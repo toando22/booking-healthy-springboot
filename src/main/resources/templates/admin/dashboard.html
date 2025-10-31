@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Dashboard - Booking Health Admin</title>
+
+  <!-- Favicons -->
+  <link th:href="@{/assets-admin/img/favicon.png}" rel="icon">
+  <link th:href="@{/assets-admin/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Nunito:300,400,600,700|Poppins:400,500,600,700" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets-admin/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets-admin/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets-admin/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets-admin/vendor/quill/quill.snow.css}" rel="stylesheet">
+  <link th:href="@{/assets-admin/vendor/remixicon/remixicon.css}" rel="stylesheet">
+  <link th:href="@{/assets-admin/vendor/simple-datatables/style.css}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link th:href="@{/assets-admin/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<div th:replace="~{admin/include/header :: header}"></div>
+
+
+<!-- ======= Sidebar ======= -->
+<div th:replace="~{admin/include/sidebar :: sidebar}"></div>
+
+<!-- ======= Main Content ======= -->
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Home</a></li>
+        <li class="breadcrumb-item active">Dashboard</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section dashboard">
+    <div class="row">
+
+      <!-- Sales Card -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card sales-card">
+          <div class="card-body">
+            <h5 class="card-title">Sales <span>| Today</span></h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-cart"></i>
+              </div>
+              <div class="ps-3">
+                <h6>145</h6>
+                <span class="text-success small pt-1 fw-bold">12%</span>
+                <span class="text-muted small pt-2 ps-1">increase</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Card -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card revenue-card">
+          <div class="card-body">
+            <h5 class="card-title">Revenue <span>| This Month</span></h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-currency-dollar"></i>
+              </div>
+              <div class="ps-3">
+                <h6>$3,264</h6>
+                <span class="text-success small pt-1 fw-bold">8%</span>
+                <span class="text-muted small pt-2 ps-1">increase</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customers Card -->
+      <div class="col-xxl-4 col-xl-12">
+        <div class="card info-card customers-card">
+          <div class="card-body">
+            <h5 class="card-title">Customers <span>| This Year</span></h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="ps-3">
+                <h6>1244</h6>
+                <span class="text-danger small pt-1 fw-bold">12%</span>
+                <span class="text-muted small pt-2 ps-1">decrease</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Reports <span>| Today</span></h5>
+            <div id="reportsChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Sales -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+          <div class="card-body">
+            <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+            <table class="table table-borderless datatable">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Status</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th>#2457</th>
+                <td>Brandon Jacob</td>
+                <td>At praesentium minu</td>
+                <td>$64</td>
+                <td><span class="badge bg-success">Approved</span></td>
+              </tr>
+              <tr>
+                <th>#2147</th>
+                <td>Bridie Kessler</td>
+                <td>Blanditiis dolor omnis</td>
+                <td>$47</td>
+                <td><span class="badge bg-warning">Pending</span></td>
+              </tr>
+              <tr>
+                <th>#2049</th>
+                <td>Ashleigh Langosh</td>
+                <td>Recusandae consectetur</td>
+                <td>$147</td>
+                <td><span class="badge bg-success">Approved</span></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- ======= Footer ======= -->
+<div th:replace="~{admin/include/footer :: footer}"></div>
+
+<!-- Vendor JS Files -->
+<script th:src="@{/assets-admin/vendor/apexcharts/apexcharts.min.js}"></script>
+<script th:src="@{/assets-admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets-admin/vendor/echarts/echarts.min.js}"></script>
+<script th:src="@{/assets-admin/vendor/simple-datatables/simple-datatables.js}"></script>
+<script th:src="@{/assets-admin/js/main.js}"></script>
+
+</body>
+</html>
