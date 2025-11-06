@@ -28,98 +28,52 @@
 
 <body class="doctor-details-page">
 
-    <header id="header" class="header d-flex align-items-center fixed-top">
-        <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+<header id="header" class="header d-flex align-items-center fixed-top">
+  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-            <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <!-- <img src="assets/img/logo.webp" alt=""> -->
-                <svg class="my-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g id="bgCarrier" stroke-width="0"></g>
-                    <g id="tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                    <g id="iconCarrier">
-                        <path d="M22 22L2 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path d="M17 22V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V22" stroke="currentColor" stroke-width="1.5"></path>
-                        <path opacity="0.5" d="M21 22V8.5C21 7.09554 21 6.39331 20.6629 5.88886C20.517 5.67048 20.3295 5.48298 20.1111 5.33706C19.6067 5 18.9045 5 17.5 5" stroke="currentColor" stroke-width="1.5"></path>
-                        <path opacity="0.5" d="M3 22V8.5C3 7.09554 3 6.39331 3.33706 5.88886C3.48298 5.67048 3.67048 5.48298 3.88886 5.33706C4.39331 5 5.09554 5 6.5 5" stroke="currentColor" stroke-width="1.5"></path>
-                        <path d="M12 22V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M10 12H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M5.5 11H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M5.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M17 11H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M17 14H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M5.5 8H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M17 8H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path opacity="0.5" d="M10 15H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                        <path d="M12 9V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M14 7L10 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </g>
-                </svg>
+    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
+      <svg class="my-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="bgCarrier" stroke-width="0"></g><g id="tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="iconCarrier"><path d="M22 22L2 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M17 22V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V22" stroke="currentColor" stroke-width="1.5"></path><path opacity="0.5" d="M21 22V8.5C21 7.09554 21 6.39331 20.6629 5.88886C20.517 5.67048 20.3295 5.48298 20.1111 5.33706C19.6067 5 18.9045 5 17.5 5" stroke="currentColor" stroke-width="1.5"></path><path opacity="0.5" d="M3 22V8.5C3 7.09554 3 6.39331 3.33706 5.88886C3.48298 5.67048 3.67048 5.48298 3.88886 5.33706C4.39331 5 5.09554 5 6.5 5" stroke="currentColor" stroke-width="1.5"></path><path d="M12 22V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M10 12H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 11H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 11H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 14H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 8H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 8H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M10 15H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14 7L10 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+      <h1 class="sitename">MediTrust</h1>
+    </a>
 
-                <h1 class="sitename">MediTrust</h1>
-            </a>
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/about}">About</a></li>
+        <li><a th:href="@{/departments}">Departments</a></li>
+        <li><a th:href="@{/services}">Services</a></li>
+        <li><a th:href="@{/doctors}" class="active">Doctors</a></li> <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+        <ul>
+          <li><a th:href="@{/department-details}">Department Details</a></li>
+          <li><a th:href="@{/service-details}">Service Details</a></li>
+          <li><a th:href="@{/appointment}">Appointment</a></li>
+        </ul>
+      </li>
+        <li><a th:href="@{/contact}">Contact</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
 
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="index.html" class="active">Trang chủ</a></li>
-                    <li><a href="about.html">Giới thiệu</a></li>
-                    <li><a href="departments.html">Chuyên khoa</a></li>
-                    <li><a href="services.html">Dịch vụ</a></li>
-                    <li><a href="doctors.html">Đội ngũ bác sĩ</a></li>
-                    <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="department-details.html">Department Details</a></li>
-                            <li><a href="service-details.html">Service Details</a></li>
-                            <li><a href="appointment.html">Appointment</a></li>
-                            <li><a href="testimonials.html">Testimonials</a></li>
-                            <li><a href="faq.html">Frequently Asked Questions</a></li>
-                            <li><a href="gallery.html">Gallery</a></li>
-                            <li><a href="terms.html">Terms</a></li>
-                            <li><a href="privacy.html">Privacy</a></li>
-                            <li><a href="404.html">404</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="#">Dropdown 1</a></li>
-                            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Dropdown 1</a></li>
-                                    <li><a href="#">Deep Dropdown 2</a></li>
-                                    <li><a href="#">Deep Dropdown 3</a></li>
-                                    <li><a href="#">Deep Dropdown 4</a></li>
-                                    <li><a href="#">Deep Dropdown 5</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Dropdown 2</a></li>
-                            <li><a href="#">Dropdown 3</a></li>
-                            <li><a href="#">Dropdown 4</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="contact.html">Liên hệ</a></li>
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
+    <a class="btn-getstarted" th:href="@{/appointment}">Appointment</a>
 
-            <a class="btn-getstarted" href="appointment.html">Đặt lịch hẹn</a>
+  </div>
+</header>
 
-        </div>
-    </header>
 <main class="main">
 
   <div class="page-title">
     <div class="breadcrumbs">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a th:href="@{/}"><i class="bi bi-house"></i> Trang chủ</a></li>
-          <li class="breadcrumb-item"><a th:href="@{/doctors}">Bác sĩ</a></li>
+          <li class="breadcrumb-item"><a th:href="@{/}"><i class="bi bi-house"></i> Home</a></li>
+          <li class="breadcrumb-item"><a th:href="@{/doctors}">Doctors</a></li>
           <li class="breadcrumb-item active current" th:text="'Dr. ' + ${doctor.user.fullName}">Doctor Name</li>
         </ol>
       </nav>
     </div>
 
     <div class="title-wrapper">
-      <h1>Chi tiết Bác sĩ</h1>
+      <h1>Doctor Details</h1>
       <p th:text="${doctor.specialty}">Specialty</p>
     </div>
   </div><section id="doctor-details" class="service-details-2 section">
@@ -145,22 +99,22 @@
       <div class="col-lg-6" data-aos="fade-left" data-aos-delay="300">
         <div class="service-content">
           <h2 th:text="'Dr. ' + ${doctor.user.fullName}">Doctor Name</h2>
-          <p class="service-tagline" th:text="${doctor.experienceYears} + ' năm kinh nghiệm'">Years of experience</p>
+          <p class="service-tagline" th:text="${doctor.experienceYears} + ' years of experience'">Years of experience</p>
 
           <p th:text="${doctor.bio}">Doctor biography...</p>
 
           <div class="service-features">
-            <h4>Thông tin Bác sĩ:</h4>
+            <h4>Doctor Information:</h4>
             <ul>
-              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Chuyên khoa:</strong> <span th:text="${doctor.specialty}"></span></li>
-              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Kinh nghiệm:</strong> <span th:text="${doctor.experienceYears} + ' years'"></span></li>
+              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Specialty:</strong> <span th:text="${doctor.specialty}"></span></li>
+              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Experience:</strong> <span th:text="${doctor.experienceYears} + ' years'"></span></li>
               <li><i class="bi bi-check-circle"></i> <strong class="me-2">Email:</strong> <span th:text="${doctor.user.email}"></span></li>
-              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Điện thoại:</strong> <span th:text="${doctor.user.phone}"></span></li>
+              <li><i class="bi bi-check-circle"></i> <strong class="me-2">Phone:</strong> <span th:text="${doctor.user.phone}"></span></li>
             </ul>
           </div>
 
           <div class="service-actions">
-            <a th:href="@{/appointment(doctorId=${doctor.id})}" class="btn-primary">Đặt lịch tư vấn</a>
+            <a th:href="@{/appointment(doctorId=${doctor.id})}" class="btn-primary">Schedule Consultation</a>
           </div>
         </div>
       </div>
@@ -171,30 +125,29 @@
 
       <div class="col-lg-8" data-aos="fade-right" data-aos-delay="100">
         <div class="booking-section">
-          <h3>Sẵn sàng đặt lịch hẹn của bạn?</h3>
-          <p> Đội ngũ bác sĩ chuyên khoa của chúng tôi luôn sẵn sàng tư vấn từ thứ Hai đến thứ Sáu.
-              Nhận lịch hẹn trong ngày cho các trường hợp khẩn cấp.</p>
+          <h3>Ready to Schedule Your Appointment?</h3>
+          <p>Our specialists are available for consultations Monday through Friday. Same-day appointments available for urgent cases.</p>
 
           <div class="availability-info">
             <div class="info-item">
               <i class="bi bi-clock"></i>
               <div>
-                <strong>Giờ làm việc</strong>
-                <span>Thứ 2 - Thứ 6: 8:00 AM - 6:00 PM</span>
+                <strong>Office Hours</strong>
+                <span>Mon-Fri: 8:00 AM - 6:00 PM</span>
               </div>
             </div>
             <div class="info-item">
               <i class="bi bi-telephone"></i>
               <div>
-                <strong>Đường dây khẩn cấp</strong>
+                <strong>Emergency Line</strong>
                 <span>+1 (555) 123-4567</span>
               </div>
             </div>
             <div class="info-item">
               <i class="bi bi-geo-alt"></i>
               <div>
-                <strong>Địa chỉ</strong>
-                <span>Số 888 Tây Mỗ, Nam Từ Liêm, Hà Nội</span>
+                <strong>Location</strong>
+                <span>123 Medical Center Dr, Boston, MA 02101</span>
               </div>
             </div>
           </div>
@@ -203,11 +156,11 @@
 
       <div class="col-lg-4" data-aos="fade-left" data-aos-delay="200">
         <div class="appointment-card">
-          <h4>Đặt Lịch Khám</h4>
-          <p>Đặt lịch hẹn trực tuyến nhanh chóng và tiện lợi</p>
-          <a th:href="@{/appointment(doctorId=${doctor.id})}" class="btn-appointment">Đặt lịch ngay</a>
+          <h4>Book Your Visit</h4>
+          <p>Quick and easy online scheduling</p>
+          <a th:href="@{/appointment(doctorId=${doctor.id})}" class="btn-appointment">Book Appointment</a>
           <div class="contact-alternative">
-            <span>Hoặc gọi cho chúng tôi qua số</span>
+            <span>Or call us at</span>
             <a href="tel:+15551234567">+1 (555) 123-4567</a>
           </div>
         </div>
@@ -219,87 +172,33 @@
 
 </section></main>
 
-    <footer id="footer" class="footer position-relative light-background">
-
-        <div class="container footer-top">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6 footer-about">
-                    <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">MediTrust</span>
-                    </a>
-                    <div class="footer-contact pt-3">
-                        <p>Số 888</p>
-                        <p>Tây Mỗ, Nam Từ Liêm, Hà Nội</p>
-                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                        <p><strong>Email:</strong> <span>info@example.com</span></p>
-                    </div>
-                    <div class="social-links d-flex mt-4">
-                        <a href=""><i class="bi bi-twitter-x"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Liên kết Hữu ích</h4>
-                    <ul>
-                        <li><a href="#">Trang chủ</a></li>
-                        <li><a href="#">Giới thiệu</a></li>
-                        <li><a href="#">Dịch vụ</a></li>
-                        <li><a href="#">Điều khoản dịch vụ</a></li>
-                        <li><a href="#">Chính sách bảo mật</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Our Services</h4>
-                    <ul>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Product Management</a></li>
-                        <li><a href="#">Marketing</a></li>
-                        <li><a href="#">Graphic Design</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Hic solutasetp</h4>
-                    <ul>
-                        <li><a href="#">Molestiae accusamus iure</a></li>
-                        <li><a href="#">Excepturi dignissimos</a></li>
-                        <li><a href="#">Suscipit distinctio</a></li>
-                        <li><a href="#">Dilecta</a></li>
-                        <li><a href="#">Sit quas consectetur</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Nobis illum</h4>
-                    <ul>
-                        <li><a href="#">Ipsam</a></li>
-                        <li><a href="#">Laudantium dolorum</a></li>
-                        <li><a href="#">Dinera</a></li>
-                        <li><a href="#">Trodelas</a></li>
-                        <li><a href="#">Flexo</a></li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="container copyright text-center mt-4">
-            <p>© <span>Copyright</span> <strong class="px-1 sitename">MyWebsite</strong> <span>All Rights Reserved</span></p>
-            <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you've purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-            </div>
-        </div>
-
-    </footer>
+<footer id="footer" class="footer position-relative light-background">
+  <div class="container footer-top">
+    <div class="row gy-4">
+      <div class="col-lg-4 col-md-6 footer-about">
+        <a th:href="@{/}" class="logo d-flex align-items-center">
+          <span class="sitename">MediTrust</span>
+        </a>
+      </div>
+      <div class="col-lg-2 col-md-3 footer-links">
+        <h4>Useful Links</h4>
+        <ul>
+          <li><a th:href="@{/}">Home</a></li>
+          <li><a th:href="@{/about}">About us</a></li>
+          <li><a th:href="@{/services}">Services</a></li>
+          <li><a th:href="@{/terms}">Terms of service</a></li>
+          <li><a th:href="@{/privacy}">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container copyright text-center mt-4">
+    <p>© <span>Copyright</span> <strong class="px-1 sitename">MyWebsite</strong> <span>All Rights Reserved</span></p>
+    <div class="credits">
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </div>
+</footer>
 
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
