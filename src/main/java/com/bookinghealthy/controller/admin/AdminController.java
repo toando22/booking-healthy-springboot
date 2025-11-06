@@ -15,11 +15,13 @@ public class AdminController {
     }
 
      @GetMapping("/doctors")
-     public String showDoctorManagement() {
+     public String showDoctorManagement()
+     {
          return "doctor/dashboard"; // Sẽ cần file templates/admin/doctors.html
      }
     @GetMapping("/manageuser")
-    public String showmangeuser() {
+    public String showmangeuser()
+    {
         return "admin/manage-user"; // Sẽ cần file templates/admin/doctors.html
     }
 }

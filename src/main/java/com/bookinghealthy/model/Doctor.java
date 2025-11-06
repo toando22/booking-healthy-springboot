@@ -26,9 +26,13 @@ public class Doctor {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(nullable = false)
-    private String specialty; // Chuyên khoa (ví dụ: Tim mạch, Nha khoa)
-
+//    @Column(nullable = false)
+//    private String specialty; // Chuyên khoa (ví dụ: Tim mạch, Nha khoa)
+// === THAY THẾ BẰNG KHỐI NÀY ===
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "department_id")
+private Department department; // Liên kết Bác sĩ với Khoa
+    // === KẾT THÚC THAY THẾ ===
     @Column(columnDefinition = "TEXT")
     private String bio; // Tiểu sử, mô tả kinh nghiệm
 

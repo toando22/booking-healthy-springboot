@@ -25,10 +25,13 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.findById(id);
     }
 
+    // === SỬA HÀM NÀY ===
     @Override
-    public List<Doctor> searchBySpecialty(String specialty) {
-        return doctorRepository.findBySpecialtyContainingIgnoreCase(specialty);
+    public List<Doctor> findByDepartmentId(Long departmentId) {
+        // Gọi hàm mới trong repository
+        return doctorRepository.findByDepartmentId(departmentId);
     }
+    // === KẾT THÚC SỬA ĐỔI ===
 
     @Override
     public List<Doctor> searchByName(String name) {

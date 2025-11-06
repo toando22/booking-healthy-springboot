@@ -29,6 +29,8 @@ public class User {
     private String phone;
     private String avatar;
 
+    // === THAY ĐỔI DUY NHẤT LÀ DÒNG NÀY ===
+    // Sửa FetchType.EAGER thành FetchType.LAZY
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
