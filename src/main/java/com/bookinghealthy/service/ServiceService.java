@@ -9,5 +9,7 @@ public interface ServiceService {
     List<Service> findByCategory(String category);
     Optional<Service> findById(Long id); // <-- THÊM DÒNG NÀY
     // (Chúng ta sẽ thêm save, delete, update khi làm Admin)
-
+    // === THÊM 2 HÀM MỚI ===
+    Service save(Service service);
+    void deleteById(Long id);
 }

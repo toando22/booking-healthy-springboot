@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{admin/include/header :: header (title='Quản lý Lịch khám')}"></th:block>
+</head>
+<body>
+<th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+<th:block th:replace="~{admin/include/sidebar :: sidebar}"></th:block>
+
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Quản lý Lịch khám</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Quản lý Lịch khám</li>
+      </ol>
+    </nav>
+  </div><section class="section">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Tất cả Lịch hẹn</h5>
+
+          <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-1"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-octagon me-1"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <table class="table datatable">
+            <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Bệnh nhân</th>
+              <th scope="col">Bác sĩ</th>
+              <th scope="col">Khoa</th>
+              <th scope="col">Ngày hẹn</th>
+              <th scope="col">Giờ hẹn</th>
+              <th scope="col">Trạng thái</th>
+              <th scope="col">Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="booking : ${listBookings}">
+              <td th:text="${booking.id}">1</td>
+              <td th:text="${booking.user.fullName}">Patient Name</td>
+              <td th:text="${booking.doctor.user.fullName}">Doctor Name</td>
+              <td th:text="${booking.doctor.department.name}">Cardiology</td>
+              <td th:text="${#temporals.format(booking.appointmentDate, 'dd-MM-yyyy')}">10-11-2025</td>
+              <td th:text="${booking.appointmentTime}">08:00 - 08:30</td>
+              <td>
+                <span th:if="${booking.status.name() == 'PENDING'}" class="badge bg-warning">Chờ xác nhận</span>
+                <span th:if="${booking.status.name() == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
+                <span th:if="${booking.status.name() == 'CANCELED'}" class="badge bg-danger">Đã hủy</span>
+                <span th:if="${booking.status.name() == 'COMPLETED'}" class="badge bg-secondary">Đã hoàn thành</span>
+              </td>
+              <td>
+                <div th:if="${booking.status.name() == 'PENDING'}">
+                  <a th:href="@{/admin/manage-booking/confirm/{id}(id=${booking.id})}" class="btn btn-success btn-sm" title="Xác nhận">
+                    <i class="bi bi-check-lg"></i>
+                  </a>
+                  &nbsp;
+                  <a th:href="@{/admin/manage-booking/cancel/{id}(id=${booking.id})}" class="btn btn-danger btn-sm" title="Hủy lịch">
+                    <i class="bi bi-x-lg"></i>
+                  </a>
+                </div>
+                <a th:href="@{/admin/manage-booking/delete/{id}(id=${booking.id})}" class="btn btn-dark btn-sm" title="Xóa vĩnh viễn"
+                   onclick="return confirm('Bạn có chắc muốn XÓA VĨNH VIỄN lịch hẹn này?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main><th:block th:replace="~{admin/include/footer :: footer}"></th:block>
+</body>
+</html>

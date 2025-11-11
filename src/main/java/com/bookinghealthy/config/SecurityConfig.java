@@ -32,53 +32,66 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // --- CÁC TRANG CÔNG KHAI (AI CŨNG XEM ĐƯỢC) ---
+                        // --- 1. CÁC TRANG CÔNG KHAI (AI CŨNG XEM ĐƯỢC) ---
                         .requestMatchers(
                                 "/", "/home",             // Trang chủ
                                 "/login", "/register",       // Đăng nhập, Đăng ký
                                 "/doctors", "/doctors/**",   // Trang Bác sĩ
                                 "/services", "/services/**", // Trang Dịch vụ
-                                "/contact", "/about"       // Trang Liên hệ, Giới thiệu (ví dụ)
+                                "/departments", "/department-details/**", // Trang Khoa (Mới)
+                                "/contact", "/about",       // Trang Liên hệ, Giới thiệu
+                                "/api/doctors"            // API cho AJAX (Mới)
                         ).permitAll()
 
-                        // --- TÀI NGUYÊN TĨNH (CSS, JS, ẢNH) ---
+                        // --- 2. TÀI NGUYÊN TĨNH (CSS, JS, ẢNH) ---
                         .requestMatchers(
                                 "/assets/**",
                                 "/assets-admin/**",
                                 "/uploads/**"
                         ).permitAll()
 
-                        // --- CÁC TRANG BẢO VỆ (PHẢI ĐĂNG NHẬP) ---
-
-                        // 1. Phân quyền theo VAI TRÒ (ROLE)
+                        // --- 3. PHÂN QUYỀN ADMIN (BẮT BUỘC ROLE_ADMIN) ---
+                        // Sửa: Dùng "/admin/**" để bao gồm TẤT CẢ các trang con
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // --- 4. PHÂN QUYỀN BÁC SĨ (BẮT BUỘC ROLE_DOCTOR) ---
                         .requestMatchers("/doctor/**").hasRole("DOCTOR")
 
-                        // 2. Phân quyền theo XÁC THỰC (Đăng nhập là được)
-                        // Trang Đặt lịch và Trang Hồ sơ cá nhân
+                        // --- 5. CÁC TRANG CẦN ĐĂNG NHẬP (USER, DOCTOR, ADMIN đều được) ---
                         .requestMatchers(
                                 "/appointment",
                                 "/profile",
                                 "/change-password"
                         ).authenticated()
 
-                        // 3. Mọi request CÒN LẠI đều phải đăng nhập
+                        // 6. Mọi request CÒN LẠI đều phải đăng nhập
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        // Chuyển về trang chủ SAU KHI đăng nhập thành công
-                        .defaultSuccessUrl("/", true)
+                        // === NÂNG CẤP: PHÂN LUỒNG ĐĂNG NHẬP ===
+                        .successHandler((request, response, authentication) -> {
+                            // Nếu là ADMIN, về /admin/dashboard
+                            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                                response.sendRedirect("/admin/dashboard");
+                            }
+                            // Nếu là DOCTOR, về /doctor/dashboard
+                            else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"))) {
+                                response.sendRedirect("/doctor/dashboard");
+                            }
+                            // Nếu là USER (Bệnh nhân), về trang chủ
+                            else {
+                                response.sendRedirect("/");
+                            }
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        // URL để kích hoạt đăng xuất
                         .logoutUrl("/logout")
-                        // Chuyển về trang login SAU KHI đăng xuất
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable()); // (Tạm thời tắt CSRF để test)
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

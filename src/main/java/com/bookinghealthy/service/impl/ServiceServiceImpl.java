@@ -30,4 +30,14 @@ public class ServiceServiceImpl implements ServiceService {
     public Optional<Service> findById(Long id) {
         return serviceRepository.findById(id);
     }
+    // === THÊM 2 PHƯƠNG THỨC MỚI NÀY ===
+    @Override
+    public Service save(Service service) {
+        return serviceRepository.save(service);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        serviceRepository.deleteById(id);
+    }
 }

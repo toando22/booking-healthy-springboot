@@ -37,4 +37,20 @@ public class DoctorServiceImpl implements DoctorService {
     public List<Doctor> searchByName(String name) {
         return doctorRepository.findByUserFullNameContainingIgnoreCase(name);
     }
+    // === THÊM 2 PHƯƠNG THỨC MỚI NÀY ===
+    @Override
+    public Doctor save(Doctor doctor) {
+        return doctorRepository.save(doctor);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        doctorRepository.deleteById(id);
+    }
+
+    // === THÊM PHƯƠNG THỨC MỚI NÀY ===
+    @Override
+    public Optional<Doctor> findByUsername(String username) {
+        return doctorRepository.findByUser_Username(username);
+    }
 }

@@ -1,6 +1,9 @@
 package com.bookinghealthy.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email; // <-- THÊM IMPORT
+import jakarta.validation.constraints.NotBlank; // <-- THÊM IMPORT
+import jakarta.validation.constraints.Size; // <-- THÊM IMPORT
 import lombok.*;
 import java.util.Set;
 
@@ -16,21 +19,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Username không được để trống") // <-- THÊM
+    @Size(min = 3, message = "Username phải có ít nhất 3 ký tự") // <-- THÊM
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NotBlank(message = "Email không được để trống") // <-- THÊM
+    @Email(message = "Email không đúng định dạng") // <-- THÊM
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "Họ tên không được để trống") // <-- THÊM
     private String fullName;
+
     private String phone;
     private String avatar;
 
-    // === THAY ĐỔI DUY NHẤT LÀ DÒNG NÀY ===
-    // Sửa FetchType.EAGER thành FetchType.LAZY
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
