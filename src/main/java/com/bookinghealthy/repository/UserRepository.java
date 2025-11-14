@@ -4,6 +4,8 @@ import com.bookinghealthy.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query; // Thêm import này
 import org.springframework.data.repository.query.Param; // Thêm import này
+
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -27,4 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // (Giữ nguyên các hàm cũ)
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+    // === THÊM HÀM MỚI NÀY ===
+    // Tìm tất cả User theo tên Role (ví dụ: "ROLE_USER")
+    List<User> findByRoles_Name(String roleName);
 }

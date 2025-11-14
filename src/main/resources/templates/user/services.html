@@ -4,95 +4,76 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Services - MediTrust</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-
+  <title>Dịch vụ - MediTrust</title>
   <link th:href="@{/assets/img/favicon.png}" rel="icon">
   <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
-
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
   <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/glightbox/css/glightbox.min.css}" rel="stylesheet">
-
   <link th:href="@{/assets/css/main.css}" rel="stylesheet">
-
 </head>
 
 <body class="services-page">
 
 <header id="header" class="header d-flex align-items-center fixed-top">
   <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
     <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
-      <svg class="my-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="bgCarrier" stroke-width="0"></g><g id="tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="iconCarrier"><path d="M22 22L2 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M17 22V6C17 4.11438 17 3.17157 16.4142 2.58579C15.8284 2 14.8856 2 13 2H11C9.11438 2 8.17157 2 7.58579 2.58579C7 3.17157 7 4.11438 7 6V22" stroke="currentColor" stroke-width="1.5"></path><path opacity="0.5" d="M21 22V8.5C21 7.09554 21 6.39331 20.6629 5.88886C20.517 5.67048 20.3295 5.48298 20.1111 5.33706C19.6067 5 18.9045 5 17.5 5" stroke="currentColor" stroke-width="1.5"></path><path opacity="0.5" d="M3 22V8.5C3 7.09554 3 6.39331 3.33706 5.88886C3.48298 5.67048 3.67048 5.48298 3.88886 5.33706C4.39331 5 5.09554 5 6.5 5" stroke="currentColor" stroke-width="1.5"></path><path d="M12 22V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M10 12H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 11H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 11H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 14H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M5.5 8H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M17 8H18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path opacity="0.5" d="M10 15H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M12 9V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14 7L10 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
       <h1 class="sitename">MediTrust</h1>
     </a>
-
     <nav id="navmenu" class="navmenu">
       <ul>
-        <li><a th:href="@{/}">Home</a></li>
-        <li><a th:href="@{/about}">About</a></li>
-        <li><a th:href="@{/departments}">Departments</a></li>
-        <li><a th:href="@{/services}" class="active">Services</a></li>
-        <li><a th:href="@{/doctors}">Doctors</a></li>
+        <li><a th:href="@{/}">Trang chủ</a></li>
+        <li><a th:href="@{/about}">Giới thiệu</a></li>
+        <li><a th:href="@{/departments}">Chuyên khoa</a></li>
+        <li><a th:href="@{/services}" class="active">Dịch vụ</a></li> <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>
         <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
           <ul>
-            <li><a th:href="@{/department-details}">Department Details</a></li>
-            <li><a th:href="@{/service-details}">Service Details</a></li>
-            <li><a th:href="@{/appointment}">Appointment</a></li>
+            <li><a th:href="@{/appointment}">Đặt lịch hẹn</a></li>
           </ul>
         </li>
-        <li><a th:href="@{/contact}">Contact</a></li>
+        <li><a th:href="@{/contact}">Liên hệ</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
-
-    <a class="btn-getstarted" th:href="@{/appointment}">Appointment</a>
-
+    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>
   </div>
 </header>
-
 <main class="main">
 
   <div class="page-title">
     <div class="breadcrumbs">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a th:href="@{/}"><i class="bi bi-house"></i> Home</a></li>
-          <li class="breadcrumb-item active current">Services</li>
+          <li class="breadcrumb-item"><a th:href="@{/}"><i class="bi bi-house"></i> Trang chủ</a></li>
+          <li class="breadcrumb-item active current">Dịch vụ</li>
         </ol>
       </nav>
     </div>
-
     <div class="title-wrapper">
-      <h1>Services</h1>
-      <p>Explore the wide range of medical services we offer to keep you healthy.</p>
+      <h1>Dịch vụ của chúng tôi</h1>
+      <p>Khám phá các dịch vụ y tế đa dạng mà chúng tôi cung cấp.</p>
     </div>
   </div><section id="services" class="services section">
-
   <div class="container" data-aos="fade_up" data-aos-delay="100">
-
     <div class="services-tabs">
-      <ul class="nav nav-tabs" role="tablist" data-aos="fade-up" data-aos-delay="200">
+      <ul class="nav nav-tabs" role="tablist" data-aos="fade_up" data-aos-delay="200">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="services-primary-tab" data-bs-toggle="tab" data-bs-target="#services-primary" type="button" role="tab">Primary Care</button>
+          <button class="nav-link active" id="services-primary-tab" data-bs-toggle="tab" data-bs-target="#services-primary" type="button" role="tab">Chăm sóc Cơ bản (Primary)</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="services-specialty-tab" data-bs-toggle="tab" data-bs-target="#services-specialty" type="button" role="tab">Specialty Care</button>
+          <button class="nav-link" id="services-specialty-tab" data-bs-toggle="tab" data-bs-target="#services-specialty" type="button" role="tab">Chuyên khoa (Specialty)</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="services-diagnostics-tab" data-bs-toggle="tab" data-bs-target="#services-diagnostics" type="button" role="tab">Diagnostics</button>
+          <button class="nav-link" id="services-diagnostics-tab" data-bs-toggle="tab" data-bs-target="#services-diagnostics" type="button" role="tab">Chẩn đoán (Diagnostics)</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="services-emergency-tab" data-bs-toggle="tab" data-bs-target="#services-emergency" type="button" role="tab">Emergency</button>
+          <button class="nav-link" id="services-emergency-tab" data-bs-toggle="tab" data-bs-target="#services-emergency" type="button" role="tab">Cấp cứu (Emergency)</button>
         </li>
       </ul>
 
@@ -100,23 +81,19 @@
 
         <div class="tab-pane fade show active" id="services-primary" role="tabpanel">
           <div class="row g-4">
-
             <div class="col-lg-6" th:each="service : ${primaryServices}">
               <div class="service-item">
-                <div class="service-icon-wrapper">
-                  <i class="fa fa-stethoscope"></i>
-                </div>
+                <div class="service-icon-wrapper"><i class="fa fa-stethoscope"></i></div>
                 <div class="service-details">
-                  <h5 th:text="${service.name}">General Consultation</h5>
-                  <p th:text="${service.description}">Cupiditate placeat facere...</p>
+                  <h5 th:text="${service.name}">Tên Dịch vụ</h5>
+                  <p th:text="${service.description}">Mô tả...</p>
                   <ul class="service-benefits">
                     <li><i class="fa fa-check-circle"></i>
-                      Price: <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                      Chi phí: <span th:text="${service.price}"></span>
                     </li>
                   </ul>
                   <a th:href="@{/service-details/{id}(id=${service.id})}" class="service-link">
-                    <span>Learn More</span>
-                    <i class="fa fa-arrow-right"></i>
+                    <span>Chi tiết</span> <i class="fa fa-arrow-right"></i>
                   </a>
                 </div>
               </div>
@@ -126,23 +103,19 @@
 
         <div class="tab-pane fade" id="services-specialty" role="tabpanel">
           <div class="row g-4">
-
             <div class="col-lg-6" th:each="service : ${specialtyServices}">
               <div class="service-item">
-                <div class="service-icon-wrapper">
-                  <i class="fa fa-heartbeat"></i>
-                </div>
+                <div class="service-icon-wrapper"><i class="fa fa-heartbeat"></i></div>
                 <div class="service-details">
-                  <h5 th:text="${service.name}">Cardiology</h5>
-                  <p th:text="${service.description}">Sed ut perspiciatis...</p>
+                  <h5 th:text="${service.name}">Tên Dịch vụ</h5>
+                  <p th:text="${service.description}">Mô tả...</p>
                   <ul class="service-benefits">
                     <li><i class="fa fa-check-circle"></i>
-                      Price: <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                      Chi phí: <span th:text="${service.price}"></span>
                     </li>
                   </ul>
                   <a th:href="@{/service-details/{id}(id=${service.id})}" class="service-link">
-                    <span>Learn More</span>
-                    <i class="fa fa-arrow-right"></i>
+                    <span>Chi tiết</span> <i class="fa fa-arrow-right"></i>
                   </a>
                 </div>
               </div>
@@ -152,23 +125,19 @@
 
         <div class="tab-pane fade" id="services-diagnostics" role="tabpanel">
           <div class="row g-4">
-
             <div class="col-lg-6" th:each="service : ${diagnosticsServices}">
               <div class="service-item">
-                <div class="service-icon-wrapper">
-                  <i class="fa fa-vial"></i>
-                </div>
+                <div class="service-icon-wrapper"><i class="fa fa-vial"></i></div>
                 <div class="service-details">
-                  <h5 th:text="${service.name}">Laboratory Testing</h5>
-                  <p th:text="${service.description}">Quis autem vel eum iure...</p>
+                  <h5 th:text="${service.name}">Tên Dịch vụ</h5>
+                  <p th:text="${service.description}">Mô tả...</p>
                   <ul class="service-benefits">
                     <li><i class="fa fa-check-circle"></i>
-                      Price: <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                      Chi phí: <span th:text="${service.price}"></span>
                     </li>
                   </ul>
                   <a th:href="@{/service-details/{id}(id=${service.id})}" class="service-link">
-                    <span>Learn More</span>
-                    <i class="fa fa-arrow-right"></i>
+                    <span>Chi tiết</span> <i class="fa fa-arrow-right"></i>
                   </a>
                 </div>
               </div>
@@ -178,28 +147,23 @@
 
         <div class="tab-pane fade" id="services-emergency" role="tabpanel">
           <div class="row g-4">
-
             <div class="col-lg-12" th:each="service : ${emergencyServices}">
               <div class="service-item emergency-highlight">
-                <div class="service-icon-wrapper">
-                  <i class="fa fa-ambulance"></i>
-                </div>
+                <div class="service-icon-wrapper"><i class="fa fa-ambulance"></i></div>
                 <div class="service-details">
-                  <h5 th:text="${service.name}">24/7 Emergency Care</h5>
-                  <p th:text="${service.description}">Sed do eiusmod tempor...</p>
+                  <h5 th:text="${service.name}">Tên Dịch vụ</h5>
+                  <p th:text="${service.description}">Mô tả...</p>
                   <ul class="service-benefits">
                     <li><i class="fa fa-check-circle"></i>
-                      Price: <span th:text="${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                      Chi phí: <span th:text="${service.price}"></span>
                     </li>
                   </ul>
                   <div class="emergency-actions">
                     <a href="tel:911" class="btn-emergency">
-                      <i class="fa fa-phone"></i>
-                      <span>Call Emergency</span>
+                      <i class="fa fa-phone"></i> <span>Gọi cấp cứu</span>
                     </a>
                     <a th:href="@{/service-details/{id}(id=${service.id})}" class="btn-directions">
-                      <i class="fa fa-arrow-right"></i>
-                      <span>Learn More</span>
+                      <i class="fa fa-arrow-right"></i> <span>Chi tiết</span>
                     </a>
                   </div>
                 </div>
@@ -210,59 +174,14 @@
 
       </div>
     </div>
-
-    <div class="services-cta" data-aos="fade_up" data-aos-delay="400">
-      <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-          <div class="cta-content">
-            <i class="fa fa-calendar-check"></i>
-            <h3>Ready to Schedule Your Appointment?</h3>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident.</p>
-            <div class="cta-buttons">
-              <a th:href="@{/appointment}" class="btn-book">Book Now</a>
-              <a th:href="@{/contact}" class="btn-contact">Contact Us</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
-
 </section></main>
 
 <footer id="footer" class="footer position-relative light-background">
-  <div class="container footer-top">
-    <div class="row gy-4">
-      <div class="col-lg-4 col-md-6 footer-about">
-        <a th:href="@{/}" class="logo d-flex align-items-center">
-          <span class="sitename">MediTrust</span>
-        </a>
-      </div>
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Useful Links</h4>
-        <ul>
-          <li><a th:href="@{/}">Home</a></li>
-          <li><a th:href="@{/about}">About us</a></li>
-          <li><a th:href="@{/services}">Services</a></li>
-          <li><a th:href="@{/terms}">Terms of service</a></li>
-          <li><a th:href="@{/privacy}">Privacy policy</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="container copyright text-center mt-4">
-    <p>© <span>Copyright</span> <strong class="px-1 sitename">MyWebsite</strong> <span>All Rights Reserved</span></p>
-    <div class="credits">
-      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-    </div>
-  </div>
 </footer>
 
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
 <div id="preloader"></div>
-
 <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
 <script th:src="@{/assets/vendor/aos/aos.js}"></script>
@@ -271,9 +190,7 @@
 <script th:src="@{/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js}"></script>
 <script th:src="@{/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
 <script th:src="@{/assets/vendor/glightbox/js/glightbox.min.js}"></script>
-
 <script th:src="@{/assets/js/main.js}"></script>
 
 </body>
-
 </html>

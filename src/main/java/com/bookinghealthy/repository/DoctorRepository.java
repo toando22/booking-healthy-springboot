@@ -6,21 +6,31 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
-    /**
-     * Sửa dòng @EntityGraph
-     * Thêm "department" vào danh sách tải
-     */
+    // (Hàm này để sửa lỗi "trắng trang" sau này)
     @Override
-    @EntityGraph(attributePaths = {"user", "user.roles", "department"}) // <-- THÊM ", department"
+    @EntityGraph(attributePaths = {"user", "user.roles", "department"})
     List<Doctor> findAll();
 
-    // Sửa hàm này để tải department
-    @EntityGraph(attributePaths = {"user", "user.roles", "department"}) // <-- THÊM ", department"
+    // (Hàm này để sửa lỗi "trắng trang" sau này)
+    @Override
+    @EntityGraph(attributePaths = {"user", "user.roles", "department"})
+    Optional<Doctor> findById(Long id);
+
+    // === DÒNG BỊ THIẾU CỦA BẠN LÀ ĐÂY ===
+    // Tìm bác sĩ bằng ID của Khoa
+    @EntityGraph(attributePaths = {"user", "user.roles", "department"})
     List<Doctor> findByDepartmentId(Long departmentId);
+    // === KẾT THÚC DÒNG BỊ THIẾU ===
 
     List<Doctor> findByUserFullNameContainingIgnoreCase(String fullName);
+
+    // === THÊM HÀM MỚI NÀY ===
+    // Tìm Doctor bằng username của User liên kết
+    @EntityGraph(attributePaths = {"user", "department"})
+    Optional<Doctor> findByUser_Username(String username);
 }

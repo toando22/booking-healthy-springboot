@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.math.BigDecimal; // <-- Thêm import
 
 @Entity
 @Table(name = "doctors")
@@ -18,27 +19,22 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Liên kết 1-1 với User.
-    // Mỗi bác sĩ PHẢI là một User.
-    // fetch = FetchType.LAZY: Chỉ tải thông tin User khi thực sự cần.
-    // optional = false: Bắt buộc phải có 1 User.
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-//    @Column(nullable = false)
-//    private String specialty; // Chuyên khoa (ví dụ: Tim mạch, Nha khoa)
-// === THAY THẾ BẰNG KHỐI NÀY ===
-@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "department_id")
-private Department department; // Liên kết Bác sĩ với Khoa
-    // === KẾT THÚC THAY THẾ ===
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
     @Column(columnDefinition = "TEXT")
-    private String bio; // Tiểu sử, mô tả kinh nghiệm
+    private String bio;
 
-    private Integer experienceYears; // Số năm kinh nghiệm
+    private Integer experienceYears;
 
-    // Chúng ta có thể thêm các trường khác sau này
-    // như rating (từ Module 6: Feedback)
-    // private Double rating;
+    // === THÊM 2 TRƯỜNG MỚI ===
+    private String degree; // Bằng cấp (Tiến sĩ, Thạc sĩ, Bác sĩ)
+
+    @Column(nullable = false, precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) DEFAULT 300000.00")
+    private BigDecimal price; // Giá khám
 }

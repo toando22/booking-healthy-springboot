@@ -47,7 +47,6 @@
   </div>
 </header>
 <main class="main">
-
   <div class="page-title">
     <div class="breadcrumbs">
       <nav aria-label="breadcrumb">
@@ -130,55 +129,70 @@
             </div>
 
             <div class="col-md-6">
-              <select name="serviceId" class="form-select" required="">
-                <option value="">Chọn dịch vụ</option>
-                <option th:each="service : ${services}"
-                        th:value="${service.id}"
-                        th:text="${service.name} + ' (' + ${#numbers.formatDecimal(service.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ)'">
+              <select name="appointmentType" class="form-select" required="">
+                <option value="">Chọn loại hình khám</option>
+                <option value="BHYT">Khám BHYT</option>
+                <option value="Dịch vụ">Khám Dịch vụ</option>
+                <option value="Từ xa">Khám Từ xa</option>
+                <option value="Tại nhà">Khám Tại nhà</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <select id="departmentSelect" name="departmentId" class="form-select" required="">
+                <option value="">Chọn chuyên khoa</option>
+                <option th:each="dept : ${departments}"
+                        th:value="${dept.id}"
+                        th:text="${dept.name}">
                 </option>
               </select>
             </div>
 
             <div class="col-md-6">
-              <select name="doctorId" class="form-select" required="">
-                <option value="">Chọn bác sĩ</option>
-                <option th:each="doctor : ${doctors}"
-                        th:value="${doctor.id}"
-                        th:text="'Dr. ' + ${doctor.user.fullName} + ' (' + ${doctor.department.name} + ')'"
-                        th:selected="${selectedDoctorId != null && selectedDoctorId == doctor.id}">
-                </option>
+              <select id="doctorSelect" name="doctorId" class="form-select" required="" disabled>
+                <option value="">Vui lòng chọn khoa trước</option>
               </select>
+              <div id="doctorPriceInfo" class="form-text mt-1" style="min-height: 20px;"></div>
             </div>
+
             <div class="col-md-6">
-              <input type="date" name="appointmentDate" class="form-control" required="">
+              <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required="">
+            </div>
+
+            <div class="col-md-6">
             </div>
 
             <div class="col-12">
               <label class="form-label d-block mb-2">Chọn khung giờ</label>
-              <div class="btn-group" role="group" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <div id="timeSlotContainer" class="btn-group" role="group" style="display: flex; flex-wrap: wrap; gap: 8px;">
 
-                <input type="radio" class="btn-check" name="appointmentTime" id="time1" value="08:00 AM - 09:00 AM" required>
-                <label class="btn btn-outline-secondary" for="time1">08:00 - 09:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time2" value="09:00 AM - 10:00 AM">
-                <label class="btn btn-outline-secondary" for="time2">09:00 - 10:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time3" value="10:00 AM - 11:00 AM">
-                <label class="btn btn-outline-secondary" for="time3">10:00 - 11:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time4" value="11:00 AM - 12:00 PM">
-                <label class="btn btn-outline-secondary" for="time4">11:00 - 12:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time5" value="02:00 PM - 03:00 PM">
-                <label class="btn btn-outline-secondary" for="time5">14:00 - 15:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time6" value="03:00 PM - 04:00 PM">
-                <label class="btn btn-outline-secondary" for="time6">15:00 - 16:00</label>
-
-                <input type="radio" class="btn-check" name="appointmentTime" id="time7" value="04:00 PM - 05:00 PM">
-                <label class="btn btn-outline-secondary" for="time7">16:00 - 17:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time1" value="08:00 - 08:30" required>
+                <label class="btn btn-outline-secondary" for="time1">08:00 - 08:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time2" value="08:30 - 09:00">
+                <label class="btn btn-outline-secondary" for="time2">08:30 - 09:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time3" value="09:00 - 09:30">
+                <label class="btn btn-outline-secondary" for="time3">09:00 - 09:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time4" value="09:30 - 10:00">
+                <label class="btn btn-outline-secondary" for="time4">09:30 - 10:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time5" value="10:00 - 10:30">
+                <label class="btn btn-outline-secondary" for="time5">10:00 - 10:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time6" value="10:30 - 11:00">
+                <label class="btn btn-outline-secondary" for="time6">10:30 - 11:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time7" value="14:00 - 14:30">
+                <label class="btn btn-outline-secondary" for="time7">14:00 - 14:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time8" value="14:30 - 15:00">
+                <label class="btn btn-outline-secondary" for="time8">14:30 - 15:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time9" value="15:00 - 15:30">
+                <label class="btn btn-outline-secondary" for="time9">15:00 - 15:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time10" value="15:30 - 16:00">
+                <label class="btn btn-outline-secondary" for="time10">15:30 - 16:00</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time11" value="16:00 - 16:30">
+                <label class="btn btn-outline-secondary" for="time11">16:00 - 16:30</label>
+                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time12" value="16:30 - 17:00">
+                <label class="btn btn-outline-secondary" for="time12">16:30 - 17:00</label>
               </div>
             </div>
+
             <div class="col-12">
               <textarea class="form-control" name="notes" rows="5" placeholder="Vui lòng mô tả các triệu chứng hoặc lý do đến thăm khám của bạn (tùy chọn)"></textarea>
             </div>
@@ -193,52 +207,7 @@
         </form>
       </div>
     </div></div>
-
-    <div class="process-steps mt-5" data-aos="fade_up" data-aos-delay="300">
-      <div class="row text-center gy-4">
-        <div class="col-lg-3 col-md-6">
-          <div class="step-item">
-            <div class="step-number">1</div>
-            <div class="step-icon">
-              <i class="bi bi-person-fill"></i>
-            </div>
-            <h5>Nhập thông tin</h5>
-            <p>Cung cấp thông tin cá nhân và chọn chuyên khoa bạn mong muốn</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="step-item">
-            <div class="step-number">2</div>
-            <div class="step-icon">
-              <i class="bi bi-calendar-event"></i>
-            </div>
-            <h5>Chọn ngày</h5>
-            <p>Chọn ngày và khung giờ khám phù hợp trong các tùy chọn có sẵn</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="step-item">
-            <div class="step-number">3</div>
-            <div class="step-icon">
-              <i class="bi bi-check-circle"></i>
-            </div>
-            <h5>Xác nhận</h5>
-            <p>Nhận xác nhận lịch hẹn và chi tiết qua email hoặc tin nhắn SMS</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="step-item">
-            <div class="step-number">4</div>
-            <div class="step-icon">
-              <i class="bi bi-heart-pulse"></i>
-            </div>
-            <h5>Thăm khám</h5>
-            <p>Đến phòng khám theo lịch hẹn và nhận dịch vụ chăm sóc sức khỏe</p>
-          </div>
-        </div>
-      </div>
-    </div></div>
-
+  </div>
 </section></main>
 
 <footer id="footer" class="footer position-relative light-background">
@@ -328,7 +297,118 @@
 <script th:src="@{/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
 <script th:src="@{/assets/vendor/glightbox/js/glightbox.min.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
 
+    // === LẤY CÁC THÀNH PHẦN ===
+    const departmentSelect = document.getElementById('departmentSelect');
+    const doctorSelect = document.getElementById('doctorSelect');
+    const doctorPriceInfo = document.getElementById('doctorPriceInfo');
+    const dateInput = document.getElementById('appointmentDate');
+    const timeSlotContainer = document.getElementById('timeSlotContainer');
+
+    const baseUrl = /*[[@{/}]]*/ '';
+
+    // === YÊU CẦU #6: KHÔNG CHỌN NGÀY QUÁ KHỨ ===
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+
+    // === YÊU CẦU #2 & #3: LỌC BÁC SĨ THEO KHOA (AJAX) ===
+    let doctorsData = [];
+
+    departmentSelect.addEventListener('change', function() {
+      const departmentId = this.value;
+
+      doctorSelect.innerHTML = '<option value="">Đang tải bác sĩ...</option>';
+      doctorSelect.disabled = true;
+      doctorPriceInfo.textContent = '';
+
+      if (!departmentId) {
+        doctorSelect.innerHTML = '<option value="">Vui lòng chọn khoa trước</option>';
+        return;
+      }
+
+      fetch(baseUrl + 'api/doctors?departmentId=' + departmentId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(doctors => {
+          doctorsData = doctors;
+          doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
+
+          if (doctors.length > 0) {
+            doctors.forEach(doctor => {
+              const option = document.createElement('option');
+              option.value = doctor.id;
+              option.textContent = 'Dr. ' + doctor.fullName + ' (' + doctor.degree + ')';
+              doctorSelect.appendChild(option);
+            });
+            doctorSelect.disabled = false;
+          } else {
+            doctorSelect.innerHTML = '<option value="">Khoa này không có bác sĩ</option>';
+          }
+        })
+        .catch(error => {
+          console.error('Lỗi khi tải bác sĩ:', error);
+          doctorSelect.innerHTML = '<option value="">Lỗi tải bác sĩ</option>';
+        });
+    });
+
+    // === YÊU CẦU #4: HIỂN THỊ GIÁ KHI CHỌN BÁC SĨ ===
+    doctorSelect.addEventListener('change', function() {
+        const selectedDoctorId = this.value;
+        const selectedDoctor = doctorsData.find(doc => doc.id == selectedDoctorId);
+
+        if (selectedDoctor) {
+            const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedDoctor.price);
+            doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;
+            doctorPriceInfo.classList.add('text-success', 'fw-bold');
+        } else {
+            doctorPriceInfo.textContent = '';
+            doctorPriceInfo.classList.remove('text-success', 'fw-bold');
+        }
+    });
+
+    // === YÊU CẦU #7: KHÔNG CHỌN GIỜ QUÁ KHỨ ===
+    function validateTimeSlots() {
+        const selectedDate = dateInput.value;
+        if (!selectedDate) return;
+
+        const now = new Date();
+        const currentDate = now.toISOString().split('T')[0];
+        const currentHours = now.getHours();
+
+        const allTimeSlots = timeSlotContainer.querySelectorAll('.time-slot');
+
+        allTimeSlots.forEach(slotInput => {
+            const slotLabel = document.querySelector('label[for="' + slotInput.id + '"]');
+            const slotStartTime = slotInput.value.split(' ')[0];
+            const slotHour = parseInt(slotStartTime.split(':')[0]);
+
+            let isPast = false;
+
+            if (selectedDate === currentDate) {
+                if (slotHour < currentHours) {
+                    isPast = true;
+                }
+            }
+
+            slotInput.disabled = isPast;
+            if (isPast) {
+                slotLabel.classList.add('disabled', 'text-decoration-line-through');
+            } else {
+                slotLabel.classList.remove('disabled', 'text-decoration-line-through');
+            }
+        });
+    }
+
+    dateInput.addEventListener('change', validateTimeSlots);
+    validateTimeSlots();
+
+  });
+</script>
 </body>
-
 </html>

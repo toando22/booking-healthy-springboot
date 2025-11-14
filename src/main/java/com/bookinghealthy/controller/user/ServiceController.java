@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ServiceController {
@@ -34,4 +36,17 @@ public class ServiceController {
     }
 
     // (Chúng ta sẽ thêm trang /service-details sau)
+    // === THÊM HÀM MỚI NÀY ===
+    @GetMapping("/service-details/{id}")
+    public String showServiceDetails(@PathVariable("id") Long id, Model model) {
+
+        Optional<Service> serviceOpt = serviceService.findById(id);
+
+        if (serviceOpt.isEmpty()) {
+            return "redirect:/services"; // Nếu không thấy, về trang danh sách
+        }
+
+        model.addAttribute("service", serviceOpt.get());
+        return "user/service-details"; // Trỏ đến file HTML chi tiết
+    }
 }

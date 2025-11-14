@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+// Bỏ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "services")
@@ -26,12 +26,13 @@ public class Service {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // === THAY ĐỔI Ở ĐÂY ===
     @Column(nullable = false)
-    private BigDecimal price;
+    private String price; // Đổi từ BigDecimal thành String
+    // === KẾT THÚC THAY ĐỔI ===
 
     private String image;
 
-    // === THÊM TRƯỜNG MỚI NÀY ===
     @Column(nullable = false)
-    private String category; // Sẽ lưu 'Primary', 'Specialty', 'Diagnostics', 'Emergency'
+    private String category;
 }

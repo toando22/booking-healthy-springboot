@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal; // <-- Thêm import
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -22,35 +23,37 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Liên kết với Bệnh nhân (User)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Liên kết với Bác sĩ (Doctor)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    // Liên kết với Dịch vụ (Service)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    // (Xóa liên kết Service)
 
     @Column(nullable = false)
-    private LocalDate appointmentDate; // Ngày hẹn
+    private LocalDate appointmentDate;
 
     @Column(nullable = false)
-    private String appointmentTime; // Giờ hẹn (ví dụ: "09:00 AM - 10:00 AM")
+    private String appointmentTime;
 
     @Column(columnDefinition = "TEXT")
-    private String notes; // Ghi chú của bệnh nhân
+    private String notes;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BookingStatus status; // Trạng thái lịch hẹn
+    private BookingStatus status;
 
-    @CreationTimestamp // Tự động gán ngày giờ tạo
+    @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    // === THÊM 2 TRƯỜNG MỚI ===
+    @Column(nullable = false)
+    private String appointmentType; // (Lưu 'BHYT', 'Dịch vụ', 'Từ xa', 'Tại nhà')
+
+    @Column(nullable = false)
+    private BigDecimal bookingPrice; // Giá cuối cùng tại thời điểm đặt
 }
