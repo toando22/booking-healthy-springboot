@@ -11,6 +11,7 @@ public class DoctorDTO {
     private String departmentName;
     private String degree; // <-- Thêm
     private BigDecimal price; // <-- Thêm
+    private Long departmentId; // <-- THÊM TRƯỜNG NÀY
 
     public DoctorDTO(Doctor doctor) {
         this.id = doctor.getId();
@@ -18,8 +19,10 @@ public class DoctorDTO {
 
         if (doctor.getDepartment() != null) {
             this.departmentName = doctor.getDepartment().getName();
+            this.departmentId = doctor.getDepartment().getId(); // <-- GÁN GIÁ TRỊ
         } else {
             this.departmentName = "N/A";
+            this.departmentId = null;
         }
 
         this.degree = doctor.getDegree(); // <-- Gán

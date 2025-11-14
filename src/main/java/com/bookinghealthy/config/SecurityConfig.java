@@ -40,6 +40,10 @@ public class SecurityConfig {
                                 "/services", "/services/**", // Trang Dịch vụ
                                 "/departments", "/department-details/**", // Trang Khoa (Mới)
                                 "/contact", "/about",       // Trang Liên hệ, Giới thiệu
+                                // === MỞ CỬA CHO CÁC TRANG CHI TIẾT ===
+                              //  "/doctors", "/doctors/**",               // Cho phép /doctors VÀ /doctors/1, /doctors/search...
+                                "/services", "/service-details/**",      // Cho phép /services VÀ /service-details/1...
+                                "/departments", "/department-details/**",// Cho phép /departments VÀ /department-details/1...
                                 "/api/doctors"            // API cho AJAX (Mới)
                         ).permitAll()
 

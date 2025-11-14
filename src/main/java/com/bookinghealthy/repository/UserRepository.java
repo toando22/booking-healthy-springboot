@@ -29,7 +29,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // (Giữ nguyên các hàm cũ)
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    // === THÊM HÀM MỚI NÀY ===
-    // Tìm tất cả User theo tên Role (ví dụ: "ROLE_USER")
-    List<User> findByRoles_Name(String roleName);
+//    // === THÊM HÀM MỚI NÀY ===
+//    // Tìm tất cả User theo tên Role (ví dụ: "ROLE_USER")
+//    List<User> findByRoles_Name(String roleName);           --v1-11/11-ok
+
+    // === SỬA LỖI CÚ PHÁP Ở ĐÂY ===
+    // (Đã thêm "r" sau u.roles và dùng r.name)
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles r WHERE r.name = :roleName")
+    List<User> findByRoles_Name(@Param("roleName") String roleName);
+    // === KẾT THÚC SỬA LỖI ===
+
+    @Override
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles")
+    List<User> findAll();
 }

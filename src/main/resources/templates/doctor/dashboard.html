@@ -48,7 +48,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="booking : ${listBookings}">
-                            <td th:text="${booking.id}">1</td>
+                            <td th:text="${booking.id}">1admi</td>
                             <td th:text="${booking.user.fullName}">Patient Name</td>
                             <td th:text="${booking.user.email}">patient@mail.com</td>
                             <td th:text="${#temporals.format(booking.appointmentDate, 'dd-MM-yyyy')}">10-11-2025</td>

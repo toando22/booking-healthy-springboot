@@ -127,30 +127,41 @@
 
     <div class="department-stats" data-aos="fade-up" data-aos-delay="400">
       <div class="row gy-4">
+
         <div class="col-md-3 col-6">
           <div class="stat-item">
-            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="2500" data-purecounter-duration="2">0</div>
-            <p>Bệnh nhân được điều trị</p>
+            <div class="number purecounter"
+                 data-purecounter-start="0"
+                 th:attr="data-purecounter-end=${treatedCount}"
+                 data-purecounter-duration="1">0</div>
+            <p>Bệnh nhân đã khám</p>
           </div>
         </div>
+
         <div class="col-md-3 col-6">
           <div class="stat-item">
-            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="12" data-purecounter-duration="2">0</div>
+            <div class="number purecounter"
+                 data-purecounter-start="0"
+                 th:attr="data-purecounter-end=${doctorCount}"
+                 data-purecounter-duration="1">0</div>
             <p>Bác sĩ chuyên khoa</p>
           </div>
         </div>
+
         <div class="col-md-3 col-6">
           <div class="stat-item">
-            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="98" data-purecounter-duration="2">0</div>
-            <p>Tỷ lệ điều trị thành công</p>
+            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="98" data-purecounter-duration="1">0</div>
+            <p>Tỷ lệ hài lòng (%)</p>
           </div>
         </div>
+
         <div class="col-md-3 col-6">
           <div class="stat-item">
-            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="2">0</div>
-            <p>Dịch vụ chăm sóc liên tục</p>
+            <div class="number purecounter" data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="1">0</div>
+            <p>Năm kinh nghiệm TB</p>
           </div>
         </div>
+
       </div>
     </div>
 

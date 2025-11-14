@@ -1,6 +1,7 @@
 package com.bookinghealthy.service.impl;
 
 import com.bookinghealthy.model.Booking;
+import com.bookinghealthy.model.User;
 import com.bookinghealthy.repository.BookingRepository;
 import com.bookinghealthy.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteById(Long id) {
         bookingRepository.deleteById(id);
+    }
+
+    // === THÊM PHƯƠNG THỨC MỚI NÀY ===
+    @Override
+    public List<Booking> findByUser(User user) {
+        return bookingRepository.findByUser(user);
     }
 }

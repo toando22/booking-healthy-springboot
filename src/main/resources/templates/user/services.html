@@ -21,29 +21,30 @@
 
 <body class="services-page">
 
-<header id="header" class="header d-flex align-items-center fixed-top">
-  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
-      <h1 class="sitename">MediTrust</h1>
-    </a>
-    <nav id="navmenu" class="navmenu">
-      <ul>
-        <li><a th:href="@{/}">Trang chủ</a></li>
-        <li><a th:href="@{/about}">Giới thiệu</a></li>
-        <li><a th:href="@{/departments}">Chuyên khoa</a></li>
-        <li><a th:href="@{/services}" class="active">Dịch vụ</a></li> <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>
-        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a th:href="@{/appointment}">Đặt lịch hẹn</a></li>
-          </ul>
-        </li>
-        <li><a th:href="@{/contact}">Liên hệ</a></li>
-      </ul>
-      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-    </nav>
-    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>
-  </div>
-</header>
+<!--<header id="header" class="header d-flex align-items-center fixed-top">-->
+<!--  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">-->
+<!--    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">-->
+<!--      <h1 class="sitename">MediTrust</h1>-->
+<!--    </a>-->
+<!--    <nav id="navmenu" class="navmenu">-->
+<!--      <ul>-->
+<!--        <li><a th:href="@{/}">Trang chủ</a></li>-->
+<!--        <li><a th:href="@{/about}">Giới thiệu</a></li>-->
+<!--        <li><a th:href="@{/departments}">Chuyên khoa</a></li>-->
+<!--        <li><a th:href="@{/services}" class="active">Dịch vụ</a></li> <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>-->
+<!--        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--          <ul>-->
+<!--            <li><a th:href="@{/appointment}">Đặt lịch hẹn</a></li>-->
+<!--          </ul>-->
+<!--        </li>-->
+<!--        <li><a th:href="@{/contact}">Liên hệ</a></li>-->
+<!--      </ul>-->
+<!--      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>-->
+<!--    </nav>-->
+<!--    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>-->
+<!--  </div>-->
+<!--</header>-->
+<div th:replace="~{user/include/header :: header-nav}"></div>
 <main class="main">
 
   <div class="page-title">

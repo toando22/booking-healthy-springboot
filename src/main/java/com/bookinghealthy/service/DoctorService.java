@@ -19,4 +19,7 @@ public interface DoctorService {
 
     // === THÊM HÀM MỚI NÀY ===
     Optional<Doctor> findByUsername(String username);
+
+    // Thêm hàm này
+    List<Doctor> searchDoctors(String keyword, Long departmentId);
 }

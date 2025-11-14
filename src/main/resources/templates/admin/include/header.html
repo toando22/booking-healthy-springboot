@@ -59,3 +59,86 @@
 
         </ul></li></ul>
 </nav></header></html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
+
+<!--<head th:fragment="header-css">-->
+<!--</head>-->
+
+<!--<header th:fragment="header-nav" id="header" class="header d-flex align-items-center fixed-top">-->
+<!--    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">-->
+
+<!--        <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">-->
+<!--            <h1 class="sitename">MediTrust</h1>-->
+<!--        </a>-->
+
+<!--        <nav id="navmenu" class="navmenu">-->
+<!--            <ul>-->
+<!--                <li><a th:href="@{/}" class="active">Trang chủ</a></li>-->
+<!--                <li><a th:href="@{/about}">Giới thiệu</a></li>-->
+<!--                <li><a th:href="@{/departments}">Chuyên khoa</a></li>-->
+<!--                <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>-->
+
+<!--                <li class="dropdown"><a href="#"><span>Tin tức</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--                    <ul>-->
+<!--                        <li><a href="#">Hoạt động & Sự kiện</a></li>-->
+<!--                        <li><a href="#">Y học thường thức</a></li>-->
+<!--                        <li><a href="#">Tuyển dụng</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+
+<!--                <li class="dropdown"><a href="#"><span>Lịch làm việc</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--                    <ul>-->
+<!--                        <li><a href="#">Giờ làm việc</a></li>-->
+<!--                        <li><a href="#">Lịch trực bác sĩ</a></li>-->
+<!--                        <li><a href="#">Quy trình khám bệnh</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+
+<!--                <li><a th:href="@{/contact}">Liên hệ</a></li>-->
+<!--            </ul>-->
+<!--            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>-->
+<!--        </nav>-->
+
+<!--        <div sec:authorize="!isAuthenticated()" class="d-flex gap-2">-->
+<!--            <a class="btn-getstarted" th:href="@{/login}">Đăng nhập</a>-->
+<!--        </div>-->
+
+<!--        <div sec:authorize="isAuthenticated()" class="dropdown ms-3">-->
+<!--            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                <img th:src="${#authentication.principal.avatar != null ? '/uploads/' + #authentication.principal.avatar : '/assets/img/default-avatar.png'}"-->
+<!--                     alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover;">-->
+<!--                <span class="ms-2 d-none d-sm-inline fw-bold text-dark"-->
+<!--                      th:text="${#authentication.principal.fullName}">User Name</span>-->
+<!--            </a>-->
+<!--            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">-->
+<!--                <li><a class="dropdown-item" th:href="@{/user/profile}">Hồ sơ cá nhân</a></li>-->
+<!--                <li><a class="dropdown-item" th:href="@{/user/profile#booking-history}">Lịch sử khám bệnh</a></li>-->
+
+<!--                <li sec:authorize="hasRole('ADMIN')">-->
+<!--                    <hr class="dropdown-divider">-->
+<!--                </li>-->
+<!--                <li sec:authorize="hasRole('ADMIN')">-->
+<!--                    <a class="dropdown-item text-danger" th:href="@{/admin/dashboard}">Trang Quản trị (Admin)</a>-->
+<!--                </li>-->
+
+<!--                <li sec:authorize="hasRole('DOCTOR')">-->
+<!--                    <hr class="dropdown-divider">-->
+<!--                </li>-->
+<!--                <li sec:authorize="hasRole('DOCTOR')">-->
+<!--                    <a class="dropdown-item text-primary" th:href="@{/doctor/dashboard}">Trang Bác sĩ</a>-->
+<!--                </li>-->
+
+<!--                <li><hr class="dropdown-divider"></li>-->
+
+<!--                <li>-->
+<!--                    <form th:action="@{/logout}" method="post">-->
+<!--                        <button type="submit" class="dropdown-item">Đăng xuất</button>-->
+<!--                    </form>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</header>-->
+<!--</html>-->

@@ -53,4 +53,11 @@ public class DoctorServiceImpl implements DoctorService {
     public Optional<Doctor> findByUsername(String username) {
         return doctorRepository.findByUser_Username(username);
     }
+
+
+    // Implement hàm mới
+    @Override
+    public List<Doctor> searchDoctors(String keyword, Long departmentId) {
+        return doctorRepository.searchDoctors(keyword, departmentId);
+    }
 }

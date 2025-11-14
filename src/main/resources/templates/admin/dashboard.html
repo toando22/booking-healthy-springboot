@@ -2,39 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard - Booking Health Admin</title>
-
-  <!-- Favicons -->
-  <link th:href="@{/assets-admin/img/favicon.png}" rel="icon">
-  <link th:href="@{/assets-admin/img/apple-touch-icon.png}" rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Nunito:300,400,600,700|Poppins:400,500,600,700" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link th:href="@{/assets-admin/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-  <link th:href="@{/assets-admin/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
-  <link th:href="@{/assets-admin/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
-  <link th:href="@{/assets-admin/vendor/quill/quill.snow.css}" rel="stylesheet">
-  <link th:href="@{/assets-admin/vendor/remixicon/remixicon.css}" rel="stylesheet">
-  <link th:href="@{/assets-admin/vendor/simple-datatables/style.css}" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link th:href="@{/assets-admin/css/style.css}" rel="stylesheet">
+  <th:block th:replace="~{admin/include/header :: header (title='Dashboard')}"></th:block>
 </head>
 
 <body>
 
-<!-- ======= Header ======= -->
-<div th:replace="~{admin/include/header :: header}"></div>
+<th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+<th:block th:replace="~{admin/include/sidebar :: sidebar}"></th:block>
 
-
-<!-- ======= Sidebar ======= -->
-<div th:replace="~{admin/include/sidebar :: sidebar}"></div>
-
-<!-- ======= Main Content ======= -->
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>Dashboard</h1>
@@ -49,109 +24,94 @@
   <section class="section dashboard">
     <div class="row">
 
-      <!-- Sales Card -->
-      <div class="col-xxl-4 col-md-6">
-        <div class="card info-card sales-card">
-          <div class="card-body">
-            <h5 class="card-title">Sales <span>| Today</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-cart"></i>
-              </div>
-              <div class="ps-3">
-                <h6>145</h6>
-                <span class="text-success small pt-1 fw-bold">12%</span>
-                <span class="text-muted small pt-2 ps-1">increase</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Revenue Card -->
       <div class="col-xxl-4 col-md-6">
         <div class="card info-card revenue-card">
           <div class="card-body">
-            <h5 class="card-title">Revenue <span>| This Month</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-currency-dollar"></i>
-              </div>
-              <div class="ps-3">
-                <h6>$3,264</h6>
-                <span class="text-success small pt-1 fw-bold">8%</span>
-                <span class="text-muted small pt-2 ps-1">increase</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Customers Card -->
-      <div class="col-xxl-4 col-xl-12">
-        <div class="card info-card customers-card">
-          <div class="card-body">
-            <h5 class="card-title">Customers <span>| This Year</span></h5>
+            <h5 class="card-title">Tổng số Bệnh nhân</h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-people"></i>
               </div>
               <div class="ps-3">
-                <h6>1244</h6>
-                <span class="text-danger small pt-1 fw-bold">12%</span>
-                <span class="text-muted small pt-2 ps-1">decrease</span>
+                <h6 th:text="${patientCount}">0</h6>
+                <span class="text-muted small pt-2 ps-1">Bệnh nhân (User)</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Reports -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card customers-card">
+          <div class="card-body">
+            <h5 class="card-title">Tổng số Bác sĩ</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <div class="ps-3">
+                <h6 th:text="${doctorCount}">0</h6>
+                <span class="text-muted small pt-2 ps-1">Bác sĩ (Doctor)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-4 col-xl-12">
+        <div class="card info-card sales-card">
+          <div class="card-body">
+            <h5 class="card-title">Tổng số Lịch hẹn</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-calendar-check"></i>
+              </div>
+              <div class="ps-3">
+                <h6 th:text="${bookingCount}">0</h6>
+                <span class="text-muted small pt-2 ps-1">Lịch hẹn (Booking)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Reports <span>| Today</span></h5>
+            <h5 class="card-title">Báo cáo <span>| 7 ngày qua</span></h5>
             <div id="reportsChart"></div>
           </div>
         </div>
       </div>
 
-      <!-- Recent Sales -->
       <div class="col-12">
         <div class="card recent-sales overflow-auto">
           <div class="card-body">
-            <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+            <h5 class="card-title">Lịch hẹn Gần đây <span>| Tất cả</span></h5>
             <table class="table table-borderless datatable">
               <thead>
               <tr>
-                <th>#</th>
-                <th>Customer</th>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Status</th>
+                <th scope="col">#ID</th>
+                <th scope="col">Bệnh nhân</th>
+                <th scope="col">Bác sĩ</th>
+                <th scope="col">Giá (VNĐ)</th>
+                <th scope="col">Trạng thái</th>
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <th>#2457</th>
-                <td>Brandon Jacob</td>
-                <td>At praesentium minu</td>
-                <td>$64</td>
-                <td><span class="badge bg-success">Approved</span></td>
-              </tr>
-              <tr>
-                <th>#2147</th>
-                <td>Bridie Kessler</td>
-                <td>Blanditiis dolor omnis</td>
-                <td>$47</td>
-                <td><span class="badge bg-warning">Pending</span></td>
-              </tr>
-              <tr>
-                <th>#2049</th>
-                <td>Ashleigh Langosh</td>
-                <td>Recusandae consectetur</td>
-                <td>$147</td>
-                <td><span class="badge bg-success">Approved</span></td>
+              <tr th:each="booking : ${listBookings}">
+                <th scope="row">
+                  <a th:href="@{/admin/manage-booking}" th:text="'#' + ${booking.id}">#ID</a>
+                </th>
+                <td th:text="${booking.user.fullName}">Tên BN</td>
+                <td th:text="${booking.doctor.user.fullName}">Tên BS</td>
+                <td th:text="${#numbers.formatDecimal(booking.bookingPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'">300.000</td>
+                <td>
+                  <span th:if="${booking.status.name() == 'PENDING'}" class="badge bg-warning">Chờ xác nhận</span>
+                  <span th:if="${booking.status.name() == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
+                  <span th:if="${booking.status.name() == 'CANCELED'}" class="badge bg-danger">Đã hủy</span>
+                  <span th:if="${booking.status.name() == 'COMPLETED'}" class="badge bg-secondary">Đã hoàn thành</span>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -163,15 +123,69 @@
   </section>
 </main>
 
-<!-- ======= Footer ======= -->
-<div th:replace="~{admin/include/footer :: footer}"></div>
+<th:block th:replace="~{admin/include/footer :: footer}"></th:block>
 
-<!-- Vendor JS Files -->
 <script th:src="@{/assets-admin/vendor/apexcharts/apexcharts.min.js}"></script>
 <script th:src="@{/assets-admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/assets-admin/vendor/echarts/echarts.min.js}"></script>
 <script th:src="@{/assets-admin/vendor/simple-datatables/simple-datatables.js}"></script>
 <script th:src="@{/assets-admin/js/main.js}"></script>
 
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    const baseUrl = /*[[@{/}]]*/ '';
+
+    fetch(baseUrl + 'api/dashboard/booking-stats-7days')
+      .then(response => response.json())
+      .then(data => {
+        const categories = data.map(item => item.date);
+        const seriesData = data.map(item => item.count);
+
+        new ApexCharts(document.querySelector("#reportsChart"), {
+          series: [{
+            name: 'Lịch hẹn mới',
+            data: seriesData,
+          }],
+          chart: {
+            height: 350,
+            type: 'area',
+            toolbar: {
+              show: false
+            },
+          },
+          markers: {
+            size: 4
+          },
+          colors: ['#4154f1'],
+          fill: {
+            type: "gradient",
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.3,
+              opacityTo: 0.4,
+              stops: [0, 90, 100]
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'smooth',
+            width: 2
+          },
+          xaxis: {
+            type: 'datetime',
+            categories: categories
+          },
+          tooltip: {
+            x: {
+              format: 'dd/MM/yy'
+            },
+          }
+        }).render();
+      })
+      .catch(error => console.error('Lỗi khi tải dữ liệu biểu đồ:', error));
+  });
+</script>
 </body>
 </html>

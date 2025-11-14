@@ -1,3 +1,418 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+
+<!--<head>-->
+<!--  <meta charset="utf-8">-->
+<!--  <meta content="width=device-width, initial-scale=1.0" name="viewport">-->
+<!--  <title>Đặt lịch khám - MediTrust</title>-->
+
+<!--  <link th:href="@{/assets/img/favicon.png}" rel="icon">-->
+<!--  <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">-->
+<!--  <link href="https://fonts.googleapis.com" rel="preconnect">-->
+<!--  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>-->
+<!--  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/glightbox/css/glightbox.min.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/css/main.css}" rel="stylesheet">-->
+<!--</head>-->
+
+<!--<body class="appointment-page">-->
+
+<!--<header id="header" class="header d-flex align-items-center fixed-top">-->
+<!--  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">-->
+<!--    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">-->
+<!--      <h1 class="sitename">MediTrust</h1>-->
+<!--    </a>-->
+<!--    <nav id="navmenu" class="navmenu">-->
+<!--      <ul>-->
+<!--        <li><a th:href="@{/}">Trang chủ</a></li>-->
+<!--        <li><a th:href="@{/about}">Giới thiệu</a></li>-->
+<!--        <li><a th:href="@{/departments}">Chuyên khoa</a></li>-->
+<!--        <li><a th:href="@{/services}">Dịch vụ</a></li>-->
+<!--        <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>-->
+<!--        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--          <ul>-->
+<!--            <li><a th:href="@{/appointment}" class="active">Đặt lịch hẹn</a></li>-->
+<!--          </ul>-->
+<!--        </li>-->
+<!--        <li><a th:href="@{/contact}">Liên hệ</a></li>-->
+<!--      </ul>-->
+<!--      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>-->
+<!--    </nav>-->
+<!--    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>-->
+<!--  </div>-->
+<!--</header>-->
+<!--<main class="main">-->
+<!--  <div class="page-title">-->
+<!--    <div class="breadcrumbs">-->
+<!--      <nav aria-label="breadcrumb">-->
+<!--        <ol class="breadcrumb">-->
+<!--          <li class="breadcrumb-item"><a th:href="@{/}"><i class="bi bi-house"></i> Trang chủ</a></li>-->
+<!--          <li class="breadcrumb-item active current">Đặt lịch khám</li>-->
+<!--        </ol>-->
+<!--      </nav>-->
+<!--    </div>-->
+<!--    <div class="title-wrapper">-->
+<!--      <h1>Đặt lịch khám</h1>-->
+<!--    </div>-->
+<!--  </div><section id="appointmnet" class="appointmnet section">-->
+<!--  <div class="container" data-aos="fade_up" data-aos-delay="100">-->
+<!--    <div class="row gy-4">-->
+
+<!--      <div class="col-lg-6">-->
+<!--        <div class="appointment-info">-->
+<!--          <h3>Đặt lịch trực tuyến nhanh chóng & dễ dàng</h3>-->
+<!--          <p class="mb-4">Đặt lịch khám của bạn chỉ với vài bước đơn giản. Đội ngũ bác sĩ và chuyên gia y tế của chúng tôi luôn sẵn sàng mang đến dịch vụ chăm sóc sức khỏe tốt nhất, phù hợp với nhu cầu riêng của bạn</p>-->
+<!--          <div class="info-items">-->
+<!--            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="200">-->
+<!--              <div class="icon-wrapper me-3">-->
+<!--                <i class="bi bi-calendar-check"></i>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <h5>Lịch hẹn linh hoạt</h5>-->
+<!--                <p class="mb-0">Chọn khung giờ phù hợp với lịch trình bận rộn của bạn</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="250">-->
+<!--              <div class="icon-wrapper me-3">-->
+<!--                <i class="bi bi-stopwatch"></i>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <h5>Phản hồi nhanh chóng</h5>-->
+<!--                <p class="mb-0">Nhận xác nhận lịch hẹn trong vòng 15 phút sau khi gửi yêu cầu</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="300">-->
+<!--              <div class="icon-wrapper me-3">-->
+<!--                <i class="bi bi-shield-check"></i>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <h5>Chăm sóc y tế chuyên nghiệp</h5>-->
+<!--                <p class="mb-0">Đội ngũ bác sĩ và chuyên gia được chứng nhận luôn sẵn sàng phục vụ bạn</p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="emergency-contact mt-4" data-aos="fade-up" data-aos-delay="350">-->
+<!--            <div class="emergency-card p-3">-->
+<!--              <h6 class="mb-2"><i class="bi bi-telephone-fill me-2"></i>Đường dây nóng khẩn cấp</h6>-->
+<!--              <p class="mb-0">Gọi <strong>+1 (555) 911-4567</strong> để được hỗ trợ y tế khẩn cấp</p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div><div class="col-lg-6">-->
+<!--      <div class="appointment-form-wrapper" data-aos="fade-up" data-aos-delay="200">-->
+
+<!--        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--          <strong th:text="${successMessage}"></strong>-->
+<!--          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">-->
+<!--          <strong th:text="${errorMessage}"></strong>-->
+<!--          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--        </div>-->
+
+<!--        <form th:action="@{/appointment}" method="post" class="appointment-form">-->
+<!--          <div class="row gy-3">-->
+
+<!--            <div class="col-md-6">-->
+<!--              <input type="text" name="name" class="form-control" placeholder="Họ và tên" required="" th:value="${currentUser.fullName}" readonly>-->
+<!--            </div>-->
+<!--            <div class="col-md-6">-->
+<!--              <input type="email" name="email" class="form-control" placeholder="Email" required="" th:value="${currentUser.email}" readonly>-->
+<!--            </div>-->
+<!--            <div class="col-md-6">-->
+<!--              <input type="tel" name="phone" class="form-control" placeholder="Số điện thoại" required="" th:value="${currentUser.phone}" readonly>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-6">-->
+<!--              <select name="appointmentType" class="form-select" required="">-->
+<!--                <option value="">Chọn loại hình khám</option>-->
+<!--                <option value="BHYT">Khám BHYT</option>-->
+<!--                <option value="Dịch vụ">Khám Dịch vụ</option>-->
+<!--                <option value="Từ xa">Khám Từ xa</option>-->
+<!--                <option value="Tại nhà">Khám Tại nhà</option>-->
+<!--              </select>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-6">-->
+<!--              <select id="departmentSelect" name="departmentId" class="form-select" required="">-->
+<!--                <option value="">Chọn chuyên khoa</option>-->
+<!--                <option th:each="dept : ${departments}"-->
+<!--                        th:value="${dept.id}"-->
+<!--                        th:text="${dept.name}">-->
+<!--                </option>-->
+<!--              </select>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-6">-->
+<!--              <select id="doctorSelect" name="doctorId" class="form-select" required="" disabled>-->
+<!--                <option value="">Vui lòng chọn khoa trước</option>-->
+<!--              </select>-->
+<!--              <div id="doctorPriceInfo" class="form-text mt-1" style="min-height: 20px;"></div>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-6">-->
+<!--              <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required="">-->
+<!--            </div>-->
+
+<!--            <div class="col-md-6">-->
+<!--            </div>-->
+
+<!--            <div class="col-12">-->
+<!--              <label class="form-label d-block mb-2">Chọn khung giờ</label>-->
+<!--              <div id="timeSlotContainer" class="btn-group" role="group" style="display: flex; flex-wrap: wrap; gap: 8px;">-->
+
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time1" value="08:00 - 08:30" required>-->
+<!--                <label class="btn btn-outline-secondary" for="time1">08:00 - 08:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time2" value="08:30 - 09:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time2">08:30 - 09:00</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time3" value="09:00 - 09:30">-->
+<!--                <label class="btn btn-outline-secondary" for="time3">09:00 - 09:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time4" value="09:30 - 10:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time4">09:30 - 10:00</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time5" value="10:00 - 10:30">-->
+<!--                <label class="btn btn-outline-secondary" for="time5">10:00 - 10:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time6" value="10:30 - 11:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time6">10:30 - 11:00</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time7" value="14:00 - 14:30">-->
+<!--                <label class="btn btn-outline-secondary" for="time7">14:00 - 14:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time8" value="14:30 - 15:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time8">14:30 - 15:00</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time9" value="15:00 - 15:30">-->
+<!--                <label class="btn btn-outline-secondary" for="time9">15:00 - 15:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time10" value="15:30 - 16:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time10">15:30 - 16:00</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time11" value="16:00 - 16:30">-->
+<!--                <label class="btn btn-outline-secondary" for="time11">16:00 - 16:30</label>-->
+<!--                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time12" value="16:30 - 17:00">-->
+<!--                <label class="btn btn-outline-secondary" for="time12">16:30 - 17:00</label>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="col-12">-->
+<!--              <textarea class="form-control" name="notes" rows="5" placeholder="Vui lòng mô tả các triệu chứng hoặc lý do đến thăm khám của bạn (tùy chọn)"></textarea>-->
+<!--            </div>-->
+
+<!--            <div class="col-12">-->
+<!--              <button type="submit" class="btn btn-appointment w-100">-->
+<!--                <i class="bi bi-calendar-plus me-2"></i>Đặt lịch-->
+<!--              </button>-->
+<!--            </div>-->
+
+<!--          </div>-->
+<!--        </form>-->
+<!--      </div>-->
+<!--    </div></div>-->
+<!--  </div>-->
+<!--</section></main>-->
+
+<!--<footer id="footer" class="footer position-relative light-background">-->
+<!--  <div class="container footer-top">-->
+<!--    <div class="row gy-4">-->
+<!--      <div class="col-lg-4 col-md-6 footer-about">-->
+<!--        <a th:href="@{/}" class="logo d-flex align-items-center">-->
+<!--          <span class="sitename">MediTrust</span>-->
+<!--        </a>-->
+<!--        <div class="footer-contact pt-3">-->
+<!--          <p>Số 888</p>-->
+<!--          <p>Tây Mỗ, Nam Từ Liêm, Hà Nội</p>-->
+<!--          <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>-->
+<!--          <p><strong>Email:</strong> <span>info@example.com</span></p>-->
+<!--        </div>-->
+<!--        <div class="social-links d-flex mt-4">-->
+<!--          <a href=""><i class="bi bi-twitter-x"></i></a>-->
+<!--          <a href=""><i class="bi bi-facebook"></i></a>-->
+<!--          <a href=""><i class="bi bi-instagram"></i></a>-->
+<!--          <a href=""><i class="bi bi-linkedin"></i></a>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      <div class="col-lg-2 col-md-3 footer-links">-->
+<!--        <h4>Liên kết Hữu ích</h4>-->
+<!--        <ul>-->
+<!--          <li><a th:href="@{/}">Trang chủ</a></li>-->
+<!--          <li><a th:href="@{/about}">Giới thiệu</a></li>-->
+<!--          <li><a th:href="@{/services}">Dịch vụ</a></li>-->
+<!--          <li><a href="#">Điều khoản dịch vụ</a></li>-->
+<!--          <li><a href="#">Chính sách bảo mật</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+
+<!--      <div class="col-lg-2 col-md-3 footer-links">-->
+<!--        <h4>Our Services</h4>-->
+<!--        <ul>-->
+<!--          <li><a href="#">Web Design</a></li>-->
+<!--          <li><a href="#">Web Development</a></li>-->
+<!--          <li><a href="#">Product Management</a></li>-->
+<!--          <li><a href="#">Marketing</a></li>-->
+<!--          <li><a href="#">Graphic Design</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+
+<!--      <div class="col-lg-2 col-md-3 footer-links">-->
+<!--        <h4>Hic solutasetp</h4>-->
+<!--        <ul>-->
+<!--          <li><a href="#">Molestiae accusamus iure</a></li>-->
+<!--          <li><a href="#">Excepturi dignissimos</a></li>-->
+<!--          <li><a href="#">Suscipit distinctio</a></li>-->
+<!--          <li><a href="#">Dilecta</a></li>-->
+<!--          <li><a href="#">Sit quas consectetur</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+
+<!--      <div class="col-lg-2 col-md-3 footer-links">-->
+<!--        <h4>Nobis illum</h4>-->
+<!--        <ul>-->
+<!--          <li><a href="#">Ipsam</a></li>-->
+<!--          <li><a href="#">Laudantium dolorum</a></li>-->
+<!--          <li><a href="#">Dinera</a></li>-->
+<!--          <li><a href="#">Trodelas</a></li>-->
+<!--          <li><a href="#">Flexo</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="container copyright text-center mt-4">-->
+<!--    <p>© <span>Copyright</span> <strong class="px-1 sitename">MyWebsite</strong> <span>All Rights Reserved</span></p>-->
+<!--    <div class="credits">-->
+<!--      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</footer>-->
+<!--<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>-->
+<!--<div id="preloader"></div>-->
+
+<!--<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/aos/aos.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/purecounter/purecounter_vanilla.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>-->
+<!--<script th:src="@{/assets/vendor/glightbox/js/glightbox.min.js}"></script>-->
+<!--<script th:src="@{/assets/js/main.js}"></script>-->
+<!--<script>-->
+<!--  document.addEventListener("DOMContentLoaded", function() {-->
+
+<!--    // === LẤY CÁC THÀNH PHẦN ===-->
+<!--    const departmentSelect = document.getElementById('departmentSelect');-->
+<!--    const doctorSelect = document.getElementById('doctorSelect');-->
+<!--    const doctorPriceInfo = document.getElementById('doctorPriceInfo');-->
+<!--    const dateInput = document.getElementById('appointmentDate');-->
+<!--    const timeSlotContainer = document.getElementById('timeSlotContainer');-->
+
+<!--    const baseUrl = /*[[@{/}]]*/ '';-->
+
+<!--    // === YÊU CẦU #6: KHÔNG CHỌN NGÀY QUÁ KHỨ ===-->
+<!--    const today = new Date().toISOString().split('T')[0];-->
+<!--    dateInput.setAttribute('min', today);-->
+
+<!--    // === YÊU CẦU #2 & #3: LỌC BÁC SĨ THEO KHOA (AJAX) ===-->
+<!--    let doctorsData = [];-->
+
+<!--    departmentSelect.addEventListener('change', function() {-->
+<!--      const departmentId = this.value;-->
+
+<!--      doctorSelect.innerHTML = '<option value="">Đang tải bác sĩ...</option>';-->
+<!--      doctorSelect.disabled = true;-->
+<!--      doctorPriceInfo.textContent = '';-->
+
+<!--      if (!departmentId) {-->
+<!--        doctorSelect.innerHTML = '<option value="">Vui lòng chọn khoa trước</option>';-->
+<!--        return;-->
+<!--      }-->
+
+<!--      fetch(baseUrl + 'api/doctors?departmentId=' + departmentId)-->
+<!--        .then(response => {-->
+<!--            if (!response.ok) {-->
+<!--                throw new Error('Network response was not ok');-->
+<!--            }-->
+<!--            return response.json();-->
+<!--        })-->
+<!--        .then(doctors => {-->
+<!--          doctorsData = doctors;-->
+<!--          doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';-->
+
+<!--          if (doctors.length > 0) {-->
+<!--            doctors.forEach(doctor => {-->
+<!--              const option = document.createElement('option');-->
+<!--              option.value = doctor.id;-->
+<!--              option.textContent = 'Dr. ' + doctor.fullName + ' (' + doctor.degree + ')';-->
+<!--              doctorSelect.appendChild(option);-->
+<!--            });-->
+<!--            doctorSelect.disabled = false;-->
+<!--          } else {-->
+<!--            doctorSelect.innerHTML = '<option value="">Khoa này không có bác sĩ</option>';-->
+<!--          }-->
+<!--        })-->
+<!--        .catch(error => {-->
+<!--          console.error('Lỗi khi tải bác sĩ:', error);-->
+<!--          doctorSelect.innerHTML = '<option value="">Lỗi tải bác sĩ</option>';-->
+<!--        });-->
+<!--    });-->
+
+<!--    // === YÊU CẦU #4: HIỂN THỊ GIÁ KHI CHỌN BÁC SĨ ===-->
+<!--    doctorSelect.addEventListener('change', function() {-->
+<!--        const selectedDoctorId = this.value;-->
+<!--        const selectedDoctor = doctorsData.find(doc => doc.id == selectedDoctorId);-->
+
+<!--        if (selectedDoctor) {-->
+<!--            const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedDoctor.price);-->
+<!--            doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;-->
+<!--            doctorPriceInfo.classList.add('text-success', 'fw-bold');-->
+<!--        } else {-->
+<!--            doctorPriceInfo.textContent = '';-->
+<!--            doctorPriceInfo.classList.remove('text-success', 'fw-bold');-->
+<!--        }-->
+<!--    });-->
+
+<!--    // === YÊU CẦU #7: KHÔNG CHỌN GIỜ QUÁ KHỨ ===-->
+<!--    function validateTimeSlots() {-->
+<!--        const selectedDate = dateInput.value;-->
+<!--        if (!selectedDate) return;-->
+
+<!--        const now = new Date();-->
+<!--        const currentDate = now.toISOString().split('T')[0];-->
+<!--        const currentHours = now.getHours();-->
+
+<!--        const allTimeSlots = timeSlotContainer.querySelectorAll('.time-slot');-->
+
+<!--        allTimeSlots.forEach(slotInput => {-->
+<!--            const slotLabel = document.querySelector('label[for="' + slotInput.id + '"]');-->
+<!--            const slotStartTime = slotInput.value.split(' ')[0];-->
+<!--            const slotHour = parseInt(slotStartTime.split(':')[0]);-->
+
+<!--            let isPast = false;-->
+
+<!--            if (selectedDate === currentDate) {-->
+<!--                if (slotHour < currentHours) {-->
+<!--                    isPast = true;-->
+<!--                }-->
+<!--            }-->
+
+<!--            slotInput.disabled = isPast;-->
+<!--            if (isPast) {-->
+<!--                slotLabel.classList.add('disabled', 'text-decoration-line-through');-->
+<!--            } else {-->
+<!--                slotLabel.classList.remove('disabled', 'text-decoration-line-through');-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+<!--    dateInput.addEventListener('change', validateTimeSlots);-->
+<!--    validateTimeSlots();-->
+
+<!--  });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -18,34 +433,44 @@
   <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/glightbox/css/glightbox.min.css}" rel="stylesheet">
   <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+
+  <style>
+    /* Thêm style để tránh lỗi giao diện khoảng trống */
+    .appointment-page .page-title { padding: 60px 0; }
+    .appointment-page .appointment-form { --bs-gutter-y: 1rem; }
+    .form-text.text-success { font-weight: bold; color: #198754; }
+  </style>
 </head>
 
 <body class="appointment-page">
 
-<header id="header" class="header d-flex align-items-center fixed-top">
-  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
-      <h1 class="sitename">MediTrust</h1>
-    </a>
-    <nav id="navmenu" class="navmenu">
-      <ul>
-        <li><a th:href="@{/}">Trang chủ</a></li>
-        <li><a th:href="@{/about}">Giới thiệu</a></li>
-        <li><a th:href="@{/departments}">Chuyên khoa</a></li>
-        <li><a th:href="@{/services}">Dịch vụ</a></li>
-        <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>
-        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a th:href="@{/appointment}" class="active">Đặt lịch hẹn</a></li>
-          </ul>
-        </li>
-        <li><a th:href="@{/contact}">Liên hệ</a></li>
-      </ul>
-      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-    </nav>
-    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>
-  </div>
-</header>
+<!--<header id="header" class="header d-flex align-items-center fixed-top">-->
+<!--  <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">-->
+<!--    <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">-->
+<!--      <h1 class="sitename">MediTrust</h1>-->
+<!--    </a>-->
+<!--    <nav id="navmenu" class="navmenu">-->
+<!--      <ul>-->
+<!--        <li><a th:href="@{/}">Trang chủ</a></li>-->
+<!--        <li><a th:href="@{/about}">Giới thiệu</a></li>-->
+<!--        <li><a th:href="@{/departments}">Chuyên khoa</a></li>-->
+<!--        <li><a th:href="@{/services}">Dịch vụ</a></li>-->
+<!--        <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>-->
+<!--        <li class="dropdown"><a href="#"><span>More Pages</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--          <ul>-->
+<!--            <li><a th:href="@{/appointment}" class="active">Đặt lịch hẹn</a></li>-->
+<!--          </ul>-->
+<!--        </li>-->
+<!--        <li><a th:href="@{/contact}">Liên hệ</a></li>-->
+<!--      </ul>-->
+<!--      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>-->
+<!--    </nav>-->
+<!--    <a class="btn-getstarted" th:href="@{/appointment}">Đặt lịch hẹn</a>-->
+<!--  </div>-->
+<!--</header>-->
+
+<div th:replace="~{user/include/header :: header-nav}"></div>
+
 <main class="main">
   <div class="page-title">
     <div class="breadcrumbs">
@@ -59,227 +484,149 @@
     <div class="title-wrapper">
       <h1>Đặt lịch khám</h1>
     </div>
-  </div><section id="appointmnet" class="appointmnet section">
-  <div class="container" data-aos="fade_up" data-aos-delay="100">
-    <div class="row gy-4">
-
-      <div class="col-lg-6">
-        <div class="appointment-info">
-          <h3>Đặt lịch trực tuyến nhanh chóng & dễ dàng</h3>
-          <p class="mb-4">Đặt lịch khám của bạn chỉ với vài bước đơn giản. Đội ngũ bác sĩ và chuyên gia y tế của chúng tôi luôn sẵn sàng mang đến dịch vụ chăm sóc sức khỏe tốt nhất, phù hợp với nhu cầu riêng của bạn</p>
-          <div class="info-items">
-            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="200">
-              <div class="icon-wrapper me-3">
-                <i class="bi bi-calendar-check"></i>
-              </div>
-              <div>
-                <h5>Lịch hẹn linh hoạt</h5>
-                <p class="mb-0">Chọn khung giờ phù hợp với lịch trình bận rộn của bạn</p>
-              </div>
-            </div>
-            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="250">
-              <div class="icon-wrapper me-3">
-                <i class="bi bi-stopwatch"></i>
-              </div>
-              <div>
-                <h5>Phản hồi nhanh chóng</h5>
-                <p class="mb-0">Nhận xác nhận lịch hẹn trong vòng 15 phút sau khi gửi yêu cầu</p>
-              </div>
-            </div>
-            <div class="info-item d-flex align-items-center mb-3" data-aos="fade-up" data-aos-delay="300">
-              <div class="icon-wrapper me-3">
-                <i class="bi bi-shield-check"></i>
-              </div>
-              <div>
-                <h5>Chăm sóc y tế chuyên nghiệp</h5>
-                <p class="mb-0">Đội ngũ bác sĩ và chuyên gia được chứng nhận luôn sẵn sàng phục vụ bạn</p>
-              </div>
-            </div>
-          </div>
-          <div class="emergency-contact mt-4" data-aos="fade-up" data-aos-delay="350">
-            <div class="emergency-card p-3">
-              <h6 class="mb-2"><i class="bi bi-telephone-fill me-2"></i>Đường dây nóng khẩn cấp</h6>
-              <p class="mb-0">Gọi <strong>+1 (555) 911-4567</strong> để được hỗ trợ y tế khẩn cấp</p>
-            </div>
-          </div>
-        </div>
-      </div><div class="col-lg-6">
-      <div class="appointment-form-wrapper" data-aos="fade-up" data-aos-delay="200">
-
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-          <strong th:text="${successMessage}"></strong>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-          <strong th:text="${errorMessage}"></strong>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <form th:action="@{/appointment}" method="post" class="appointment-form">
-          <div class="row gy-3">
-
-            <div class="col-md-6">
-              <input type="text" name="name" class="form-control" placeholder="Họ và tên" required="" th:value="${currentUser.fullName}" readonly>
-            </div>
-            <div class="col-md-6">
-              <input type="email" name="email" class="form-control" placeholder="Email" required="" th:value="${currentUser.email}" readonly>
-            </div>
-            <div class="col-md-6">
-              <input type="tel" name="phone" class="form-control" placeholder="Số điện thoại" required="" th:value="${currentUser.phone}" readonly>
-            </div>
-
-            <div class="col-md-6">
-              <select name="appointmentType" class="form-select" required="">
-                <option value="">Chọn loại hình khám</option>
-                <option value="BHYT">Khám BHYT</option>
-                <option value="Dịch vụ">Khám Dịch vụ</option>
-                <option value="Từ xa">Khám Từ xa</option>
-                <option value="Tại nhà">Khám Tại nhà</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <select id="departmentSelect" name="departmentId" class="form-select" required="">
-                <option value="">Chọn chuyên khoa</option>
-                <option th:each="dept : ${departments}"
-                        th:value="${dept.id}"
-                        th:text="${dept.name}">
-                </option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <select id="doctorSelect" name="doctorId" class="form-select" required="" disabled>
-                <option value="">Vui lòng chọn khoa trước</option>
-              </select>
-              <div id="doctorPriceInfo" class="form-text mt-1" style="min-height: 20px;"></div>
-            </div>
-
-            <div class="col-md-6">
-              <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required="">
-            </div>
-
-            <div class="col-md-6">
-            </div>
-
-            <div class="col-12">
-              <label class="form-label d-block mb-2">Chọn khung giờ</label>
-              <div id="timeSlotContainer" class="btn-group" role="group" style="display: flex; flex-wrap: wrap; gap: 8px;">
-
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time1" value="08:00 - 08:30" required>
-                <label class="btn btn-outline-secondary" for="time1">08:00 - 08:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time2" value="08:30 - 09:00">
-                <label class="btn btn-outline-secondary" for="time2">08:30 - 09:00</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time3" value="09:00 - 09:30">
-                <label class="btn btn-outline-secondary" for="time3">09:00 - 09:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time4" value="09:30 - 10:00">
-                <label class="btn btn-outline-secondary" for="time4">09:30 - 10:00</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time5" value="10:00 - 10:30">
-                <label class="btn btn-outline-secondary" for="time5">10:00 - 10:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time6" value="10:30 - 11:00">
-                <label class="btn btn-outline-secondary" for="time6">10:30 - 11:00</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time7" value="14:00 - 14:30">
-                <label class="btn btn-outline-secondary" for="time7">14:00 - 14:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time8" value="14:30 - 15:00">
-                <label class="btn btn-outline-secondary" for="time8">14:30 - 15:00</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time9" value="15:00 - 15:30">
-                <label class="btn btn-outline-secondary" for="time9">15:00 - 15:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time10" value="15:30 - 16:00">
-                <label class="btn btn-outline-secondary" for="time10">15:30 - 16:00</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time11" value="16:00 - 16:30">
-                <label class="btn btn-outline-secondary" for="time11">16:00 - 16:30</label>
-                <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time12" value="16:30 - 17:00">
-                <label class="btn btn-outline-secondary" for="time12">16:30 - 17:00</label>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <textarea class="form-control" name="notes" rows="5" placeholder="Vui lòng mô tả các triệu chứng hoặc lý do đến thăm khám của bạn (tùy chọn)"></textarea>
-            </div>
-
-            <div class="col-12">
-              <button type="submit" class="btn btn-appointment w-100">
-                <i class="bi bi-calendar-plus me-2"></i>Đặt lịch
-              </button>
-            </div>
-
-          </div>
-        </form>
-      </div>
-    </div></div>
   </div>
-</section></main>
+
+  <section id="appointmnet" class="appointmnet section">
+    <div class="container" data-aos="fade_up" data-aos-delay="100">
+      <div class="row gy-4">
+
+        <div class="col-lg-6">
+          <div class="appointment-info">
+            <h3>Đặt lịch trực tuyến nhanh chóng & dễ dàng</h3>
+            <p class="mb-4">Đặt lịch khám của bạn chỉ với vài bước đơn giản. Đội ngũ bác sĩ và chuyên gia y tế của chúng tôi luôn sẵn sàng mang đến dịch vụ chăm sóc sức khỏe tốt nhất, phù hợp với nhu cầu riêng của bạn</p>
+            <div class="info-items">
+              <div class="info-item d-flex align-items-center mb-3">
+                <div class="icon-wrapper me-3"><i class="bi bi-calendar-check"></i></div>
+                <div><h5>Lịch hẹn linh hoạt</h5><p class="mb-0">Chọn khung giờ phù hợp với lịch trình bận rộn của bạn</p></div>
+              </div>
+              <div class="info-item d-flex align-items-center mb-3">
+                <div class="icon-wrapper me-3"><i class="bi bi-stopwatch"></i></div>
+                <div><h5>Phản hồi nhanh chóng</h5><p class="mb-0">Nhận xác nhận lịch hẹn trong vòng 15 phút sau khi gửi yêu cầu</p></div>
+              </div>
+              <div class="info-item d-flex align-items-center mb-3">
+                <div class="icon-wrapper me-3"><i class="bi bi-shield-check"></i></div>
+                <div><h5>Chăm sóc y tế chuyên nghiệp</h5><p class="mb-0">Đội ngũ bác sĩ và chuyên gia được chứng nhận luôn sẵn sàng phục vụ bạn</p></div>
+              </div>
+            </div>
+            <div class="emergency-contact mt-4">
+              <div class="emergency-card p-3">
+                <h6 class="mb-2"><i class="bi bi-telephone-fill me-2"></i>Đường dây nóng khẩn cấp</h6>
+                <p class="mb-0">Gọi <strong>+1 (555) 911-4567</strong> để được hỗ trợ y tế khẩn cấp</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="appointment-form-wrapper" data-aos="fade-up" data-aos-delay="200">
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+              <strong th:text="${successMessage}"></strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+              <strong th:text="${errorMessage}"></strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <form th:action="@{/appointment}" method="post" class="appointment-form" th:data-selected-id="${selectedDoctorId != null ? selectedDoctorId : ''}">
+              <div class="row gy-3">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Họ và tên" required="" th:value="${currentUser.fullName}" readonly>
+                </div>
+                <div class="col-md-6">
+                  <input type="email" name="email" class="form-control" placeholder="Email" required="" th:value="${currentUser.email}" readonly>
+                </div>
+                <div class="col-md-6">
+                  <input type="tel" name="phone" class="form-control" placeholder="Số điện thoại" required="" th:value="${currentUser.phone}" readonly>
+                </div>
+
+                <div class="col-md-6">
+                  <select name="appointmentType" class="form-select" required="">
+                    <option value="">Chọn loại hình khám</option>
+                    <option value="BHYT">Khám BHYT</option>
+                    <option value="Dịch vụ">Khám Dịch vụ</option>
+                    <option value="Từ xa">Khám Từ xa</option>
+                    <option value="Tại nhà">Khám Tại nhà</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <select id="departmentSelect" name="departmentId" class="form-select" required="">
+                    <option value="">Chọn chuyên khoa</option>
+                    <option th:each="dept : ${departments}"
+                            th:value="${dept.id}"
+                            th:text="${dept.name}">
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <select id="doctorSelect" name="doctorId" class="form-select" required="" disabled>
+                    <option value="">Vui lòng chọn khoa trước</option>
+                  </select>
+                  <div id="doctorPriceInfo" class="form-text mt-1" style="min-height: 20px;"></div>
+                </div>
+
+                <div class="col-12">
+                  <input type="date" id="appointmentDate" name="appointmentDate" class="form-control" required="">
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label d-block mb-2">Chọn khung giờ</label>
+                  <div id="timeSlotContainer" class="btn-group" role="group" style="display: flex; flex-wrap: wrap; gap: 8px;">
+
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time1" value="08:00 - 08:30" required>
+                    <label class="btn btn-outline-secondary" for="time1">08:00 - 08:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time2" value="08:30 - 09:00">
+                    <label class="btn btn-outline-secondary" for="time2">08:30 - 09:00</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time3" value="09:00 - 09:30">
+                    <label class="btn btn-outline-secondary" for="time3">09:00 - 09:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time4" value="09:30 - 10:00">
+                    <label class="btn btn-outline-secondary" for="time4">09:30 - 10:00</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time5" value="10:00 - 10:30">
+                    <label class="btn btn-outline-secondary" for="time5">10:00 - 10:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time6" value="10:30 - 11:00">
+                    <label class="btn btn-outline-secondary" for="time6">10:30 - 11:00</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time7" value="14:00 - 14:30">
+                    <label class="btn btn-outline-secondary" for="time7">14:00 - 14:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time8" value="14:30 - 15:00">
+                    <label class="btn btn-outline-secondary" for="time8">14:30 - 15:00</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time9" value="15:00 - 15:30">
+                    <label class="btn btn-outline-secondary" for="time9">15:00 - 15:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time10" value="15:30 - 16:00">
+                    <label class="btn btn-outline-secondary" for="time10">15:30 - 16:00</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time11" value="16:00 - 16:30">
+                    <label class="btn btn-outline-secondary" for="time11">16:00 - 16:30</label>
+                    <input type="radio" class="btn-check time-slot" name="appointmentTime" id="time12" value="16:30 - 17:00">
+                    <label class="btn btn-outline-secondary" for="time12">16:30 - 17:00</label>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <textarea class="form-control" name="notes" rows="5" placeholder="Vui lòng mô tả các triệu chứng hoặc lý do đến thăm khám của bạn (tùy chọn)"></textarea>
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn btn-appointment w-100">
+                    <i class="bi bi-calendar-plus me-2"></i>Đặt lịch
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div></div>
+    </div>
+  </section>
+</main>
 
 <footer id="footer" class="footer position-relative light-background">
   <div class="container footer-top">
-    <div class="row gy-4">
-      <div class="col-lg-4 col-md-6 footer-about">
-        <a th:href="@{/}" class="logo d-flex align-items-center">
-          <span class="sitename">MediTrust</span>
-        </a>
-        <div class="footer-contact pt-3">
-          <p>Số 888</p>
-          <p>Tây Mỗ, Nam Từ Liêm, Hà Nội</p>
-          <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-          <p><strong>Email:</strong> <span>info@example.com</span></p>
-        </div>
-        <div class="social-links d-flex mt-4">
-          <a href=""><i class="bi bi-twitter-x"></i></a>
-          <a href=""><i class="bi bi-facebook"></i></a>
-          <a href=""><i class="bi bi-instagram"></i></a>
-          <a href=""><i class="bi bi-linkedin"></i></a>
-        </div>
-      </div>
-
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Liên kết Hữu ích</h4>
-        <ul>
-          <li><a th:href="@{/}">Trang chủ</a></li>
-          <li><a th:href="@{/about}">Giới thiệu</a></li>
-          <li><a th:href="@{/services}">Dịch vụ</a></li>
-          <li><a href="#">Điều khoản dịch vụ</a></li>
-          <li><a href="#">Chính sách bảo mật</a></li>
-        </ul>
-      </div>
-
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Our Services</h4>
-        <ul>
-          <li><a href="#">Web Design</a></li>
-          <li><a href="#">Web Development</a></li>
-          <li><a href="#">Product Management</a></li>
-          <li><a href="#">Marketing</a></li>
-          <li><a href="#">Graphic Design</a></li>
-        </ul>
-      </div>
-
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Hic solutasetp</h4>
-        <ul>
-          <li><a href="#">Molestiae accusamus iure</a></li>
-          <li><a href="#">Excepturi dignissimos</a></li>
-          <li><a href="#">Suscipit distinctio</a></li>
-          <li><a href="#">Dilecta</a></li>
-          <li><a href="#">Sit quas consectetur</a></li>
-        </ul>
-      </div>
-
-      <div class="col-lg-2 col-md-3 footer-links">
-        <h4>Nobis illum</h4>
-        <ul>
-          <li><a href="#">Ipsam</a></li>
-          <li><a href="#">Laudantium dolorum</a></li>
-          <li><a href="#">Dinera</a></li>
-          <li><a href="#">Trodelas</a></li>
-          <li><a href="#">Flexo</a></li>
-        </ul>
-      </div>
-
-    </div>
   </div>
-
   <div class="container copyright text-center mt-4">
-    <p>© <span>Copyright</span> <strong class="px-1 sitename">MyWebsite</strong> <span>All Rights Reserved</span></p>
+    <p>© <span>Copyright</span> <strong class="px-1 sitename">MediTrust</strong> <span>All Rights Reserved</span></p>
     <div class="credits">
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
     </div>
@@ -289,7 +636,6 @@
 <div id="preloader"></div>
 
 <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
 <script th:src="@{/assets/vendor/aos/aos.js}"></script>
 <script th:src="@{/assets/vendor/purecounter/purecounter_vanilla.js}"></script>
 <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
@@ -297,7 +643,8 @@
 <script th:src="@{/assets/vendor/isotope-layout/isotope.pkgd.min.js}"></script>
 <script th:src="@{/assets/vendor/glightbox/js/glightbox.min.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-<script>
+
+<script th:inline="javascript">
   document.addEventListener("DOMContentLoaded", function() {
 
     // === LẤY CÁC THÀNH PHẦN ===
@@ -306,96 +653,118 @@
     const doctorPriceInfo = document.getElementById('doctorPriceInfo');
     const dateInput = document.getElementById('appointmentDate');
     const timeSlotContainer = document.getElementById('timeSlotContainer');
+    const form = document.querySelector('.appointment-form');
 
     const baseUrl = /*[[@{/}]]*/ '';
-
-    // === YÊU CẦU #6: KHÔNG CHỌN NGÀY QUÁ KHỨ ===
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-
-    // === YÊU CẦU #2 & #3: LỌC BÁC SĨ THEO KHOA (AJAX) ===
+    const selectedDoctorId = form.dataset.selectedId;
+    const priceFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
     let doctorsData = [];
 
-    departmentSelect.addEventListener('change', function() {
-      const departmentId = this.value;
-
+    // === 1. LỌC BÁC SĨ THEO KHOA ===
+    async function fetchDoctors(departmentId) {
       doctorSelect.innerHTML = '<option value="">Đang tải bác sĩ...</option>';
       doctorSelect.disabled = true;
       doctorPriceInfo.textContent = '';
 
       if (!departmentId) {
         doctorSelect.innerHTML = '<option value="">Vui lòng chọn khoa trước</option>';
-        return;
+        return [];
       }
 
-      fetch(baseUrl + 'api/doctors?departmentId=' + departmentId)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(doctors => {
-          doctorsData = doctors;
-          doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
+      try {
+        const response = await fetch(baseUrl + 'api/doctors?departmentId=' + departmentId);
+        if (!response.ok) throw new Error('Network response was not ok');
 
-          if (doctors.length > 0) {
-            doctors.forEach(doctor => {
-              const option = document.createElement('option');
-              option.value = doctor.id;
-              option.textContent = 'Dr. ' + doctor.fullName + ' (' + doctor.degree + ')';
-              doctorSelect.appendChild(option);
-            });
-            doctorSelect.disabled = false;
-          } else {
-            doctorSelect.innerHTML = '<option value="">Khoa này không có bác sĩ</option>';
-          }
-        })
-        .catch(error => {
-          console.error('Lỗi khi tải bác sĩ:', error);
-          doctorSelect.innerHTML = '<option value="">Lỗi tải bác sĩ</option>';
-        });
-    });
+        const doctors = await response.json();
+        doctorsData = doctors;
+        doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';
 
-    // === YÊU CẦU #4: HIỂN THỊ GIÁ KHI CHỌN BÁC SĨ ===
-    doctorSelect.addEventListener('change', function() {
-        const selectedDoctorId = this.value;
-        const selectedDoctor = doctorsData.find(doc => doc.id == selectedDoctorId);
+        if (doctors.length > 0) {
+          doctors.forEach(doctor => {
+            const option = document.createElement('option');
+            option.value = doctor.id;
+            option.textContent = 'Dr. ' + doctor.fullName + ' (' + doctor.degree + ')';
+            doctorSelect.appendChild(option);
+          });
+          doctorSelect.disabled = false;
+        } else {
+          doctorSelect.innerHTML = '<option value="">Khoa này không có bác sĩ</option>';
+        }
+        return doctors;
+      } catch (error) {
+        console.error('Lỗi khi tải bác sĩ:', error);
+        doctorSelect.innerHTML = '<option value="">Lỗi tải bác sĩ</option>';
+        return [];
+      }
+    }
 
-        if (selectedDoctor) {
-            const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedDoctor.price);
+    // === 2. TỰ ĐỘNG CHỌN BÁC SĨ (NẾU CÓ) ===
+    async function preselectDoctor(doctorId) {
+        try {
+            const response = await fetch(baseUrl + 'api/doctor/' + doctorId);
+            if (!response.ok) return;
+            const doctor = await response.json();
+
+            // Chọn Khoa và Khóa lại
+            departmentSelect.value = doctor.departmentId;
+            departmentSelect.disabled = true;
+
+            // Tải bác sĩ và Chọn bác sĩ
+            await fetchDoctors(doctor.departmentId);
+            doctorSelect.value = doctorId;
+            doctorSelect.disabled = true; // Khóa lại để người dùng không đổi
+
+            // Hiển thị giá
+            const formattedPrice = priceFormatter.format(doctor.price);
             doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;
             doctorPriceInfo.classList.add('text-success', 'fw-bold');
-        } else {
-            doctorPriceInfo.textContent = '';
-            doctorPriceInfo.classList.remove('text-success', 'fw-bold');
+
+            // Thêm input ẩn cho departmentId (vì select bị disabled sẽ không gửi)
+            const hiddenDept = document.createElement('input');
+            hiddenDept.type = 'hidden';
+            hiddenDept.name = 'departmentId';
+            hiddenDept.value = doctor.departmentId;
+            form.appendChild(hiddenDept);
+
+        } catch (error) {
+            console.error('Lỗi pre-select:', error);
         }
+    }
+
+    departmentSelect.addEventListener('change', async function() {
+      await fetchDoctors(this.value);
     });
 
-    // === YÊU CẦU #7: KHÔNG CHỌN GIỜ QUÁ KHỨ ===
+    doctorSelect.addEventListener('change', function() {
+      const selectedDoctor = doctorsData.find(doc => doc.id == this.value);
+      if (selectedDoctor) {
+        const formattedPrice = priceFormatter.format(selectedDoctor.price);
+        doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;
+        doctorPriceInfo.classList.add('text-success', 'fw-bold');
+      } else {
+        doctorPriceInfo.textContent = '';
+        doctorPriceInfo.classList.remove('text-success', 'fw-bold');
+      }
+    });
+
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+
     function validateTimeSlots() {
         const selectedDate = dateInput.value;
         if (!selectedDate) return;
-
         const now = new Date();
         const currentDate = now.toISOString().split('T')[0];
         const currentHours = now.getHours();
-
         const allTimeSlots = timeSlotContainer.querySelectorAll('.time-slot');
 
         allTimeSlots.forEach(slotInput => {
             const slotLabel = document.querySelector('label[for="' + slotInput.id + '"]');
-            const slotStartTime = slotInput.value.split(' ')[0];
-            const slotHour = parseInt(slotStartTime.split(':')[0]);
-
+            const slotHour = parseInt(slotInput.value.split(':')[0]);
             let isPast = false;
-
-            if (selectedDate === currentDate) {
-                if (slotHour < currentHours) {
-                    isPast = true;
-                }
+            if (selectedDate === currentDate && slotHour < currentHours) {
+                isPast = true;
             }
-
             slotInput.disabled = isPast;
             if (isPast) {
                 slotLabel.classList.add('disabled', 'text-decoration-line-through');
@@ -408,6 +777,15 @@
     dateInput.addEventListener('change', validateTimeSlots);
     validateTimeSlots();
 
+    // === SỬA LỖI 400: BẬT LẠI DROPDOWN TRƯỚC KHI SUBMIT ===
+    form.addEventListener('submit', function() {
+        departmentSelect.disabled = false;
+        doctorSelect.disabled = false;
+    });
+
+    if (selectedDoctorId) {
+        preselectDoctor(selectedDoctorId);
+    }
   });
 </script>
 </body>

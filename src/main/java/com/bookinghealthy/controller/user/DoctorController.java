@@ -1,6 +1,8 @@
 package com.bookinghealthy.controller.user;
 
+import com.bookinghealthy.model.Department;
 import com.bookinghealthy.model.Doctor;
+import com.bookinghealthy.service.DepartmentService;
 import com.bookinghealthy.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable; // Thêm import này
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional; // Thêm import này
@@ -18,12 +21,39 @@ public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
+    // === ĐÂY LÀ DÒNG BẠN ĐANG THIẾU ===
+    @Autowired
+    private DepartmentService departmentService;
+    // ==================================
 
-    // Endpoint hiển thị danh sách bác sĩ (bạn đã có)
+//    // Endpoint hiển thị danh sách bác sĩ (bạn đã có)
+//    @GetMapping("/doctors")
+//    public String showDoctorList(Model model) {
+//        List<Doctor> doctors = doctorService.findAll();
+//        model.addAttribute("doctors", doctors);
+//        return "user/doctors";
+//    }    --v1-12/11/ok
+
+    // === SỬA HÀM NÀY ===
     @GetMapping("/doctors")
-    public String showDoctorList(Model model) {
-        List<Doctor> doctors = doctorService.findAll();
+    public String listDoctors(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "departmentId", required = false) Long departmentId,
+            Model model) {
+
+        // 1. Gọi hàm tìm kiếm (nếu không nhập gì, nó sẽ trả về tất cả)
+        List<Doctor> doctors = doctorService.searchDoctors(keyword, departmentId);
+
+        // 2. Lấy danh sách khoa (để hiển thị lại vào dropdown lọc ở trang doctors)
+        List<Department> departments = departmentService.findAll();
+
         model.addAttribute("doctors", doctors);
+        model.addAttribute("departments", departments);
+
+        // Giữ lại giá trị đã tìm kiếm để hiển thị trên form
+        model.addAttribute("currentKeyword", keyword);
+        model.addAttribute("currentDepartmentId", departmentId);
+
         return "user/doctors";
     }
 
@@ -49,4 +79,6 @@ public class DoctorController {
         // Trả về file HTML chi tiết
         return "user/doctor-details";
     }
+
+
 }
