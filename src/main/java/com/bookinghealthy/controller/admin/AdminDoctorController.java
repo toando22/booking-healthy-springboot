@@ -7,6 +7,7 @@ import com.bookinghealthy.model.User;
 import com.bookinghealthy.repository.RoleRepository;
 import com.bookinghealthy.service.DepartmentService;
 import com.bookinghealthy.service.DoctorService;
+//import com.bookinghealthy.service.ImageService;
 import com.bookinghealthy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,7 +32,8 @@ public class AdminDoctorController {
     @Autowired private DepartmentService departmentService;
     @Autowired private RoleRepository roleRepository;
     @Autowired private PasswordEncoder passwordEncoder;
-
+    // === TIÊM IMAGE SERVICE ===
+//    @Autowired private ImageService imageService;
     // 1. HIỂN THỊ DANH SÁCH (READ)
     @GetMapping
     public String listDoctors(Model model) {

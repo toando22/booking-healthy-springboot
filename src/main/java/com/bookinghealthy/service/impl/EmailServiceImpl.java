@@ -1,6 +1,7 @@
 package com.bookinghealthy.service.impl;
 
 import com.bookinghealthy.model.Booking;
+import com.bookinghealthy.model.Candidate;
 import com.bookinghealthy.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -101,6 +102,58 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             System.err.println("Lỗi khi gửi mail HỦY: " + e.getMessage());
+        }
+    }
+    // === 1. GỬI XÁC NHẬN CHO ỨNG VIÊN ===
+    @Async
+    @Override
+    public void sendCandidateConfirmation(Candidate candidate) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(candidate.getEmail());
+            message.setSubject("MediTrust - Xác nhận ứng tuyển: " + candidate.getJobPosting().getTitle());
+            message.setText("Chào " + candidate.getFullName() + ",\n\n" +
+                    "Cảm ơn bạn đã quan tâm và ứng tuyển vào vị trí " + candidate.getJobPosting().getTitle() + " tại MediTrust.\n" +
+                    "Hồ sơ của bạn đã được hệ thống ghi nhận.\n\n" +
+                    "Bộ phận Tuyển dụng sẽ xem xét và phản hồi lại bạn trong thời gian sớm nhất.\n\n" +
+                    "Trân trọng,\nMediTrust HR Team");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi mail ứng viên: " + e.getMessage());
+        }
+    }
+    // === 2. GỬI THÔNG BÁO CHO ADMIN ===
+    @Async
+    @Override
+    public void sendNewCandidateNotification(Candidate candidate) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo("doduytoan2201@gmail.com"); // Email Admin nhận tin
+            message.setSubject("[HR] Ứng viên mới: " + candidate.getJobPosting().getTitle());
+            message.setText("Hệ thống vừa nhận được hồ sơ mới:\n\n" +
+                    "Vị trí: " + candidate.getJobPosting().getTitle() + "\n" +
+                    "Ứng viên: " + candidate.getFullName() + "\n" +
+                    "Email: " + candidate.getEmail() + "\n" +
+                    "SĐT: " + candidate.getPhone() + "\n\n" +
+                    "Vui lòng truy cập trang quản trị để xem CV chi tiết.");
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi mail admin: " + e.getMessage());
+        }
+    }
+
+    // === 3. GỬI KẾT QUẢ (DUYỆT/TỪ CHỐI) ===
+    @Async
+    @Override
+    public void sendCandidateResult(Candidate candidate, String subject, String content) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(candidate.getEmail());
+            message.setSubject(subject);
+            message.setText(content);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi mail kết quả: " + e.getMessage());
         }
     }
 }

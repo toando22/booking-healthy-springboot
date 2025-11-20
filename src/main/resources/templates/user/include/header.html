@@ -11,29 +11,46 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a th:href="@{/}" class="active">Trang chủ</a></li>
-                <li><a th:href="@{/about}">Giới thiệu</a></li>
-                <li><a th:href="@{/departments}">Chuyên khoa</a></li>
-                <li><a th:href="@{/services}">Dịch vụ</a></li>
-                <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>
+                <li>
+                    <a th:href="@{/}" th:classappend="${activePage == 'home'} ? 'active'">Trang chủ</a>
+                </li>
+
+                <li>
+                    <a th:href="@{/about}" th:classappend="${activePage == 'about'} ? 'active'">Giới thiệu</a>
+                </li>
+
+                <li>
+                    <a th:href="@{/departments}" th:classappend="${activePage == 'departments'} ? 'active'">Chuyên khoa</a>
+                </li>
+
+                <li>
+                    <a th:href="@{/services}" th:classappend="${activePage == 'services'} ? 'active'">Dịch vụ</a>
+                </li>
+
+                <li>
+                    <a th:href="@{/doctors}" th:classappend="${activePage == 'doctors'} ? 'active'">Đội ngũ bác sĩ</a>
+                </li>
 
                 <li class="dropdown"><a href="#"><span>Tin tức</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                        <li><a href="#">Hoạt động & Sự kiện</a></li>
-                        <li><a href="#">Y học thường thức</a></li>
-                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a th:href="@{/news}">Hoạt động & Sự kiện</a></li>
+                        <li><a th:href="@{/knowledge}">Y học thường thức</a></li>
+                        <li><a th:href="@{/careers}">Tuyển dụng</a></li>
                     </ul>
                 </li>
 
                 <li class="dropdown"><a href="#"><span>Lịch làm việc</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
-                        <li><a href="#">Giờ làm việc</a></li>
-                        <li><a href="#">Lịch trực bác sĩ</a></li>
-                        <li><a href="#">Quy trình khám bệnh</a></li>
+                        <li><a th:href="@{/working-hours}">Giờ làm việc</a></li>
+                        <li><a th:href="@{/doctor-schedule}">Lịch trực bác sĩ</a></li>
+                        <li><a th:href="@{/medical-process}">Quy trình khám bệnh</a></li>
+                        <li><a th:href="@{/appointment}">Đặt lịch khám</a></li>
                     </ul>
                 </li>
 
-                <li><a th:href="@{/contact}">Liên hệ</a></li>
+                <li>
+                    <a th:href="@{/contact}" th:classappend="${activePage == 'contact'} ? 'active'">Liên hệ</a>
+                </li>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>

@@ -73,14 +73,37 @@ public class AdminBookingController {
         return "redirect:/admin/manage-booking";
     }
 
-    // 4. XỬ LÝ XÓA (DELETE)
+//    // 4. XỬ LÝ XÓA (DELETE)
+//    @GetMapping("/delete/{id}")
+//    public String deleteBooking(@PathVariable("id") Long id, RedirectAttributes ra) {
+//        try {
+//            bookingService.deleteById(id);
+//            ra.addFlashAttribute("successMessage", "Đã xóa lịch hẹn vĩnh viễn.");
+//        } catch (Exception e) {
+//            ra.addFlashAttribute("errorMessage", "Lỗi khi xóa lịch hẹn.");
+//        }
+//        return "redirect:/admin/manage-booking";
+//    }  (nâng cấp nghiệp vụ admin chiều 19/11)
+
+    // 4. XỬ LÝ XÓA (DELETE) - ĐÃ NÂNG CẤP NGHIỆP VỤ
     @GetMapping("/delete/{id}")
     public String deleteBooking(@PathVariable("id") Long id, RedirectAttributes ra) {
         try {
+            Booking booking = bookingService.findById(id)
+                    .orElseThrow(() -> new Exception("Không tìm thấy Lịch hẹn ID: " + id));
+
+            // === LOGIC NGHIỆP VỤ MỚI ===
+            // Chỉ cho phép xóa nếu trạng thái là PENDING hoặc CANCELED
+            if (booking.getStatus() == BookingStatus.CONFIRMED || booking.getStatus() == BookingStatus.COMPLETED) {
+                ra.addFlashAttribute("errorMessage", "KHÔNG THỂ XÓA! Lịch hẹn này đã được xác nhận hoặc đã hoàn thành. Bạn chỉ có thể HỦY nó.");
+                return "redirect:/admin/manage-booking";
+            }
+            // ============================
+
             bookingService.deleteById(id);
-            ra.addFlashAttribute("successMessage", "Đã xóa lịch hẹn vĩnh viễn.");
+            ra.addFlashAttribute("successMessage", "Đã xóa lịch hẹn vĩnh viễn (Dọn dẹp dữ liệu).");
         } catch (Exception e) {
-            ra.addFlashAttribute("errorMessage", "Lỗi khi xóa lịch hẹn.");
+            ra.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
         return "redirect:/admin/manage-booking";
     }

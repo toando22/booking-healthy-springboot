@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Quy trình khám bệnh - MediTrust</title>
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+  <style>
+    .process-step { position: relative; padding-left: 50px; margin-bottom: 40px; }
+    .step-number {
+        position: absolute; left: 0; top: 0;
+        width: 40px; height: 40px;
+        background: #1977cc; color: #fff;
+        border-radius: 50%; text-align: center; line-height: 40px; font-weight: bold; font-size: 1.2rem;
+    }
+    .process-step::before {
+        content: ''; position: absolute; left: 19px; top: 40px; bottom: -40px;
+        width: 2px; background: #e0e0e0;
+    }
+    .process-step:last-child::before { display: none; }
+  </style>
+</head>
+
+<body>
+<div th:replace="~{user/include/header :: header-nav}"></div>
+
+<main class="main">
+  <div class="page-title" style="padding: 40px 0;">
+    <div class="container">
+      <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li><li class="breadcrumb-item active">Quy trình</li></ol></nav>
+      <h2>Quy trình Khám chữa bệnh</h2>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+          <div class="process-container">
+
+            <div class="process-step">
+              <div class="step-number">1</div>
+              <h4>Đăng ký & Tiếp nhận</h4>
+              <p>Quý khách có thể đặt lịch trước qua Website để được ưu tiên. Khi đến bệnh viện, vui lòng xuất trình mã đặt lịch tại Quầy Lễ tân.</p>
+              <a th:href="@{/appointment}" class="btn btn-sm btn-outline-primary">Đặt lịch ngay</a>
+            </div>
+
+            <div class="process-step">
+              <div class="step-number">2</div>
+              <h4>Khám chuyên khoa</h4>
+              <p>Bác sĩ chuyên khoa sẽ thăm khám lâm sàng, kiểm tra các triệu chứng và chỉ định các xét nghiệm cận lâm sàng cần thiết.</p>
+            </div>
+
+            <div class="process-step">
+              <div class="step-number">3</div>
+              <h4>Thực hiện Xét nghiệm / Chụp chiếu</h4>
+              <p>Quý khách thực hiện các chỉ định (Xét nghiệm máu, X-quang, Siêu âm...) và chờ kết quả tại khu vực chờ tiện nghi.</p>
+            </div>
+
+            <div class="process-step">
+              <div class="step-number">4</div>
+              <h4>Chẩn đoán & Tư vấn</h4>
+              <p>Bác sĩ đọc kết quả, chẩn đoán bệnh, kê đơn thuốc và tư vấn phác đồ điều trị hoặc chế độ dinh dưỡng phù hợp.</p>
+            </div>
+
+            <div class="process-step">
+              <div class="step-number">5</div>
+              <h4>Thanh toán & Nhận thuốc</h4>
+              <p>Thanh toán viện phí tại quầy thu ngân và nhận thuốc tại Nhà thuốc bệnh viện. Kết thúc quy trình.</p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer th:replace="~{user/index :: footer}"></footer>
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+</body>
+</html>

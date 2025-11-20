@@ -32,7 +32,7 @@ public class ProfileController {
     @Autowired private BookingService bookingService;
     @Autowired private UserService userService;
     @Autowired private EmailService emailService;
-
+   // @Autowired private com.bookinghealthy.service.ImageService imageService; // <-- TIÊM SERVICE MỚI
     // --- 1. TRANG HỒ SƠ (Xem & Lịch sử) ---
     @GetMapping("/profile")
     public String showProfile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -85,6 +85,9 @@ public class ProfileController {
                 Path path = Paths.get(folderPath + fileName);
                 Files.write(path, file.getBytes());
 
+//                // === SỬ DỤNG IMAGE SERVICE ĐỂ XỬ LÝ ===
+//                String fileName = imageService.saveAvatar(file);
+//                // ======================================
                 // Lưu tên file vào DB
                 profileService.updateAvatar(userDetails.getUsername(), fileName);
 

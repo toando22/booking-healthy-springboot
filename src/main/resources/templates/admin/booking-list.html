@@ -71,8 +71,11 @@
                     <i class="bi bi-x-lg"></i>
                   </a>
                 </div>
-                <a th:href="@{/admin/manage-booking/delete/{id}(id=${booking.id})}" class="btn btn-dark btn-sm" title="Xóa vĩnh viễn"
-                   onclick="return confirm('Bạn có chắc muốn XÓA VĨNH VIỄN lịch hẹn này?')">
+                <a th:if="${booking.status.name() == 'PENDING' or booking.status.name() == 'CANCELED'}"
+                   th:href="@{/admin/manage-booking/delete/{id}(id=${booking.id})}"
+                   class="btn btn-dark btn-sm"
+                   title="Xóa vĩnh viễn"
+                   onclick="return confirm('CẢNH BÁO: Hành động này sẽ xóa lịch sử vĩnh viễn. Bạn có chắc không?')">
                   <i class="bi bi-trash"></i>
                 </a>
               </td>

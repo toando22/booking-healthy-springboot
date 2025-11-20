@@ -1,6 +1,7 @@
 package com.bookinghealthy.repository;
 
 import com.bookinghealthy.model.Schedule;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     // Tìm khung giờ của 1 bác sĩ VÀO 1 NGÀY CỤ THỂ TRONG TUẦN
     List<Schedule> findByDoctorIdAndDayOfWeek(Long doctorId, DayOfWeek dayOfWeek);
+
+    // Tìm lịch theo Thứ (vd: MONDAY, TUESDAY...)
+    // Dùng @EntityGraph để tải luôn thông tin Bác sĩ và Khoa (tránh lỗi Lazy)
+    @EntityGraph(attributePaths = {"doctor", "doctor.user", "doctor.department"})
+    List<Schedule> findByDayOfWeek(DayOfWeek dayOfWeek);
 }

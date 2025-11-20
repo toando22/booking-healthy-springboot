@@ -435,6 +435,7 @@
   <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
   <style>
+
     /* Thêm style để tránh lỗi giao diện khoảng trống */
     .appointment-page .page-title { padding: 60px 0; }
     .appointment-page .appointment-form { --bs-gutter-y: 1rem; }
@@ -647,7 +648,146 @@
 <script th:inline="javascript">
   document.addEventListener("DOMContentLoaded", function() {
 
-    // === LẤY CÁC THÀNH PHẦN ===
+<!--    // === LẤY CÁC THÀNH PHẦN ===-->
+<!--    const departmentSelect = document.getElementById('departmentSelect');-->
+<!--    const doctorSelect = document.getElementById('doctorSelect');-->
+<!--    const doctorPriceInfo = document.getElementById('doctorPriceInfo');-->
+<!--    const dateInput = document.getElementById('appointmentDate');-->
+<!--    const timeSlotContainer = document.getElementById('timeSlotContainer');-->
+<!--    const form = document.querySelector('.appointment-form');-->
+
+<!--    const baseUrl = /*[[@{/}]]*/ '';-->
+<!--    const selectedDoctorId = form.dataset.selectedId;-->
+<!--    const priceFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });-->
+<!--    let doctorsData = [];-->
+
+<!--    // === 1. LỌC BÁC SĨ THEO KHOA ===-->
+<!--    async function fetchDoctors(departmentId) {-->
+<!--      doctorSelect.innerHTML = '<option value="">Đang tải bác sĩ...</option>';-->
+<!--      doctorSelect.disabled = true;-->
+<!--      doctorPriceInfo.textContent = '';-->
+
+<!--      if (!departmentId) {-->
+<!--        doctorSelect.innerHTML = '<option value="">Vui lòng chọn khoa trước</option>';-->
+<!--        return [];-->
+<!--      }-->
+
+<!--      try {-->
+<!--        const response = await fetch(baseUrl + 'api/doctors?departmentId=' + departmentId);-->
+<!--        if (!response.ok) throw new Error('Network response was not ok');-->
+
+<!--        const doctors = await response.json();-->
+<!--        doctorsData = doctors;-->
+<!--        doctorSelect.innerHTML = '<option value="">Chọn bác sĩ</option>';-->
+
+<!--        if (doctors.length > 0) {-->
+<!--          doctors.forEach(doctor => {-->
+<!--            const option = document.createElement('option');-->
+<!--            option.value = doctor.id;-->
+<!--            option.textContent = 'Dr. ' + doctor.fullName + ' (' + doctor.degree + ')';-->
+<!--            doctorSelect.appendChild(option);-->
+<!--          });-->
+<!--          doctorSelect.disabled = false;-->
+<!--        } else {-->
+<!--          doctorSelect.innerHTML = '<option value="">Khoa này không có bác sĩ</option>';-->
+<!--        }-->
+<!--        return doctors;-->
+<!--      } catch (error) {-->
+<!--        console.error('Lỗi khi tải bác sĩ:', error);-->
+<!--        doctorSelect.innerHTML = '<option value="">Lỗi tải bác sĩ</option>';-->
+<!--        return [];-->
+<!--      }-->
+<!--    }-->
+
+<!--    // === 2. TỰ ĐỘNG CHỌN BÁC SĨ (NẾU CÓ) ===-->
+<!--    async function preselectDoctor(doctorId) {-->
+<!--        try {-->
+<!--            const response = await fetch(baseUrl + 'api/doctor/' + doctorId);-->
+<!--            if (!response.ok) return;-->
+<!--            const doctor = await response.json();-->
+
+<!--            // Chọn Khoa và Khóa lại-->
+<!--            departmentSelect.value = doctor.departmentId;-->
+<!--            departmentSelect.disabled = true;-->
+
+<!--            // Tải bác sĩ và Chọn bác sĩ-->
+<!--            await fetchDoctors(doctor.departmentId);-->
+<!--            doctorSelect.value = doctorId;-->
+<!--            doctorSelect.disabled = true; // Khóa lại để người dùng không đổi-->
+
+<!--            // Hiển thị giá-->
+<!--            const formattedPrice = priceFormatter.format(doctor.price);-->
+<!--            doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;-->
+<!--            doctorPriceInfo.classList.add('text-success', 'fw-bold');-->
+
+<!--            // Thêm input ẩn cho departmentId (vì select bị disabled sẽ không gửi)-->
+<!--            const hiddenDept = document.createElement('input');-->
+<!--            hiddenDept.type = 'hidden';-->
+<!--            hiddenDept.name = 'departmentId';-->
+<!--            hiddenDept.value = doctor.departmentId;-->
+<!--            form.appendChild(hiddenDept);-->
+
+<!--        } catch (error) {-->
+<!--            console.error('Lỗi pre-select:', error);-->
+<!--        }-->
+<!--    }-->
+
+<!--    departmentSelect.addEventListener('change', async function() {-->
+<!--      await fetchDoctors(this.value);-->
+<!--    });-->
+
+<!--    doctorSelect.addEventListener('change', function() {-->
+<!--      const selectedDoctor = doctorsData.find(doc => doc.id == this.value);-->
+<!--      if (selectedDoctor) {-->
+<!--        const formattedPrice = priceFormatter.format(selectedDoctor.price);-->
+<!--        doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;-->
+<!--        doctorPriceInfo.classList.add('text-success', 'fw-bold');-->
+<!--      } else {-->
+<!--        doctorPriceInfo.textContent = '';-->
+<!--        doctorPriceInfo.classList.remove('text-success', 'fw-bold');-->
+<!--      }-->
+<!--    });-->
+
+<!--    const today = new Date().toISOString().split('T')[0];-->
+<!--    dateInput.setAttribute('min', today);-->
+
+<!--    function validateTimeSlots() {-->
+<!--        const selectedDate = dateInput.value;-->
+<!--        if (!selectedDate) return;-->
+<!--        const now = new Date();-->
+<!--        const currentDate = now.toISOString().split('T')[0];-->
+<!--        const currentHours = now.getHours();-->
+<!--        const allTimeSlots = timeSlotContainer.querySelectorAll('.time-slot');-->
+
+<!--        allTimeSlots.forEach(slotInput => {-->
+<!--            const slotLabel = document.querySelector('label[for="' + slotInput.id + '"]');-->
+<!--            const slotHour = parseInt(slotInput.value.split(':')[0]);-->
+<!--            let isPast = false;-->
+<!--            if (selectedDate === currentDate && slotHour < currentHours) {-->
+<!--                isPast = true;-->
+<!--            }-->
+<!--            slotInput.disabled = isPast;-->
+<!--            if (isPast) {-->
+<!--                slotLabel.classList.add('disabled', 'text-decoration-line-through');-->
+<!--            } else {-->
+<!--                slotLabel.classList.remove('disabled', 'text-decoration-line-through');-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+<!--    dateInput.addEventListener('change', validateTimeSlots);-->
+<!--    validateTimeSlots();-->
+
+<!--    // === SỬA LỖI 400: BẬT LẠI DROPDOWN TRƯỚC KHI SUBMIT ===-->
+<!--    form.addEventListener('submit', function() {-->
+<!--        departmentSelect.disabled = false;-->
+<!--        doctorSelect.disabled = false;-->
+<!--    });-->
+
+<!--    if (selectedDoctorId) {-->
+<!--        preselectDoctor(selectedDoctorId);-->
+<!--    }-->
+// === LẤY CÁC THÀNH PHẦN ===
     const departmentSelect = document.getElementById('departmentSelect');
     const doctorSelect = document.getElementById('doctorSelect');
     const doctorPriceInfo = document.getElementById('doctorPriceInfo');
@@ -705,21 +845,17 @@
             if (!response.ok) return;
             const doctor = await response.json();
 
-            // Chọn Khoa và Khóa lại
             departmentSelect.value = doctor.departmentId;
             departmentSelect.disabled = true;
 
-            // Tải bác sĩ và Chọn bác sĩ
             await fetchDoctors(doctor.departmentId);
             doctorSelect.value = doctorId;
-            doctorSelect.disabled = true; // Khóa lại để người dùng không đổi
+            doctorSelect.disabled = true;
 
-            // Hiển thị giá
             const formattedPrice = priceFormatter.format(doctor.price);
             doctorPriceInfo.textContent = 'Giá khám: ' + formattedPrice;
             doctorPriceInfo.classList.add('text-success', 'fw-bold');
 
-            // Thêm input ẩn cho departmentId (vì select bị disabled sẽ không gửi)
             const hiddenDept = document.createElement('input');
             hiddenDept.type = 'hidden';
             hiddenDept.name = 'departmentId';
@@ -747,27 +883,49 @@
       }
     });
 
-    const today = new Date().toISOString().split('T')[0];
+    // === VALIDATE NGÀY VÀ GIỜ (NÂNG CẤP: CHECK CẢ PHÚT) ===
+    // Lấy ngày hôm nay theo định dạng YYYY-MM-DD của máy người dùng
+    const d = new Date();
+    const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     dateInput.setAttribute('min', today);
 
     function validateTimeSlots() {
         const selectedDate = dateInput.value;
         if (!selectedDate) return;
+
         const now = new Date();
-        const currentDate = now.toISOString().split('T')[0];
-        const currentHours = now.getHours();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentDateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
         const allTimeSlots = timeSlotContainer.querySelectorAll('.time-slot');
 
         allTimeSlots.forEach(slotInput => {
             const slotLabel = document.querySelector('label[for="' + slotInput.id + '"]');
-            const slotHour = parseInt(slotInput.value.split(':')[0]);
+            const slotStartTime = slotInput.value.split(' ')[0]; // VD: "10:30"
+            const [slotHourStr, slotMinuteStr] = slotStartTime.split(':');
+            const slotHour = parseInt(slotHourStr);
+            const slotMinute = parseInt(slotMinuteStr);
+
             let isPast = false;
-            if (selectedDate === currentDate && slotHour < currentHours) {
-                isPast = true;
+
+            // Chỉ kiểm tra nếu ngày chọn là ngày hôm nay
+            if (selectedDate === currentDateStr) {
+                // Nếu giờ slot nhỏ hơn giờ hiện tại -> Đã qua
+                if (slotHour < currentHour) {
+                    isPast = true;
+                }
+                // Nếu giờ bằng nhau, nhưng phút slot nhỏ hơn hoặc bằng phút hiện tại -> Đã qua
+                else if (slotHour === currentHour && slotMinute <= currentMinute) {
+                    isPast = true;
+                }
             }
+
             slotInput.disabled = isPast;
             if (isPast) {
                 slotLabel.classList.add('disabled', 'text-decoration-line-through');
+                // Nếu đang chọn cái bị disable thì bỏ chọn
+                if (slotInput.checked) slotInput.checked = false;
             } else {
                 slotLabel.classList.remove('disabled', 'text-decoration-line-through');
             }
@@ -775,6 +933,7 @@
     }
 
     dateInput.addEventListener('change', validateTimeSlots);
+    // Gọi 1 lần khi tải trang
     validateTimeSlots();
 
     // === SỬA LỖI 400: BẬT LẠI DROPDOWN TRƯỚC KHI SUBMIT ===
