@@ -1,10 +1,9 @@
 package com.bookinghealthy.controller.doctor;
 
-import com.bookinghealthy.model.Booking;
-import com.bookinghealthy.model.BookingStatus;
-import com.bookinghealthy.model.Doctor;
+import com.bookinghealthy.model.*;
 import com.bookinghealthy.repository.BookingRepository; // Dùng BookingRepository
 import com.bookinghealthy.service.BookingService;
+import com.bookinghealthy.service.DoctorBlockTimeService;
 import com.bookinghealthy.service.DoctorService;
 import com.bookinghealthy.service.EmailService;
 import jakarta.transaction.Transactional;
@@ -13,12 +12,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/doctor") // Đường dẫn gốc cho Bác sĩ
@@ -35,6 +36,9 @@ public class DoctorDashboardController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private DoctorBlockTimeService doctorBlockTimeService;
 
     // Hàm trợ giúp: Lấy Doctor entity từ User đang đăng nhập
     private Doctor getLoggedInDoctor(Authentication authentication) {
@@ -110,5 +114,108 @@ public class DoctorDashboardController {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/doctor/dashboard";
+    }
+    // ============================================================
+    // === PHẦN QUẢN LÝ LỊCH TRỰC & GIỜ BẬN (ĐÃ SỬA CHỮA) ===
+    // ============================================================
+
+    // 1. Hiển thị trang Đăng ký
+    @GetMapping("/schedule-register")
+    public String showScheduleRegister(
+            @RequestParam(value = "selectedDate", required = false) LocalDate selectedDate,
+            Model model,
+            Authentication authentication) {
+
+        Doctor currentDoctor = getLoggedInDoctor(authentication);
+
+        // Mặc định là hôm nay nếu không chọn
+        if (selectedDate == null) {
+            selectedDate = LocalDate.now();
+        }
+
+        // Thông tin ngày/thứ
+        DayOfWeek dayOfWeek = selectedDate.getDayOfWeek();
+
+        // Lấy lịch ĐỊNH KỲ
+        List<Schedule> mySchedules = doctorService.getDoctorSchedules(currentDoctor.getId());
+
+        // Lấy lịch BẬN ĐỘT XUẤT (Sửa lỗi hiển thị: Lấy Entity thay vì String)
+        List<DoctorBlockTime> myBlockTimes = doctorBlockTimeService.getBlockedSlotsForDoctorAndDate(currentDoctor.getId(), selectedDate);
+
+        model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("dayOfWeek", dayOfWeek);
+        model.addAttribute("mySchedules", mySchedules);
+        model.addAttribute("myBlockTimes", myBlockTimes); // Tên biến khớp với HTML
+        model.addAttribute("activePage", "schedule");
+
+        return "doctor/schedule-register";
+    }
+
+    // 2. Xử lý Đăng ký Lịch Thường xuyên
+    @PostMapping("/schedule/create")
+    public String createSchedule(
+            @RequestParam("dayOfWeek") String dayOfWeek,
+            @RequestParam("session") String session,
+            Authentication authentication,
+            RedirectAttributes ra) {
+
+        Doctor currentDoctor = getLoggedInDoctor(authentication);
+        String error = doctorService.registerSchedule(currentDoctor, dayOfWeek, session);
+
+        if (error != null) {
+            ra.addFlashAttribute("errorMessage", error);
+        } else {
+            ra.addFlashAttribute("successMessage", "Đăng ký lịch trực thành công!");
+        }
+        return "redirect:/doctor/schedule-register";
+    }
+
+    // 3. Xử lý Chặn Giờ Đột Xuất
+    @PostMapping("/schedule/block")
+    public String blockSchedule(
+            @RequestParam("blockDate") LocalDate blockDate,
+            @RequestParam("startTime") LocalTime startTime,
+            @RequestParam("endTime") LocalTime endTime,
+            @RequestParam("reason") String reason,
+            Authentication authentication,
+            RedirectAttributes ra) {
+
+        Doctor currentDoctor = getLoggedInDoctor(authentication);
+
+        if (blockDate.isBefore(LocalDate.now())) {
+            ra.addFlashAttribute("errorMessage", "Không thể chặn giờ trong quá khứ.");
+            ra.addAttribute("selectedDate", blockDate);
+            return "redirect:/doctor/schedule-register";
+        }
+
+        String error = doctorBlockTimeService.blockTime(currentDoctor, blockDate, startTime, endTime, reason);
+
+        if (error != null) {
+            ra.addFlashAttribute("errorMessage", error);
+        } else {
+            ra.addFlashAttribute("successMessage", "Đã chặn khung giờ thành công!");
+        }
+
+        // Redirect kèm ngày để giữ nguyên view
+        ra.addAttribute("selectedDate", blockDate);
+        return "redirect:/doctor/schedule-register";
+    }
+
+    // 4. Xóa lịch Thường xuyên
+    @GetMapping("/schedule/delete/{id}")
+    public String deleteSchedule(@PathVariable("id") Long id, RedirectAttributes ra) {
+        doctorService.deleteSchedule(id);
+        ra.addFlashAttribute("successMessage", "Đã xóa lịch trực.");
+        return "redirect:/doctor/schedule-register";
+    }
+
+    // 5. Gỡ Chặn Giờ Đột Xuất
+    @GetMapping("/schedule/unblock/{id}")
+    public String unblockSchedule(@PathVariable("id") Long id, @RequestParam("date") LocalDate date, RedirectAttributes ra) {
+        doctorBlockTimeService.unblockTime(id);
+        ra.addFlashAttribute("successMessage", "Đã gỡ chặn khung giờ.");
+
+        ra.addAttribute("selectedDate", date);
+        return "redirect:/doctor/schedule-register";
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,4 +78,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // === THÊM HÀM MỚI NÀY ===
     // Đếm số lượng lịch hẹn theo Khoa và Trạng thái (ví dụ: COMPLETED)
     long countByDoctor_Department_IdAndStatus(Long departmentId, BookingStatus status);
+
+    // === MODULE 9: THÊM HÀM NÀY ĐỂ CHẶN TRÙNG LỊCH ===
+    // Tìm tất cả các lịch của Bác sĩ X vào Ngày Y mà trạng thái KHÔNG PHẢI là Z (Đã hủy)
+    // (Nghĩa là lấy các lịch PENDING, CONFIRMED, COMPLETED để chặn giờ đó lại)
+    List<Booking> findByDoctorIdAndAppointmentDateAndStatusNot(Long doctorId, LocalDate appointmentDate, BookingStatus status);
 }

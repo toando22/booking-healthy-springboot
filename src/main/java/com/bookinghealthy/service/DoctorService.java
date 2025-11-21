@@ -1,6 +1,8 @@
 package com.bookinghealthy.service;
 
 import com.bookinghealthy.model.Doctor;
+import com.bookinghealthy.model.Schedule;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +24,14 @@ public interface DoctorService {
 
     // Thêm hàm này
     List<Doctor> searchDoctors(String keyword, Long departmentId);
+
+    // === THÊM HÀM MỚI CHO MODULE LỊCH TRỰC ===
+    // Hàm này sẽ trả về String thông báo lỗi hoặc null nếu thành công
+    String registerSchedule(Doctor doctor, String dayOfWeekStr, String session);
+
+    // Hàm xóa lịch
+    void deleteSchedule(Long scheduleId);
+
+    // Lấy danh sách lịch đã đăng ký của Bác sĩ
+    List<Schedule> getDoctorSchedules(Long doctorId);
 }

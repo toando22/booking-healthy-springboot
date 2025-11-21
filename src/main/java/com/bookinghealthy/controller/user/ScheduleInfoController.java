@@ -1,11 +1,11 @@
 package com.bookinghealthy.controller.user;
 
-import com.bookinghealthy.model.Department;
 import com.bookinghealthy.model.Doctor;
 import com.bookinghealthy.model.Schedule;
 import com.bookinghealthy.repository.DepartmentRepository;
 import com.bookinghealthy.repository.DoctorRepository;
 import com.bookinghealthy.repository.ScheduleRepository;
+import com.bookinghealthy.service.TimeSlotService; // <-- Import Service mới
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +23,7 @@ public class ScheduleInfoController {
     @Autowired private ScheduleRepository scheduleRepository;
     @Autowired private DepartmentRepository departmentRepository;
     @Autowired private DoctorRepository doctorRepository;
+    @Autowired private TimeSlotService timeSlotService; // <-- Tiêm Service
 
     // 1. TRANG GIỜ LÀM VIỆC
     @GetMapping("/working-hours")
@@ -38,7 +39,7 @@ public class ScheduleInfoController {
         return "user/medical-process";
     }
 
-    // 3. TRANG LỊCH TRỰC BÁC SĨ (Logic Phức tạp)
+    // 3. TRANG LỊCH TRỰC BÁC SĨ (ĐÃ NÂNG CẤP LOGIC)
     @GetMapping("/doctor-schedule")
     public String showDoctorSchedule(
             @RequestParam(value = "searchDate", required = false) LocalDate searchDate,
@@ -46,47 +47,54 @@ public class ScheduleInfoController {
             @RequestParam(value = "doctorId", required = false) Long doctorId,
             Model model) {
 
-        // Mặc định là hôm nay nếu không chọn
         if (searchDate == null) {
             searchDate = LocalDate.now();
         }
-
-        // 1. Lấy Thứ của ngày đã chọn
         DayOfWeek dayOfWeek = searchDate.getDayOfWeek();
 
-        // 2. Tìm tất cả lịch trong Thứ đó
+        // 1. Lấy tất cả lịch trong ngày
         List<Schedule> schedules = scheduleRepository.findByDayOfWeek(dayOfWeek);
 
-        // 3. Lọc theo Khoa (nếu chọn)
+        // 2. Lọc
         if (departmentId != null) {
             schedules = schedules.stream()
                     .filter(s -> s.getDoctor().getDepartment().getId().equals(departmentId))
                     .collect(Collectors.toList());
         }
-
-        // 4. Lọc theo Bác sĩ (nếu chọn)
         if (doctorId != null) {
             schedules = schedules.stream()
                     .filter(s -> s.getDoctor().getId().equals(doctorId))
                     .collect(Collectors.toList());
         }
 
-        // 5. Gom nhóm theo Bác sĩ (Map<Doctor, List<Schedule>>)
-        // Để hiển thị: 1 Hàng Bác sĩ -> Có thể có nhiều ca trực (Sáng/Chiều)
-        Map<Doctor, List<Schedule>> doctorSchedulesMap = schedules.stream()
+        // 3. Gom nhóm: Map<Doctor, List<Schedule>>
+        Map<Doctor, List<Schedule>> rawMap = schedules.stream()
                 .collect(Collectors.groupingBy(Schedule::getDoctor));
 
-        // Gửi dữ liệu ra View
-        model.addAttribute("doctorSchedulesMap", doctorSchedulesMap);
-        model.addAttribute("searchDate", searchDate); // Để hiển thị lại ngày đã chọn
+        // 4. CHUYỂN ĐỔI SANG SLOT (Logic Mới)
+        // Map<Doctor, List<TimeSlotDTO>>: Mỗi bác sĩ sẽ có 1 danh sách các ô giờ 30p
+        Map<Doctor, List<TimeSlotService.TimeSlotDTO>> finalMap = new LinkedHashMap<>();
+
+        for (Map.Entry<Doctor, List<Schedule>> entry : rawMap.entrySet()) {
+            Doctor doctor = entry.getKey();
+            List<Schedule> doctorWorkShifts = entry.getValue();
+
+            // Gọi Service để tính toán slot cho bác sĩ này vào ngày này
+            List<TimeSlotService.TimeSlotDTO> slots = timeSlotService.getAvailableSlots(doctor.getId(), searchDate, doctorWorkShifts);
+
+            if (!slots.isEmpty()) {
+                finalMap.put(doctor, slots);
+            }
+        }
+
+        model.addAttribute("doctorSlotsMap", finalMap); // Gửi Map mới
+        model.addAttribute("searchDate", searchDate);
         model.addAttribute("currentDepartmentId", departmentId);
         model.addAttribute("currentDoctorId", doctorId);
-
-        // Gửi danh sách cho Dropdown bộ lọc
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
-
         model.addAttribute("activePage", "schedule");
+
         return "user/doctor-schedule";
     }
 }
