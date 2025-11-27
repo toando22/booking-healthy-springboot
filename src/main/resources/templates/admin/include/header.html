@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:fragment="header">
+<head th:fragment="header(title)">
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
@@ -26,6 +27,8 @@
     <link th:href="@{/assets-admin/css/style.css}" rel="stylesheet">
 </head>
 
+<body>
+
 <header th:fragment="header-nav" id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
@@ -34,31 +37,58 @@
             <span class="d-none d-lg-block">BookingHealthy</span>
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div><nav class="header-nav ms-auto">
-    <ul class="d-flex align-items-center">
+    </div>
 
-        <li class="nav-item dropdown pe-3">
+    <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
 
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                <img th:src="@{/assets-admin/img/profile-img.jpg}" alt="Profile" class="rounded-circle">
-                <span class="d-none d-md-block dropdown-toggle ps-2">Admin Name</span>
-            </a><ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-                <h6>Admin</h6>
-                <span>System Administrator</span>
-            </li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            <li>
-                <a class="dropdown-item d-flex align-items-center" th:href="@{/logout}">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Sign Out</span>
+            <li class="nav-item dropdown pe-3">
+
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <img th:if="${#authentication.principal.avatar != null}"
+                         th:src="@{'/uploads/' + ${#authentication.principal.avatar}}" alt="Profile" class="rounded-circle">
+                    <img th:if="${#authentication.principal.avatar == null}"
+                         th:src="@{/assets/img/default-doctor.png}" alt="Profile" class="rounded-circle">
+
+                    <span class="d-none d-md-block dropdown-toggle ps-2"
+                          th:text="${#authentication.principal.fullName}">Admin Name</span>
                 </a>
-            </li>
 
-        </ul></li></ul>
-</nav></header></html>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <li class="dropdown-header">
+                        <h6 th:text="${#authentication.principal.fullName}">Tên User</h6>
+
+                        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Quản trị viên</span>
+                        <span th:if="${#authorization.expression('hasRole(''DOCTOR'')')}">Bác sĩ chuyên khoa</span>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" th:href="@{/profile}">
+                            <i class="bi bi-person"></i>
+                            <span>Hồ sơ cá nhân</span>
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Đăng xuất</span>
+                        </a>
+                    </li>
+
+                </ul></li></ul>
+    </nav>
+
+</header>
+
+</body>
+</html>
 <!--<!DOCTYPE html>-->
 <!--<html lang="en" xmlns:th="http://www.thymeleaf.org"-->
 <!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->

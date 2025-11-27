@@ -83,4 +83,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Tìm tất cả các lịch của Bác sĩ X vào Ngày Y mà trạng thái KHÔNG PHẢI là Z (Đã hủy)
     // (Nghĩa là lấy các lịch PENDING, CONFIRMED, COMPLETED để chặn giờ đó lại)
     List<Booking> findByDoctorIdAndAppointmentDateAndStatusNot(Long doctorId, LocalDate appointmentDate, BookingStatus status);
+
+    // === MODULE 11: LẤY DANH SÁCH KHÁM BỆNH ===
+    // Tìm lịch hẹn của Bác sĩ + Ngày cụ thể + Trạng thái cụ thể
+    // Dùng để lấy danh sách "Bệnh nhân cần khám hôm nay" (Status = CONFIRMED)
+    // Thêm @EntityGraph để tải luôn User và Doctor, tránh lỗi HibernateProxy
+    @EntityGraph(attributePaths = {"user", "doctor"})
+    List<Booking> findByDoctorIdAndAppointmentDateAndStatus(Long doctorId, LocalDate appointmentDate, BookingStatus status);
+
+    // Hàm này cũng nên thêm để tối ưu khi xem lịch sử
+    @EntityGraph(attributePaths = {"user", "doctor"})
+    List<Booking> findByDoctorIdAndStatus(Long doctorId, BookingStatus status);
+
+    long countByStatus(BookingStatus status);
 }

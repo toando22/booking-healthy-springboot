@@ -48,17 +48,37 @@ public class DoctorDashboardController {
     }
 
     // 1. HIỂN THỊ DANH SÁCH LỊCH HẸN (CHO BÁC SĨ)
+    // === NÂNG CẤP DASHBOARD ===
     @GetMapping("/dashboard")
     public String doctorDashboard(Model model, Authentication authentication) {
-        // Lấy Doctor đang đăng nhập
         Doctor currentDoctor = getLoggedInDoctor(authentication);
 
-        // Lấy danh sách lịch hẹn CHỈ CỦA BÁC SĨ ĐÓ
+        // 1. Lấy danh sách Booking của bác sĩ này
         List<Booking> myBookings = bookingRepository.findByDoctor(currentDoctor);
 
-        model.addAttribute("listBookings", myBookings);
+        // 2. TÍNH TOÁN SỐ LIỆU THỐNG KÊ (Dùng Stream API cho nhanh)
+        long countPending = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.PENDING).count();
+        long countConfirmed = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.CONFIRMED).count();
+        long countCompleted = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.COMPLETED).count();
+        long countCancelled = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.CANCELED).count();
 
-        // Trỏ đến file dashboard của bạn
+        // Tính số khách hôm nay (Confirmed + Today)
+        LocalDate today = LocalDate.now();
+        long countToday = myBookings.stream()
+                .filter(b -> b.getAppointmentDate().equals(today) && b.getStatus() == BookingStatus.CONFIRMED)
+                .count();
+
+        // 3. Gửi số liệu ra View
+        model.addAttribute("countPending", countPending);
+        model.addAttribute("countConfirmed", countConfirmed);
+        model.addAttribute("countCompleted", countCompleted);
+        model.addAttribute("countCancelled", countCancelled);
+        model.addAttribute("countToday", countToday);
+
+        // Gửi danh sách (để hiện bảng bên dưới)
+        model.addAttribute("listBookings", myBookings);
+        model.addAttribute("activePage", "dashboard"); // Để highlight sidebar
+
         return "doctor/dashboard";
     }
 

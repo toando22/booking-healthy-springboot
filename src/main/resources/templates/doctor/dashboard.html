@@ -1,90 +1,117 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="~{admin/include/header :: header (title='Doctor Dashboard')}"></th:block>
+    <th:block th:replace="~{admin/include/header :: header (title='Bác sĩ Dashboard')}"></th:block>
 </head>
 <body>
+
 <th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
-<th:block th:replace="~{admin/include/sidebar :: sidebar}"></th:block>
+
+<th:block th:replace="~{doctor/include/sidebar :: sidebar}"></th:block>
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Bảng điều khiển Bác sĩ</h1>
+        <h1>Tổng quan công việc</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-                <li class="breadcrumb-item active">Lịch hẹn của tôi</li>
+                <li class="breadcrumb-item"><a th:href="@{/doctor/dashboard}">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
             </ol>
         </nav>
     </div>
 
-    <section class="section">
+    <section class="section dashboard">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title">Lịch hẹn của tôi</h5>
-                            <a th:href="@{/doctor/schedule-register}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-calendar-plus me-1"></i> Đăng ký lịch trực
-                            </a>
-                        </div>
-                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle me-1"></i>
-                            <span th:text="${successMessage}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-octagon me-1"></i>
-                            <span th:text="${errorMessage}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
 
-                        <table class="table datatable">
-                            <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Bệnh nhân</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Ngày hẹn</th>
-                                <th scope="col">Giờ hẹn</th>
-                                <th scope="col">Trạng thái</th>
-                                <th scope="col">Hành động</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="booking : ${listBookings}">
-                                <td th:text="${booking.id}"></td>
-                                <td th:text="${booking.user.fullName}"></td>
-                                <td th:text="${booking.user.email}"></td>
-                                <td th:text="${#temporals.format(booking.appointmentDate, 'dd-MM-yyyy')}"></td>
-                                <td th:text="${booking.appointmentTime}"></td>
-                                <td>
-                                    <span th:if="${booking.status.name() == 'PENDING'}" class="badge bg-warning">Chờ xác nhận</span>
-                                    <span th:if="${booking.status.name() == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
-                                    <span th:if="${booking.status.name() == 'CANCELED'}" class="badge bg-danger">Đã hủy</span>
-                                    <span th:if="${booking.status.name() == 'COMPLETED'}" class="badge bg-secondary">Đã hoàn thành</span>
-                                </td>
-                                <td>
-                                    <div th:if="${booking.status.name() == 'PENDING'}">
-                                        <a th:href="@{/doctor/bookings/confirm/{id}(id=${booking.id})}" class="btn btn-success btn-sm" title="Xác nhận" onclick="return confirm('Bạn có chắc muốn nhận lịch này?')">
-                                            <i class="bi bi-check-lg"></i>
-                                        </a>
-                                        &nbsp;
-                                        <a th:href="@{/doctor/bookings/cancel/{id}(id=${booking.id})}" class="btn btn-danger btn-sm" title="Hủy lịch" onclick="return confirm('Bạn có chắc muốn từ chối lịch này?')">
-                                            <i class="bi bi-x-lg"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+            <div class="col-xxl-3 col-md-6">
+                <div class="card info-card sales-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cần khám hôm nay</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6 th:text="${countToday}">0</h6>
+                                <span class="text-success small pt-1 fw-bold">bệnh nhân</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="col-xxl-3 col-md-6">
+                <div class="card info-card revenue-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Chờ xác nhận</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6 th:text="${countPending}">0</h6>
+                                <span class="text-muted small pt-2 ps-1">yêu cầu mới</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-3 col-md-6">
+                <div class="card info-card customers-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Đã khám xong</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6 th:text="${countCompleted}">0</h6>
+                                <span class="text-muted small pt-2 ps-1">ca thành công</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Tỷ lệ Trạng thái Lịch hẹn</h5>
+                        <div id="doctorPieChart" style="min-height: 350px;"></div>
+
+                        <script th:inline="javascript">
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new ApexCharts(document.querySelector("#doctorPieChart"), {
+                                    series: [
+                                        /*[[${countPending}]]*/ 1,
+                                        /*[[${countConfirmed}]]*/ 2,
+                                        /*[[${countCompleted}]]*/ 3,
+                                        /*[[${countCancelled}]]*/ 1
+                                    ],
+                                    chart: {
+                                        height: 350,
+                                        type: 'pie',
+                                        toolbar: { show: true }
+                                    },
+                                    labels: ['Chờ duyệt', 'Đã xác nhận', 'Đã khám', 'Đã hủy'],
+                                    colors: ['#ffc107', '#0d6efd', '#198754', '#dc3545']
+                                }).render();
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 </main>
+
 <th:block th:replace="~{admin/include/footer :: footer}"></th:block>
+
+<script th:src="@{/assets-admin/vendor/apexcharts/apexcharts.min.js}"></script>
+<script th:src="@{/assets-admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets-admin/js/main.js}"></script>
+
 </body>
 </html>

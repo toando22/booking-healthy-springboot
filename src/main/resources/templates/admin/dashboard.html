@@ -83,6 +83,34 @@
           </div>
         </div>
       </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tỷ lệ Lịch hẹn</h5>
+            <div id="pieChart"></div>
+
+            <script th:inline="javascript">
+              document.addEventListener("DOMContentLoaded", () => {
+                  new ApexCharts(document.querySelector("#pieChart"), {
+                      series: [
+                          /*[[${statPending}]]*/ 10,
+                          /*[[${statConfirmed}]]*/ 20,
+                          /*[[${statCompleted}]]*/ 30,
+                          /*[[${statCancelled}]]*/ 5
+                      ],
+                      chart: {
+                          height: 350,
+                          type: 'pie',
+                          toolbar: { show: true }
+                      },
+                      labels: ['Chờ duyệt', 'Đã xác nhận', 'Đã hoàn thành', 'Đã hủy'],
+                      colors: ['#ffc107', '#198754', '#0dcaf0', '#dc3545'] // Vàng, Xanh lá, Xanh dương, Đỏ
+                  }).render();
+              });
+            </script>
+          </div>
+        </div>
+      </div>
 
       <div class="col-12">
         <div class="card recent-sales overflow-auto">

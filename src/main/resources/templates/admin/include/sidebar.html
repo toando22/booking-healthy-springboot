@@ -32,7 +32,12 @@
                 <span>Quản lý bệnh nhân</span>
             </a>
         </li>
-
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/admin/medical-records}">
+                <i class="bi bi-journal-medical"></i>
+                <span>Bệnh án điện tử</span>
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link collapsed" th:href="@{/admin/manage-booking}">
                 <i class="bi bi-calendar-check"></i>
@@ -60,6 +65,13 @@
             <a class="nav-link collapsed" th:href="@{/admin/candidates}">
                 <i class="bi bi-person-lines-fill"></i>
                 <span>Danh sách Ứng viên</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/doctor/examinations}"
+               th:classappend="${activePage == 'examinations' ? 'active' : ''}">
+                <i class="bi bi-clipboard2-pulse"></i>
+                <span>Lịch khám bệnh</span>
             </a>
         </li>
     </ul>

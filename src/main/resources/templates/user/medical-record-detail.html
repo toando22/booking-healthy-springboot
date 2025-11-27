@@ -1,0 +1,315 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="utf-8">-->
+<!--  <meta content="width=device-width, initial-scale=1.0" name="viewport">-->
+<!--  <title>Chi tiết Bệnh án - MediTrust</title>-->
+
+<!--  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">-->
+<!--  <link th:href="@{/assets/css/main.css}" rel="stylesheet">-->
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>-->
+<!--  <style>-->
+<!--    .medical-report-card {-->
+<!--        border: none;-->
+<!--        box-shadow: 0 0 20px rgba(0,0,0,0.1);-->
+<!--        border-radius: 15px;-->
+<!--        overflow: hidden;-->
+<!--    }-->
+<!--    .report-header {-->
+<!--        background: linear-gradient(135deg, #1977cc 0%, #0d5aa7 100%);-->
+<!--        color: white;-->
+<!--        padding: 20px 30px;-->
+<!--    }-->
+<!--    .section-title {-->
+<!--        color: #1977cc;-->
+<!--        font-weight: 700;-->
+<!--        text-transform: uppercase;-->
+<!--        font-size: 0.9rem;-->
+<!--        border-bottom: 2px solid #eef0f2;-->
+<!--        padding-bottom: 10px;-->
+<!--        margin-bottom: 15px;-->
+<!--        margin-top: 20px;-->
+<!--    }-->
+<!--    .info-label {-->
+<!--        font-weight: 600;-->
+<!--        color: #555;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<div th:replace="~{user/include/header :: header-nav}"></div>-->
+
+<!--<main class="main mt-5 py-5">-->
+<!--  <div class="container">-->
+
+<!--    <div class="d-flex justify-content-between align-items-center mb-4">-->
+<!--      <a th:href="@{/profile}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại Lịch sử</a>-->
+<!--      <button onclick="exportPDF()" class="btn btn-primary">-->
+<!--        <i class="bi bi-file-earmark-pdf"></i> Tải PDF-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    <div class="row justify-content-center">-->
+<!--      <div class="col-lg-8">-->
+<!--        <div class="card medical-report-card">-->
+
+<!--          <div class="report-header d-flex justify-content-between align-items-center">-->
+<!--            <div>-->
+<!--              <h3 class="mb-1 fw-bold"><i class="bi bi-hospital"></i> MediTrust</h3>-->
+<!--              <p class="mb-0 small opacity-75">Phiếu Kết Quả Khám Bệnh & Đơn Thuốc</p>-->
+<!--            </div>-->
+<!--            <div class="text-end">-->
+<!--              <h5 class="mb-0">Mã HS: <span th:text="${record.id}"></span></h5>-->
+<!--              <small th:text="${#temporals.format(record.createdAt, 'dd/MM/yyyy HH:mm')}"></small>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="card-body p-4">-->
+<!--            <div class="row mb-4">-->
+<!--              <div class="col-md-6">-->
+<!--                <h6 class="section-title">Thông tin Bệnh nhân</h6>-->
+<!--                <p class="mb-1"><span class="info-label">Họ tên:</span> <span th:text="${booking.user.fullName}"></span></p>-->
+<!--                <p class="mb-1"><span class="info-label">SĐT:</span> <span th:text="${booking.user.phone}"></span></p>-->
+<!--                <p class="mb-1" th:if="${booking.user.gender != null}">-->
+<!--                  <span class="info-label">Giới tính:</span> <span th:text="${booking.user.gender}"></span>-->
+<!--                </p>-->
+<!--              </div>-->
+<!--              <div class="col-md-6">-->
+<!--                <h6 class="section-title">Thông tin Khám</h6>-->
+<!--                <p class="mb-1"><span class="info-label">Bác sĩ:</span> <span th:text="${booking.doctor.user.fullName}"></span></p>-->
+<!--                <p class="mb-1"><span class="info-label">Chuyên khoa:</span> <span th:text="${booking.doctor.department.name}"></span></p>-->
+<!--                <p class="mb-1"><span class="info-label">Ngày khám:</span> <span th:text="${#temporals.format(booking.appointmentDate, 'dd/MM/yyyy')}"></span></p>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <h6 class="section-title"><i class="bi bi-activity"></i> Triệu chứng lâm sàng</h6>-->
+<!--            <p class="ps-3 text-dark" th:text="${record.symptoms}"></p>-->
+
+<!--            <h6 class="section-title"><i class="bi bi-clipboard-pulse"></i> Chẩn đoán</h6>-->
+<!--            <div class="alert alert-info bg-light border-0 text-primary fw-bold" th:text="${record.diagnosis}"></div>-->
+
+<!--            <h6 class="section-title"><i class="bi bi-capsule"></i> Đơn thuốc & Chỉ định</h6>-->
+<!--            <div class="bg-light p-3 rounded" style="white-space: pre-line;" th:text="${record.prescription}"></div>-->
+
+<!--            <h6 class="section-title"><i class="bi bi-chat-quote"></i> Lời dặn của Bác sĩ</h6>-->
+<!--            <p class="ps-3 fst-italic text-muted" th:text="${record.doctorNotes}"></p>-->
+
+<!--            <hr class="mt-5">-->
+<!--            <div class="text-center">-->
+<!--              <p class="small text-muted">Cảm ơn bạn đã tin tưởng MediTrust. Chúc bạn mau khỏe!</p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</main>-->
+
+<!--<footer th:replace="~{user/index :: footer}"></footer>-->
+<!--<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>-->
+<!--<script>-->
+<!--  function exportPDF() {-->
+<!--      // Chọn phần tử muốn in (toàn bộ card hồ sơ)-->
+<!--      const element = document.querySelector('.medical-report-card');-->
+
+<!--      // Cấu hình PDF-->
+<!--      const opt = {-->
+<!--          margin:       [10, 10, 10, 10], // Lề: Top, Left, Bottom, Right-->
+<!--          filename:     'HoSoBenhAn_MediTrust.pdf',-->
+<!--          image:        { type: 'jpeg', quality: 0.98 },-->
+<!--          html2canvas:  { scale: 2, useCORS: true }, // scale 2 để nét hơn-->
+<!--          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }-->
+<!--      };-->
+
+<!--      // Thực hiện tạo và tải về-->
+<!--      html2pdf().set(opt).from(element).save();-->
+<!--  }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Chi tiết Bệnh án - MediTrust</title>
+
+  <th:block th:if="${role == 'USER'}">
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+  </th:block>
+
+  <th:block th:if="${role == 'DOCTOR' || role == 'ADMIN'}">
+    <th:block th:replace="~{admin/include/header :: header (title='Xem Bệnh Án')}"></th:block>
+  </th:block>
+
+  <style>
+    .medical-report-card {
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .report-header {
+        background: linear-gradient(135deg, #1977cc 0%, #0d5aa7 100%);
+        color: white;
+        padding: 20px 30px;
+    }
+    .section-title {
+        color: #1977cc;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        border-bottom: 2px solid #eef0f2;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        margin-top: 20px;
+    }
+    .info-label { font-weight: 600; color: #555; }
+
+    /* Ẩn các nút bấm khi in ra giấy */
+    @media print {
+        .no-print { display: none !important; }
+        .medical-report-card { box-shadow: none; border: 1px solid #ddd; }
+        /* Ẩn sidebar/header khi in nếu là Admin/Doctor */
+        .sidebar, .header, .footer { display: none !important; }
+        .main { margin: 0 !important; padding: 0 !important; }
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+<th:block th:if="${role == 'USER'}">
+  <div th:replace="~{user/include/header :: header-nav}"></div>
+</th:block>
+
+<!--<th:block th:if="${role == 'DOCTOR' || role == 'ADMIN'}">-->
+<!--  <th:block th:replace="~{admin/include/header :: header-nav}"></th:block>-->
+<!--  <th:block th:replace="~{admin/include/sidebar :: sidebar}"></th:block>-->
+<!--</th:block>-->
+<th:block th:if="${role == 'ADMIN'}">
+  <th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+  <th:block th:replace="~{admin/include/sidebar :: sidebar}"></th:block>
+</th:block>
+
+<th:block th:if="${role == 'DOCTOR'}">
+  <th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+  <th:block th:replace="~{doctor/include/sidebar :: sidebar}"></th:block>
+</th:block>
+
+<main id="main" th:class="${(role == 'DOCTOR' || role == 'ADMIN') ? 'main' : 'main mt-5 py-5'}">
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+      <a th:href="@{${backLink}}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        <span th:text="${role == 'DOCTOR' ? 'Quay lại DS Khám' : (role == 'ADMIN' ? 'Quay lại Quản lý' : 'Quay lại Lịch sử')}"></span>
+      </a>
+
+      <button onclick="exportPDF()" class="btn btn-primary">
+        <i class="bi bi-file-earmark-pdf"></i> Tải PDF / In
+      </button>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="card medical-report-card" id="pdf-content">
+
+          <div class="report-header d-flex justify-content-between align-items-center">
+            <div>
+              <h3 class="mb-1 fw-bold"><i class="bi bi-hospital"></i> MediTrust</h3>
+              <p class="mb-0 small opacity-75">Phiếu Kết Quả Khám Bệnh & Đơn Thuốc</p>
+            </div>
+            <div class="text-end">
+              <h5 class="mb-0">Mã HS: <span th:text="${record.id}"></span></h5>
+              <small th:text="${#temporals.format(record.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+            </div>
+          </div>
+
+          <div class="card-body p-4">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <h6 class="section-title">Thông tin Bệnh nhân</h6>
+                <p class="mb-1"><span class="info-label">Họ tên:</span> <span th:text="${booking.user.fullName}"></span></p>
+                <p class="mb-1"><span class="info-label">SĐT:</span> <span th:text="${booking.user.phone}"></span></p>
+                <p class="mb-1" th:if="${booking.user.gender != null}">
+                  <span class="info-label">Giới tính:</span> <span th:text="${booking.user.gender}"></span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h6 class="section-title">Thông tin Khám</h6>
+                <p class="mb-1"><span class="info-label">Bác sĩ:</span> <span th:text="${booking.doctor.user.fullName}"></span></p>
+                <p class="mb-1"><span class="info-label">Chuyên khoa:</span> <span th:text="${booking.doctor.department.name}"></span></p>
+                <p class="mb-1"><span class="info-label">Ngày khám:</span> <span th:text="${#temporals.format(booking.appointmentDate, 'dd/MM/yyyy')}"></span></p>
+              </div>
+            </div>
+
+            <h6 class="section-title"><i class="bi bi-activity"></i> Triệu chứng lâm sàng</h6>
+            <p class="ps-3 text-dark" th:text="${record.symptoms}"></p>
+
+            <h6 class="section-title"><i class="bi bi-clipboard-pulse"></i> Chẩn đoán</h6>
+            <div class="alert alert-info bg-light border-0 text-primary fw-bold" th:text="${record.diagnosis}"></div>
+
+            <h6 class="section-title"><i class="bi bi-capsule"></i> Đơn thuốc & Chỉ định</h6>
+            <div class="bg-light p-3 rounded" style="white-space: pre-line;" th:text="${record.prescription}"></div>
+
+            <h6 class="section-title"><i class="bi bi-chat-quote"></i> Lời dặn của Bác sĩ</h6>
+            <p class="ps-3 fst-italic text-muted" th:text="${record.doctorNotes}"></p>
+
+            <div class="row mt-5">
+              <div class="col-6"></div>
+              <div class="col-6 text-center">
+                <p class="mb-4"><i>Ngày.....tháng.....năm 20...</i><br><strong>Bác sĩ khám bệnh</strong></p>
+                <br><br>
+                <strong th:text="${booking.doctor.user.fullName}"></strong>
+              </div>
+            </div>
+
+            <hr class="mt-3">
+            <div class="text-center">
+              <p class="small text-muted mb-0">Cảm ơn bạn đã tin tưởng MediTrust. Chúc bạn mau khỏe!</p>
+              <small style="font-size: 10px; color: #999;">Document Generated by MediTrust EMR System</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<th:block th:if="${role == 'USER'}">
+  <footer th:replace="~{user/index :: footer}"></footer>
+</th:block>
+
+<th:block th:if="${role == 'DOCTOR' || role == 'ADMIN'}">
+  <th:block th:replace="~{admin/include/footer :: footer}"></th:block>
+</th:block>
+
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+  function exportPDF() {
+      // Chọn phần tử cần in (chỉ in cái Card, không in header/footer web)
+      const element = document.getElementById('pdf-content');
+
+      const opt = {
+          margin:       [10, 10, 10, 10],
+          filename:     'HoSoBenhAn_MediTrust.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
+  }
+</script>
+
+</body>
+</html>

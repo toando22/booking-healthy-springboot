@@ -1,6 +1,7 @@
 package com.bookinghealthy.controller.admin;
 
 import com.bookinghealthy.model.Booking;
+import com.bookinghealthy.model.BookingStatus;
 import com.bookinghealthy.model.Role;
 import com.bookinghealthy.model.User;
 import com.bookinghealthy.repository.BookingRepository;
@@ -36,21 +37,34 @@ public class AdminController {
     private BookingRepository bookingRepository;
 
     // === SỬA HÀM NÀY ĐỂ GỬI SỐ LIỆU ===
+    // Trong AdminController.java, hàm adminHome
+
     @GetMapping("/dashboard")
     public String adminHome(Model model) {
-        // Đếm
         long patientCount = userService.findByRoleName("ROLE_USER").size();
         long doctorCount = userService.findByRoleName("ROLE_DOCTOR").size();
-        long bookingCount = bookingRepository.count(); // Đếm tổng số lịch hẹn
-//        // 2. Lấy 5 Lịch hẹn gần đây (MỚI)
-//        List<Booking> recentBookings = bookingRepository.findFirst5ByOrderByCreatedAtDesc();
-        // 2. Lấy TẤT CẢ Lịch hẹn (Sắp xếp mới nhất)
-        List<Booking> allRecentBookings = bookingRepository.findAllByOrderByCreatedAtDesc();
+        long bookingCount = bookingRepository.count();
+
+        // === LOGIC MỚI: THỐNG KÊ TRẠNG THÁI ===
+        // Đếm số lượng theo từng trạng thái để vẽ biểu đồ tròn
+        long countPending = bookingRepository.countByStatus(BookingStatus.PENDING); // Cần thêm hàm này vào Repo nếu chưa có
+        long countConfirmed = bookingRepository.countByStatus(BookingStatus.CONFIRMED);
+        long countCompleted = bookingRepository.countByStatus(BookingStatus.COMPLETED);
+        long countCancelled = bookingRepository.countByStatus(BookingStatus.CANCELED);
+
         // Gửi số liệu ra view
         model.addAttribute("patientCount", patientCount);
         model.addAttribute("doctorCount", doctorCount);
         model.addAttribute("bookingCount", bookingCount);
-        model.addAttribute("listBookings", allRecentBookings); // <-- GỬI DỮ LIỆU MỚI
+
+        model.addAttribute("statPending", countPending);
+        model.addAttribute("statConfirmed", countConfirmed);
+        model.addAttribute("statCompleted", countCompleted);
+        model.addAttribute("statCancelled", countCancelled);
+
+        List<Booking> allRecentBookings = bookingRepository.findAllByOrderByCreatedAtDesc();
+        model.addAttribute("listBookings", allRecentBookings);
+
         return "admin/dashboard";
     }
 

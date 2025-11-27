@@ -37,6 +37,9 @@ public class User {
 
     private String phone;
     private String avatar;
+    // === BỔ SUNG TRƯỜNG NÀY NẾU THIẾU ===
+    @Column(name = "gender")
+    private String gender; // Nam / Nữ
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

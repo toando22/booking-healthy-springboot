@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{admin/include/header :: header (title='Thực hiện Khám bệnh')}"></th:block>
+</head>
+<body>
+<th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+<th:block th:replace="~{doctor/include/sidebar :: sidebar}"></th:block>
+
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Bệnh án Điện tử</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/doctor/examinations}">Danh sách khám</a></li>
+        <li class="breadcrumb-item active">Nhập liệu</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section">
+    <div class="row">
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+            <img th:src="@{/assets/img/default-user.png}" alt="Profile" class="rounded-circle mb-3" style="width: 100px;">
+
+            <h5 class="fw-bold text-primary" th:text="${booking.user.fullName}">Nguyen Van A</h5>
+            <div class="text-muted small mb-2" th:text="${booking.user.email}">email@example.com</div>
+
+            <hr class="w-100">
+
+            <div class="w-100 text-start">
+              <p><strong><i class="bi bi-telephone me-2"></i>SĐT:</strong> <span th:text="${booking.user.phone}"></span></p>
+              <p><strong><i class="bi bi-gender-ambiguous me-2"></i>Giới tính:</strong> <span th:text="${booking.user.gender}"></span></p>
+              <p><strong><i class="bi bi-calendar-event me-2"></i>Ngày hẹn:</strong> <span th:text="${#temporals.format(booking.appointmentDate, 'dd/MM/yyyy')}"></span></p>
+              <p><strong><i class="bi bi-clock me-2"></i>Giờ hẹn:</strong> <span class="badge bg-info text-dark" th:text="${booking.appointmentTime}"></span></p>
+
+              <div class="alert alert-warning mt-3">
+                <i class="bi bi-chat-quote-fill me-1"></i> <strong>Lý do khám:</strong><br>
+                <span th:text="${booking.notes != null && !booking.notes.isEmpty() ? booking.notes : 'Không có mô tả'}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0 text-white"><i class="bi bi-file-medical me-2"></i>Phiếu Kết Quả Khám</h5>
+          </div>
+          <div class="card-body pt-4">
+
+            <form th:action="@{/doctor/medical-record/save}" method="post">
+              <input type="hidden" name="bookingId" th:value="${booking.id}">
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">1. Triệu chứng lâm sàng <span class="text-danger">*</span></label>
+                <textarea name="symptoms" class="form-control" rows="3" placeholder="Mô tả các triệu chứng bệnh nhân khai báo và bác sĩ quan sát được..." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">2. Chẩn đoán kết luận <span class="text-danger">*</span></label>
+                <textarea name="diagnosis" class="form-control" rows="2" placeholder="Kết luận bệnh..." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">3. Đơn thuốc & Chỉ định điều trị</label>
+                <textarea name="prescription" class="form-control" rows="5" placeholder="- Tên thuốc, hàm lượng, số lượng, cách dùng..."></textarea>
+                <div class="form-text">Ghi rõ tên thuốc và hướng dẫn sử dụng.</div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-bold">4. Lời dặn & Hẹn tái khám</label>
+                <textarea name="doctorNotes" class="form-control" rows="2" placeholder="Chế độ ăn uống, nghỉ ngơi, ngày tái khám..."></textarea>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <a th:href="@{/doctor/examinations}" class="btn btn-secondary">
+                  <i class="bi bi-arrow-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Xác nhận hoàn tất khám và lưu hồ sơ? Hành động này không thể hoàn tác.')">
+                  <i class="bi bi-check-circle me-1"></i> Hoàn tất & Lưu Hồ sơ
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+<th:block th:replace="~{admin/include/footer :: footer}"></th:block>
+</body>
+</html>
