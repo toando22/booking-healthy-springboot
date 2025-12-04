@@ -23,6 +23,14 @@
     </li>
 
     <li class="nav-item">
+      <a class="nav-link collapsed" th:href="@{/doctor/manage-bookings}"
+         th:classappend="${activePage == 'manage-bookings' ? 'active' : ''}">
+        <i class="bi bi-table"></i>
+        <span>Quản lý Tất cả Lịch</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
       <a class="nav-link collapsed" th:href="@{/doctor/schedule-register}"
          th:classappend="${activePage == 'schedule' ? 'active' : ''}">
         <i class="bi bi-calendar-check"></i>

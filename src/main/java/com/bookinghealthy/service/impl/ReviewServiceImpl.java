@@ -9,6 +9,7 @@ import com.bookinghealthy.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,5 +61,42 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Long countReviews(Long doctorId) {
         return reviewRepository.countReviews(doctorId);
+    }
+
+    @Override
+    public List<Review> getRecentReviews(Long doctorId) {
+        return reviewRepository.findTop5ByBooking_Doctor_IdOrderByCreatedAtDesc(doctorId);
+    }
+
+    @Override
+    public List<Integer> getRatingDistribution(Long doctorId) {
+        List<Integer> distribution = new ArrayList<>();
+        // Đếm từ 5 sao xuống 1 sao
+        for (int i = 5; i >= 1; i--) {
+            Long count = reviewRepository.countByBooking_Doctor_IdAndRating(doctorId, i);
+            distribution.add(count != null ? count.intValue() : 0);
+        }
+        return distribution; // Kết quả: [SL 5 sao, SL 4 sao, ..., SL 1 sao]
+    }
+
+    @Override
+    public List<Review> getRecentGlobalReviews() {
+        return reviewRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Integer> getGlobalRatingDistribution() {
+        List<Integer> distribution = new ArrayList<>();
+        for (int i = 5; i >= 1; i--) { // Đếm từ 5 sao xuống 1 sao
+            Long count = reviewRepository.countByRating(i);
+            distribution.add(count != null ? count.intValue() : 0);
+        }
+        return distribution;
+    }
+
+    @Override
+    public Double getGlobalAverageRating() {
+        Double avg = reviewRepository.getGlobalAverageRating();
+        return avg != null ? Math.round(avg * 10.0) / 10.0 : 0.0;
     }
 }

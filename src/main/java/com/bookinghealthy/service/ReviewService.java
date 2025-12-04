@@ -16,4 +16,12 @@ public interface ReviewService {
     Double getAverageRating(Long doctorId);
 
     Long countReviews(Long doctorId);
+
+    // Thêm vào ReviewService
+    List<Review> getRecentReviews(Long doctorId);
+    List<Integer> getRatingDistribution(Long doctorId); // Trả về list [số lượng 5 sao, 4 sao, ...]
+
+    List<Review> getRecentGlobalReviews();
+    List<Integer> getGlobalRatingDistribution();
+    Double getGlobalAverageRating();
 }

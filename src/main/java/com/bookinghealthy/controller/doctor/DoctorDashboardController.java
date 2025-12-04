@@ -1,11 +1,8 @@
 package com.bookinghealthy.controller.doctor;
 
 import com.bookinghealthy.model.*;
-import com.bookinghealthy.repository.BookingRepository; // Dùng BookingRepository
-import com.bookinghealthy.service.BookingService;
-import com.bookinghealthy.service.DoctorBlockTimeService;
-import com.bookinghealthy.service.DoctorService;
-import com.bookinghealthy.service.EmailService;
+import com.bookinghealthy.repository.BookingRepository;
+import com.bookinghealthy.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,21 +15,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/doctor") // Đường dẫn gốc cho Bác sĩ
+@RequestMapping("/doctor")
 public class DoctorDashboardController {
 
     @Autowired
     private DoctorService doctorService;
 
     @Autowired
-    private BookingRepository bookingRepository; // Dùng Repository để gọi hàm findByDoctor
+    private BookingRepository bookingRepository;
 
     @Autowired
-    private BookingService bookingService; // Dùng Service để Save
+    private BookingService bookingService;
 
     @Autowired
     private EmailService emailService;
@@ -40,49 +37,123 @@ public class DoctorDashboardController {
     @Autowired
     private DoctorBlockTimeService doctorBlockTimeService;
 
-    // Hàm trợ giúp: Lấy Doctor entity từ User đang đăng nhập
+    @Autowired
+    private ReviewService reviewService; // Service lấy đánh giá
+
+    // Helper: Lấy bác sĩ hiện tại
     private Doctor getLoggedInDoctor(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return doctorService.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Doctor not found for current user"));
     }
 
-    // 1. HIỂN THỊ DANH SÁCH LỊCH HẸN (CHO BÁC SĨ)
-    // === NÂNG CẤP DASHBOARD ===
+    // ============================================================
+    // 1. DASHBOARD CHÍNH (ĐÃ SỬA: GOM NHÓM LỊCH + FILTER NGÀY)
+    // ============================================================
     @GetMapping("/dashboard")
-    public String doctorDashboard(Model model, Authentication authentication) {
+    public String doctorDashboard(
+            @RequestParam(value = "range", defaultValue = "7") String range,
+            Model model,
+            Authentication authentication) {
+
         Doctor currentDoctor = getLoggedInDoctor(authentication);
 
-        // 1. Lấy danh sách Booking của bác sĩ này
-        List<Booking> myBookings = bookingRepository.findByDoctor(currentDoctor);
-
-        // 2. TÍNH TOÁN SỐ LIỆU THỐNG KÊ (Dùng Stream API cho nhanh)
-        long countPending = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.PENDING).count();
-        long countConfirmed = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.CONFIRMED).count();
-        long countCompleted = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.COMPLETED).count();
-        long countCancelled = myBookings.stream().filter(b -> b.getStatus() == BookingStatus.CANCELED).count();
-
-        // Tính số khách hôm nay (Confirmed + Today)
+        // --- A. XỬ LÝ BỘ LỌC THỜI GIAN ---
         LocalDate today = LocalDate.now();
-        long countToday = myBookings.stream()
+        LocalDate startDate;
+
+        if ("30".equals(range)) {
+            startDate = today.minusDays(30);
+        } else if ("all".equals(range)) {
+            startDate = LocalDate.of(2000, 1, 1);
+        } else {
+            startDate = today.minusDays(7); // Mặc định 7 ngày
+        }
+
+        // --- B. LẤY SỐ LIỆU THỐNG KÊ ---
+        List<Booking> allBookings = bookingRepository.findByDoctor(currentDoctor);
+
+        // Lọc danh sách theo ngày để tính toán cho Biểu đồ
+        List<Booking> filteredBookings = allBookings.stream()
+                .filter(b -> !b.getAppointmentDate().isBefore(startDate) && !b.getAppointmentDate().isAfter(today))
+                .collect(Collectors.toList());
+
+        long countPending = filteredBookings.stream().filter(b -> b.getStatus() == BookingStatus.PENDING).count();
+        long countConfirmed = filteredBookings.stream().filter(b -> b.getStatus() == BookingStatus.CONFIRMED).count();
+        long countCompleted = filteredBookings.stream().filter(b -> b.getStatus() == BookingStatus.COMPLETED).count();
+        long countCancelled = filteredBookings.stream().filter(b -> b.getStatus() == BookingStatus.CANCELED).count();
+
+        // Khách hôm nay (Luôn lấy theo ngày thực tế)
+        long countToday = allBookings.stream()
                 .filter(b -> b.getAppointmentDate().equals(today) && b.getStatus() == BookingStatus.CONFIRMED)
                 .count();
 
-        // 3. Gửi số liệu ra View
         model.addAttribute("countPending", countPending);
         model.addAttribute("countConfirmed", countConfirmed);
         model.addAttribute("countCompleted", countCompleted);
         model.addAttribute("countCancelled", countCancelled);
         model.addAttribute("countToday", countToday);
+        model.addAttribute("currentRange", range);
 
-        // Gửi danh sách (để hiện bảng bên dưới)
-        model.addAttribute("listBookings", myBookings);
-        model.addAttribute("activePage", "dashboard"); // Để highlight sidebar
+        // --- C. WIDGET: ĐÁNH GIÁ MỚI NHẤT ---
+        // 4. LẤY DỮ LIỆU ĐÁNH GIÁ (THÊM ĐOẠN NÀY)
+        // a. Đánh giá mới nhất (Đã có)
+        List<Review> recentReviews = reviewService.getRecentReviews(currentDoctor.getId());
 
+        // b. Điểm trung bình (MỚI)
+        Double avgRating = reviewService.getAverageRating(currentDoctor.getId());
+
+        // c. Phân bố sao (MỚI - Để vẽ biểu đồ)
+        List<Integer> ratingDist = reviewService.getRatingDistribution(currentDoctor.getId());
+
+        // ... (Code lấy lịch trực giữ nguyên) ...
+
+        // Gửi ra Model
+        model.addAttribute("recentReviews", recentReviews);
+        model.addAttribute("avgRating", avgRating); // <-- Gửi điểm TB
+        model.addAttribute("ratingDist", ratingDist); // <-- Gửi dữ liệu biểu đồ
+
+        // --- D. WIDGET: LỊCH TRỰC (LOGIC MỚI: GOM NHÓM THEO THỨ) ---
+        List<Schedule> rawSchedule = doctorService.getDoctorSchedules(currentDoctor.getId());
+
+        // Sử dụng LinkedHashMap để giữ thứ tự Thứ 2 -> CN
+        Map<String, List<Schedule>> weeklyScheduleMap = new LinkedHashMap<>();
+
+        DayOfWeek[] days = {
+                DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY
+        };
+
+        for (DayOfWeek day : days) {
+            // Lấy các ca của ngày này và sắp xếp theo giờ
+            List<Schedule> shifts = rawSchedule.stream()
+                    .filter(s -> s.getDayOfWeek() == day)
+                    .sorted(Comparator.comparing(Schedule::getStartTime))
+                    .collect(Collectors.toList());
+
+            if (!shifts.isEmpty()) {
+                // Convert Enum sang Tiếng Việt làm Key cho Map
+                String dayName = switch (day) {
+                    case MONDAY -> "Thứ 2";
+                    case TUESDAY -> "Thứ 3";
+                    case WEDNESDAY -> "Thứ 4";
+                    case THURSDAY -> "Thứ 5";
+                    case FRIDAY -> "Thứ 6";
+                    case SATURDAY -> "Thứ 7";
+                    case SUNDAY -> "Chủ nhật";
+                };
+                weeklyScheduleMap.put(dayName, shifts);
+            }
+        }
+        model.addAttribute("weeklyScheduleMap", weeklyScheduleMap);
+
+        model.addAttribute("activePage", "dashboard");
         return "doctor/dashboard";
     }
 
-    // 2. BÁC SĨ XÁC NHẬN LỊCH
+    // ============================================================
+    // 2. XỬ LÝ LỊCH HẸN (CONFIRM / CANCEL)
+    // ============================================================
     @GetMapping("/bookings/confirm/{id}")
     public String confirmBooking(@PathVariable("id") Long id, Authentication authentication, RedirectAttributes ra) {
         try {
@@ -90,7 +161,6 @@ public class DoctorDashboardController {
             Booking booking = bookingService.findById(id)
                     .orElseThrow(() -> new Exception("Không tìm thấy Lịch hẹn"));
 
-            // Check bảo mật: Đảm bảo Bác sĩ này đúng là chủ của lịch hẹn
             if (!booking.getDoctor().getId().equals(currentDoctor.getId())) {
                 ra.addFlashAttribute("errorMessage", "Lỗi: Bạn không có quyền xác nhận lịch hẹn này.");
                 return "redirect:/doctor/dashboard";
@@ -98,18 +168,17 @@ public class DoctorDashboardController {
 
             booking.setStatus(BookingStatus.CONFIRMED);
             bookingService.save(booking);
-
-            emailService.sendBookingConfirmation(booking); // Gửi mail cho Bệnh nhân
-
+            emailService.sendBookingConfirmation(booking);
             ra.addFlashAttribute("successMessage", "Đã xác nhận lịch hẹn thành công.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/doctor/dashboard";
+        // Redirect về trang trước đó (nếu gọi từ Dashboard hoặc Booking Request)
+        // Ở đây mặc định về Dashboard hoặc Booking Requests đều ổn
+        return "redirect:/doctor/booking-requests";
     }
 
-    // === THAY THẾ TOÀN BỘ HÀM NÀY ===
-    @Transactional // <-- THÊM ANNOTATION NÀY Chúng ta sẽ "bảo" 2 hàm "Hủy lịch" phải giữ "phiên" (session) database mở cho đến khi EmailService được gọi xong.
+    @Transactional
     @GetMapping("/bookings/cancel/{id}")
     public String cancelBooking(@PathVariable("id") Long id, Authentication authentication, RedirectAttributes ra) {
         try {
@@ -124,22 +193,19 @@ public class DoctorDashboardController {
 
             booking.setStatus(BookingStatus.CANCELED);
             bookingService.save(booking);
-
-            // Kích hoạt gửi mail báo HỦY cho Bệnh nhân
-            String reason = "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã từ chối lịch hẹn (có thể do lịch bận đột xuất).";
+            String reason = "Bác sĩ " + currentDoctor.getUser().getFullName() + " đã từ chối lịch hẹn (do lịch bận đột xuất).";
             emailService.sendBookingCancellation(booking, reason);
-
             ra.addFlashAttribute("successMessage", "Đã từ chối lịch hẹn thành công.");
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/doctor/dashboard";
+        return "redirect:/doctor/booking-requests";
     }
+
     // ============================================================
-    // === PHẦN QUẢN LÝ LỊCH TRỰC & GIỜ BẬN (ĐÃ SỬA CHỮA) ===
+    // 3. QUẢN LÝ LỊCH TRỰC & GIỜ BẬN
     // ============================================================
 
-    // 1. Hiển thị trang Đăng ký
     @GetMapping("/schedule-register")
     public String showScheduleRegister(
             @RequestParam(value = "selectedDate", required = false) LocalDate selectedDate,
@@ -148,30 +214,23 @@ public class DoctorDashboardController {
 
         Doctor currentDoctor = getLoggedInDoctor(authentication);
 
-        // Mặc định là hôm nay nếu không chọn
         if (selectedDate == null) {
             selectedDate = LocalDate.now();
         }
 
-        // Thông tin ngày/thứ
         DayOfWeek dayOfWeek = selectedDate.getDayOfWeek();
-
-        // Lấy lịch ĐỊNH KỲ
         List<Schedule> mySchedules = doctorService.getDoctorSchedules(currentDoctor.getId());
-
-        // Lấy lịch BẬN ĐỘT XUẤT (Sửa lỗi hiển thị: Lấy Entity thay vì String)
         List<DoctorBlockTime> myBlockTimes = doctorBlockTimeService.getBlockedSlotsForDoctorAndDate(currentDoctor.getId(), selectedDate);
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("dayOfWeek", dayOfWeek);
         model.addAttribute("mySchedules", mySchedules);
-        model.addAttribute("myBlockTimes", myBlockTimes); // Tên biến khớp với HTML
+        model.addAttribute("myBlockTimes", myBlockTimes);
         model.addAttribute("activePage", "schedule");
 
         return "doctor/schedule-register";
     }
 
-    // 2. Xử lý Đăng ký Lịch Thường xuyên
     @PostMapping("/schedule/create")
     public String createSchedule(
             @RequestParam("dayOfWeek") String dayOfWeek,
@@ -190,7 +249,6 @@ public class DoctorDashboardController {
         return "redirect:/doctor/schedule-register";
     }
 
-    // 3. Xử lý Chặn Giờ Đột Xuất
     @PostMapping("/schedule/block")
     public String blockSchedule(
             @RequestParam("blockDate") LocalDate blockDate,
@@ -216,12 +274,10 @@ public class DoctorDashboardController {
             ra.addFlashAttribute("successMessage", "Đã chặn khung giờ thành công!");
         }
 
-        // Redirect kèm ngày để giữ nguyên view
         ra.addAttribute("selectedDate", blockDate);
         return "redirect:/doctor/schedule-register";
     }
 
-    // 4. Xóa lịch Thường xuyên
     @GetMapping("/schedule/delete/{id}")
     public String deleteSchedule(@PathVariable("id") Long id, RedirectAttributes ra) {
         doctorService.deleteSchedule(id);
@@ -229,12 +285,10 @@ public class DoctorDashboardController {
         return "redirect:/doctor/schedule-register";
     }
 
-    // 5. Gỡ Chặn Giờ Đột Xuất
     @GetMapping("/schedule/unblock/{id}")
     public String unblockSchedule(@PathVariable("id") Long id, @RequestParam("date") LocalDate date, RedirectAttributes ra) {
         doctorBlockTimeService.unblockTime(id);
         ra.addFlashAttribute("successMessage", "Đã gỡ chặn khung giờ.");
-
         ra.addAttribute("selectedDate", date);
         return "redirect:/doctor/schedule-register";
     }

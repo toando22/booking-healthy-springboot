@@ -67,11 +67,19 @@
                 <span>Danh sách Ứng viên</span>
             </a>
         </li>
+        <li class="nav-heading">Cá nhân</li>
+
         <li class="nav-item">
-            <a class="nav-link collapsed" th:href="@{/doctor/examinations}"
-               th:classappend="${activePage == 'examinations' ? 'active' : ''}">
-                <i class="bi bi-clipboard2-pulse"></i>
-                <span>Lịch khám bệnh</span>
+            <a class="nav-link collapsed" th:href="@{/profile}">
+                <i class="bi bi-person"></i>
+                <span>Hồ sơ cá nhân</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Đăng xuất</span>
             </a>
         </li>
     </ul>

@@ -1,11 +1,9 @@
 package com.bookinghealthy.controller.admin;
 
-import com.bookinghealthy.model.Booking;
-import com.bookinghealthy.model.BookingStatus;
-import com.bookinghealthy.model.Role;
-import com.bookinghealthy.model.User;
+import com.bookinghealthy.model.*;
 import com.bookinghealthy.repository.BookingRepository;
 import com.bookinghealthy.repository.RoleRepository;
+import com.bookinghealthy.service.ReviewService;
 import com.bookinghealthy.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ public class AdminController {
     @Autowired private RoleRepository roleRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    @Autowired private ReviewService reviewService; // <-- Inject Review Service
+
     // === THÊM REPO NÀY ĐỂ ĐẾM ===
     @Autowired
     private BookingRepository bookingRepository;
@@ -52,6 +52,19 @@ public class AdminController {
         long countCompleted = bookingRepository.countByStatus(BookingStatus.COMPLETED);
         long countCancelled = bookingRepository.countByStatus(BookingStatus.CANCELED);
 
+        // 3. SỐ LIỆU ĐÁNH GIÁ (MỚI)
+        // a. Đánh giá mới nhất (Toàn hệ thống)
+        List<Review> recentGlobalReviews = reviewService.getRecentGlobalReviews();
+
+        // b. Phân bố sao (5 sao, 4 sao...)
+        List<Integer> globalRatingDist = reviewService.getGlobalRatingDistribution();
+
+        // c. Điểm trung bình toàn hệ thống
+        Double globalAvgRating = reviewService.getGlobalAverageRating();
+
+        // 4. DANH SÁCH LỊCH HẸN (CŨ)
+        List<Booking> allRecentBookings = bookingRepository.findAllByOrderByCreatedAtDesc();
+
         // Gửi số liệu ra view
         model.addAttribute("patientCount", patientCount);
         model.addAttribute("doctorCount", doctorCount);
@@ -62,7 +75,11 @@ public class AdminController {
         model.addAttribute("statCompleted", countCompleted);
         model.addAttribute("statCancelled", countCancelled);
 
-        List<Booking> allRecentBookings = bookingRepository.findAllByOrderByCreatedAtDesc();
+        // Stats cho đánh giá
+        model.addAttribute("recentReviews", recentGlobalReviews);
+        model.addAttribute("ratingDist", globalRatingDist);
+        model.addAttribute("avgRating", globalAvgRating);
+
         model.addAttribute("listBookings", allRecentBookings);
 
         return "admin/dashboard";

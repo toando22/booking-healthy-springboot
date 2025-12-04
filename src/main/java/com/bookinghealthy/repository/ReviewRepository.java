@@ -27,4 +27,23 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Đếm tổng số đánh giá của bác sĩ
     @Query("SELECT COUNT(r) FROM Review r WHERE r.booking.doctor.id = :doctorId")
     Long countReviews(@Param("doctorId") Long doctorId);
+
+    // 1. Lấy 5 đánh giá mới nhất của Bác sĩ (Để hiện Widget góc phải)
+    List<Review> findTop5ByBooking_Doctor_IdOrderByCreatedAtDesc(Long doctorId);
+
+    // 2. Đếm số lượng đánh giá theo số sao (Để vẽ biểu đồ)
+    // Ví dụ: Đếm xem bác sĩ có bao nhiêu đánh giá 5 sao
+    Long countByBooking_Doctor_IdAndRating(Long doctorId, Integer rating);
+
+    // Trong ReviewRepository.java
+
+    // 1. Lấy 5 đánh giá mới nhất của TOÀN HỆ THỐNG
+    List<Review> findTop5ByOrderByCreatedAtDesc();
+
+    // 2. Đếm số lượng đánh giá theo số sao (Toàn hệ thống)
+    Long countByRating(Integer rating);
+
+    // 3. Tính điểm trung bình sao (Toàn hệ thống)
+    @Query("SELECT AVG(r.rating) FROM Review r")
+    Double getGlobalAverageRating();
 }
