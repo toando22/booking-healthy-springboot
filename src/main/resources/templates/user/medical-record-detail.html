@@ -237,9 +237,11 @@
             <div class="row mb-4">
               <div class="col-md-6">
                 <h6 class="section-title">Thông tin Bệnh nhân</h6>
-                <p class="mb-1"><span class="info-label">Họ tên:</span> <span th:text="${booking.user.fullName}"></span></p>
-                <p class="mb-1"><span class="info-label">SĐT:</span> <span th:text="${booking.user.phone}"></span></p>
-                <p class="mb-1" th:if="${booking.user.gender != null}">
+                <p class="mb-1"><span class="info-label">Họ tên:</span> <span th:text="${booking.patientName}"></span></p>
+
+                <p class="mb-1"><span class="info-label">SĐT:</span> <span th:text="${booking.patientPhone}"></span></p>
+
+                <p class="mb-1" th:if="${booking.user.gender != null && booking.patientName == booking.user.fullName}">
                   <span class="info-label">Giới tính:</span> <span th:text="${booking.user.gender}"></span>
                 </p>
               </div>

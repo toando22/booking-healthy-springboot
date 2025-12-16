@@ -13,6 +13,17 @@
             <input type="text" name="username" class="form-control mb-3" placeholder="Tên đăng nhập hoặc Email" required>
             <input type="password" name="password" class="form-control mb-3" placeholder="Mật khẩu" required>
             <button class="btn btn-success w-100">Đăng nhập</button>
+            <!-- Trong form login, thêm đoạn này vào dưới nút Đăng nhập -->
+
+            <div class="text-center mt-3">
+                <p class="text-muted small">Hoặc đăng nhập bằng</p>
+                <a href="/oauth2/authorization/google" class="btn btn-outline-danger w-100">
+                    <i class="bi bi-google me-2"></i> Google
+                </a>
+                <a href="/oauth2/authorization/facebook" class="btn btn-outline-primary w-100 mt-2">
+                    <i class="bi bi-facebook me-2"></i> Facebook
+                </a>
+            </div>
         </form>
         <p class="text-center mt-3">Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a></p>
     </div>

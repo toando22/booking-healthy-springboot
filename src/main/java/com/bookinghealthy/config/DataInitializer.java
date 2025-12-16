@@ -44,36 +44,40 @@ public class DataInitializer implements CommandLineRunner {
             String passABC = passwordEncoder.encode("abc123!@#");
             String adminPass = passwordEncoder.encode("admin123");
 
-            // 3. Tạo Users (ĐÃ THÊM GIỚI TÍNH)
-            // Cấu trúc: new User(id, username, email, password, fullName, phone, avatar, GENDER, roles)
+            // 3. Tạo Users (ĐÃ THÊM BIGDECIMAL.ZERO Ở CUỐI)
+            // Cấu trúc: new User(id, username, email, pass, name, phone, avatar, gender, provider, roles, BALANCE)
 
-            User admin = new User(null, "admin", "admin@gmail.com", adminPass, "Administrator", "0900000000", null, "Nam", Set.of(adminRole));
-            User patientTom = new User(null, "patient_tom", "tom@gmail.com", pass123, "Tom Patient", "0900000001", null, "Nam", Set.of(userRole));
-            User testSang = new User(null, "testsang31", "testsang31@gmail.com", passABC, "Test Sang 31", "0900000002", null, "Nam", Set.of(userRole));
+            // ADMIN
+            User admin = new User(null, "admin", "admin@gmail.com", adminPass, "Administrator", "0900000000", null, "Nam", AuthProvider.LOCAL, Set.of(adminRole), BigDecimal.ZERO);
 
+            // USER THƯỜNG
+            User patientTom = new User(null, "patient_tom", "tom@gmail.com", pass123, "Tom Patient", "0900000001", null, "Nam", AuthProvider.LOCAL, Set.of(userRole), BigDecimal.ZERO);
+            User testSang = new User(null, "testsang31", "testsang31@gmail.com", passABC, "Test Sang 31", "0900000002", null, "Nam", AuthProvider.LOCAL, Set.of(userRole), BigDecimal.ZERO);
+
+            // DANH SÁCH BÁC SĨ
             List<User> doctorUsers = List.of(
-                    new User(null, "doctor_walter", "walter@gmail.com", pass123, "Walter White", "0912345678", "doctor-1.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "doctor_sarah", "sarah@gmail.com", pass123, "Sarah Connor", "0987654321", "doctor-2.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_thuha", "thuha.nguyen@example.com", pass123, "Nguyễn Thị Thu Hà", "0905123456", "doctor-3.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_quangdung", "quangdung.tran@example.com", pass123, "Trần Quang Dũng", "0978123456", "doctor-4.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_minhtuan", "minhtuan.le@example.com", pass123, "Lê Minh Tuấn", "0912349876", "doctor-5.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_hongnhung", "hongnhung.pham@example.com", pass123, "Phạm Hồng Nhung", "0932123456", "doctor-6.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_lananh", "lananh.do@example.com", pass123, "Đỗ Thị Lan Anh", "0988123123", "doctor-7.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_vanquan", "vanquan.nguyen@example.com", pass123, "Nguyễn Văn Quân", "0966668888", "doctor-8.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_congphu", "congphu.truong@example.com", pass123, "Trương Công Phú", "0912445566", "doctor-9.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_luuthimai", "luuthimai@example.com", pass123, "Lưu Thị Mai", "0977554433", "doctor-10.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_huuduc", "huuduc.phan@example.com", pass123, "Phan Hữu Đức", "0912333444", "doctor-11.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_kimlien", "kimlien.vu@example.com", pass123, "Vũ Thị Kim Liên", "0908222333", "doctor-12.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_huukhanh", "huukhanh.nguyen@example.com", pass123, "Nguyễn Hữu Khánh", "0977445566", "doctor-13.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_thaodang", "thaodang@example.com", pass123, "Đặng Thanh Thảo", "0912999888", "doctor-14.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_quoccuong", "quoccuong.bui@example.com", pass123, "Bùi Quốc Cường", "0935667788", "doctor-15.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_thihanh", "thihanh.nguyen@example.com", pass123, "Nguyễn Thị Hạnh", "0988665544", "doctor-16.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_vanhau", "vanhau.pham@example.com", pass123, "Phạm Văn Hậu", "0909777555", "doctor-17.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_baongoc", "baongoc.tran@example.com", pass123, "Trần Bảo Ngọc", "0932111777", "doctor-18.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_vanson", "vanson.doan@example.com", pass123, "Đoàn Văn Sơn", "0977000111", "doctor-19.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_hothihuong", "hothihuong@example.com", pass123, "Hồ Thị Hương", "0918000222", "doctor-20.jpg", "Nữ", Set.of(doctorRole)),
-                    new User(null, "bs_lamanhdung", "lamanhdung@example.com", pass123, "Lâm Anh Dũng", "0933444555", "doctor-21.jpg", "Nam", Set.of(doctorRole)),
-                    new User(null, "bs_thanhtam", "thanhtam.nguyen@example.com", pass123, "Nguyễn Thanh Tâm", "0909666777", "doctor-22.jpg", "Nữ", Set.of(doctorRole))
+                    new User(null, "doctor_walter", "walter@gmail.com", pass123, "Walter White", "0912345678", "doctor-1.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "doctor_sarah", "sarah@gmail.com", pass123, "Sarah Connor", "0987654321", "doctor-2.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_thuha", "thuha.nguyen@example.com", pass123, "Nguyễn Thị Thu Hà", "0905123456", "doctor-3.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_quangdung", "quangdung.tran@example.com", pass123, "Trần Quang Dũng", "0978123456", "doctor-4.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_minhtuan", "minhtuan.le@example.com", pass123, "Lê Minh Tuấn", "0912349876", "doctor-5.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_hongnhung", "hongnhung.pham@example.com", pass123, "Phạm Hồng Nhung", "0932123456", "doctor-6.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_lananh", "lananh.do@example.com", pass123, "Đỗ Thị Lan Anh", "0988123123", "doctor-7.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_vanquan", "vanquan.nguyen@example.com", pass123, "Nguyễn Văn Quân", "0966668888", "doctor-8.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_congphu", "congphu.truong@example.com", pass123, "Trương Công Phú", "0912445566", "doctor-9.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_luuthimai", "luuthimai@example.com", pass123, "Lưu Thị Mai", "0977554433", "doctor-10.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_huuduc", "huuduc.phan@example.com", pass123, "Phan Hữu Đức", "0912333444", "doctor-11.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_kimlien", "kimlien.vu@example.com", pass123, "Vũ Thị Kim Liên", "0908222333", "doctor-12.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_huukhanh", "huukhanh.nguyen@example.com", pass123, "Nguyễn Hữu Khánh", "0977445566", "doctor-13.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_thaodang", "thaodang@example.com", pass123, "Đặng Thanh Thảo", "0912999888", "doctor-14.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_quoccuong", "quoccuong.bui@example.com", pass123, "Bùi Quốc Cường", "0935667788", "doctor-15.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_thihanh", "thihanh.nguyen@example.com", pass123, "Nguyễn Thị Hạnh", "0988665544", "doctor-16.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_vanhau", "vanhau.pham@example.com", pass123, "Phạm Văn Hậu", "0909777555", "doctor-17.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_baongoc", "baongoc.tran@example.com", pass123, "Trần Bảo Ngọc", "0932111777", "doctor-18.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_vanson", "vanson.doan@example.com", pass123, "Đoàn Văn Sơn", "0977000111", "doctor-19.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_hothihuong", "hothihuong@example.com", pass123, "Hồ Thị Hương", "0918000222", "doctor-20.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_lamanhdung", "lamanhdung@example.com", pass123, "Lâm Anh Dũng", "0933444555", "doctor-21.jpg", "Nam", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO),
+                    new User(null, "bs_thanhtam", "thanhtam.nguyen@example.com", pass123, "Nguyễn Thanh Tâm", "0909666777", "doctor-22.jpg", "Nữ", AuthProvider.LOCAL, Set.of(doctorRole), BigDecimal.ZERO)
             );
 
             userRepository.save(admin);
@@ -81,7 +85,7 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(testSang);
             List<User> savedDoctorUsers = userRepository.saveAll(doctorUsers);
 
-            // 4. Tạo Departments (Code Java)
+            // 4. Tạo Departments (Giữ nguyên)
             List<Department> departments = List.of(
                     new Department(null, "Tim mạch", "Chuyên thăm khám...", "dept-1.jpg"),
                     new Department(null, "Nội thần kinh", "Chuyên điều trị đột quỵ...", "dept-2.jpg"),
@@ -111,7 +115,7 @@ public class DataInitializer implements CommandLineRunner {
             Map<String, Department> departmentsMap = departmentRepository.findAll().stream()
                     .collect(Collectors.toMap(Department::getName, dept -> dept));
 
-            // 5. Tạo List Bios
+            // 5. Tạo List Bios (Giữ nguyên)
             List<String> bios = List.of(
                     "Tiến sĩ, Bác sĩ chuyên khoa Tim mạch...", "Thạc sĩ, Bác sĩ chuyên khoa Nội thần kinh...", "Bác sĩ Nguyễn Thị Thu Hà – chuyên khoa Nhi...",
                     "Bác sĩ Trần Quang Dũng – chuyên khoa Da liễu...", "Bác sĩ Lê Minh Tuấn – hơn 15 năm kinh nghiệm...", "Bác sĩ Phạm Hồng Nhung – chuyên khoa Mắt...",
@@ -123,7 +127,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Bác sĩ Nguyễn Thanh Tâm – hơn 11 năm kinh nghiệm..."
             );
 
-            // 6. Tạo Doctors với Bằng cấp và Giá
+            // 6. Tạo Doctors (Giữ nguyên)
             List<Doctor> doctorsToSave = new ArrayList<>();
             doctorsToSave.add(new Doctor(null, savedDoctorUsers.get(0), departmentsMap.get("Tim mạch"), bios.get(0), 15, "Tiến sĩ", new BigDecimal("500000")));
             doctorsToSave.add(new Doctor(null, savedDoctorUsers.get(1), departmentsMap.get("Nội thần kinh"), bios.get(1), 10, "Thạc sĩ", new BigDecimal("400000")));
@@ -159,7 +163,7 @@ public class DataInitializer implements CommandLineRunner {
 
             scheduleRepository.saveAll(List.of(s1, s2, s3, s4, s5));
 
-            System.out.println(">>> KHỞI TẠO DỮ LIỆU JAVA HOÀN TẤT (ĐÃ SỬA LỖI EMAIL & THÊM GIỚI TÍNH) <<<");
+            System.out.println(">>> KHỞI TẠO DỮ LIỆU JAVA HOÀN TẤT (ĐÃ THÊM BIGDECIMAL) <<<");
         }
     }
 }

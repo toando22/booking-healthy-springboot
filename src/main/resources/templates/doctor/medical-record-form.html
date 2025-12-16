@@ -26,15 +26,21 @@
         <div class="card">
           <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-            <img th:src="@{/assets/img/default-user.png}" alt="Profile" class="rounded-circle mb-3" style="width: 100px;">
+            <h5 class="fw-bold text-primary" th:text="${booking.patientName}">Tên Bệnh Nhân</h5>
 
-            <h5 class="fw-bold text-primary" th:text="${booking.user.fullName}">Nguyen Van A</h5>
-            <div class="text-muted small mb-2" th:text="${booking.user.email}">email@example.com</div>
+            <div th:if="${booking.patientName != booking.user.fullName}" class="text-muted small mb-2">
+              (Đặt bởi: <span th:text="${booking.user.fullName}"></span>)
+            </div>
 
             <hr class="w-100">
 
             <div class="w-100 text-start">
-              <p><strong><i class="bi bi-telephone me-2"></i>SĐT:</strong> <span th:text="${booking.user.phone}"></span></p>
+              <p><strong><i class="bi bi-telephone me-2"></i>SĐT:</strong> <span th:text="${booking.patientPhone}"></span></p>
+
+              <p th:if="${booking.patientName == booking.user.fullName}">
+                <strong><i class="bi bi-gender-ambiguous me-2"></i>Giới tính:</strong>
+                <span th:text="${booking.user.gender}"></span>
+              </p>
               <p><strong><i class="bi bi-gender-ambiguous me-2"></i>Giới tính:</strong> <span th:text="${booking.user.gender}"></span></p>
               <p><strong><i class="bi bi-calendar-event me-2"></i>Ngày hẹn:</strong> <span th:text="${#temporals.format(booking.appointmentDate, 'dd/MM/yyyy')}"></span></p>
               <p><strong><i class="bi bi-clock me-2"></i>Giờ hẹn:</strong> <span class="badge bg-info text-dark" th:text="${booking.appointmentTime}"></span></p>

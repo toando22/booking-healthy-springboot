@@ -56,4 +56,18 @@ public class Booking {
 
     @Column(nullable = false)
     private BigDecimal bookingPrice; // Giá cuối cùng tại thời điểm đặt
+
+    // === THÊM CÁC TRƯỜNG NÀY ===
+    @Column(name = "payment_status")
+    private String paymentStatus; // "UNPAID", "PAID", "FAILED"
+
+    @Column(name = "payment_method")
+    private String paymentMethod; // "VNPAY" (Mặc định)
+
+    // === CÁC TRƯỜNG MỚI: THÔNG TIN NGƯỜI ĐI KHÁM (ĐẶT HỘ) ===
+    @Column(name = "patient_name")
+    private String patientName;
+
+    @Column(name = "patient_phone")
+    private String patientPhone;
 }

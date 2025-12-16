@@ -61,32 +61,52 @@
 
         <div sec:authorize="isAuthenticated()" class="dropdown ms-3">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <img th:src="${#authentication.principal.avatar != null ? '/uploads/' + #authentication.principal.avatar : '/assets/img/default-avatar.png'}"
+
+                <img th:if="${#strings.startsWith(#authentication.principal.avatar, 'http')}"
+                     th:src="${#authentication.principal.avatar}"
+                     alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #eee;">
+
+                <img th:if="${#authentication.principal.avatar != null && !#strings.isEmpty(#authentication.principal.avatar) && !#strings.startsWith(#authentication.principal.avatar, 'http')}"
+                     th:src="@{'/uploads/' + ${#authentication.principal.avatar}}"
+                     alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #eee;">
+
+                <img th:if="${#authentication.principal.avatar == null || #strings.isEmpty(#authentication.principal.avatar)}"
+                     th:src="@{/assets/img/default-avatar.png}"
                      alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover; border: 2px solid #eee;">
 
                 <span class="ms-2 d-none d-sm-inline fw-bold text-dark"
                       th:text="${#authentication.principal.fullName}">User</span>
             </a>
 
-            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" th:href="@{/user/profile}"><i class="bi bi-person me-2"></i>Hồ sơ cá nhân</a></li>
-                <li><a class="dropdown-item" th:href="@{/user/profile}"><i class="bi bi-clock-history me-2"></i>Lịch sử khám bệnh</a></li>
+            <ul class="dropdown-menu dropdown-menu-end text-small shadow border-0" aria-labelledby="userDropdown">
+
+                <li class="px-3 py-2 bg-light border-bottom mb-2 rounded-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small text-uppercase fw-bold">Số dư ví</span>
+                        <span class="text-success fw-bold">
+                            <i class="bi bi-wallet2 me-1"></i>
+                            <span th:text="${@globalHelper.getUserBalance(#authentication)}">0 đ</span>
+                        </span>
+                    </div>
+                </li>
+                <li><a class="dropdown-item py-2" th:href="@{/user/profile}"><i class="bi bi-person me-2 text-primary"></i>Hồ sơ cá nhân</a></li>
+                <li><a class="dropdown-item py-2" th:href="@{/user/profile}"><i class="bi bi-clock-history me-2 text-info"></i>Lịch sử khám bệnh</a></li>
 
                 <li sec:authorize="hasRole('ADMIN')"><hr class="dropdown-divider"></li>
                 <li sec:authorize="hasRole('ADMIN')">
-                    <a class="dropdown-item text-danger" th:href="@{/admin/dashboard}">Trang Quản trị</a>
+                    <a class="dropdown-item text-danger fw-bold" th:href="@{/admin/dashboard}">Trang Quản trị</a>
                 </li>
 
                 <li sec:authorize="hasRole('DOCTOR')"><hr class="dropdown-divider"></li>
                 <li sec:authorize="hasRole('DOCTOR')">
-                    <a class="dropdown-item text-primary" th:href="@{/doctor/dashboard}">Trang Bác sĩ</a>
+                    <a class="dropdown-item text-primary fw-bold" th:href="@{/doctor/dashboard}">Trang Bác sĩ</a>
                 </li>
 
                 <li><hr class="dropdown-divider"></li>
 
                 <li>
                     <form th:action="@{/logout}" method="post" class="m-0">
-                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
+                        <button type="submit" class="dropdown-item text-danger py-2"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
                     </form>
                 </li>
             </ul>

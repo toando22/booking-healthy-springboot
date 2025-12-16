@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email; // <-- THÊM IMPORT
 import jakarta.validation.constraints.NotBlank; // <-- THÊM IMPORT
 import jakarta.validation.constraints.Size; // <-- THÊM IMPORT
 import lombok.*;
+import java.math.BigDecimal; // Import BigDecimal
 import java.util.Set;
 
 @Entity
@@ -41,11 +42,22 @@ public class User {
     @Column(name = "gender")
     private String gender; // Nam / Nữ
 
+    // === THÊM TRƯỜNG MỚI NÀY ===
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider")
+    private AuthProvider authProvider;
+    // ============================
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    // === TRƯỜNG MỚI: SỐ DƯ VÍ ===
+    // Mặc định là 0
+    @Column(nullable = false)
+    private BigDecimal balance = BigDecimal.ZERO;
+    // ============================
 
 }

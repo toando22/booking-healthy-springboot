@@ -8,6 +8,7 @@ import com.bookinghealthy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User; // Import
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +28,24 @@ public class UserReviewController {
     @Autowired
     private UserService userService;
 
-    private User getLoggedInUser(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userService.findByUsername(userDetails.getUsername())
+    // === HÀM ĐÃ SỬA ===
+    private User getCurrentUser(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        String usernameOrEmail;
+
+        if (principal instanceof OAuth2User) {
+            usernameOrEmail = ((OAuth2User) principal).getAttribute("email");
+        } else if (principal instanceof UserDetails) {
+            usernameOrEmail = ((UserDetails) principal).getUsername();
+        } else {
+            usernameOrEmail = principal.toString();
+        }
+
+        return userService.findByUsername(usernameOrEmail)
+                .or(() -> userService.findByEmail(usernameOrEmail))
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+    // ==================
 
     @PostMapping("/submit")
     public String submitReview(
@@ -42,13 +56,12 @@ public class UserReviewController {
             RedirectAttributes ra) {
 
         try {
-            User currentUser = getLoggedInUser(authentication);
+            User currentUser = getCurrentUser(authentication); // Gọi hàm mới
 
-            // Check bảo mật: Có đúng là user này sở hữu booking đó không
             Booking booking = bookingRepository.findById(bookingId).orElse(null);
             if (booking == null || !booking.getUser().getId().equals(currentUser.getId())) {
                 ra.addFlashAttribute("errorMessage", "Lỗi: Bạn không có quyền đánh giá lịch hẹn này.");
-                return "redirect:/profile";
+                return "redirect:/user/profile";
             }
 
             reviewService.saveReview(bookingId, rating, comment);
