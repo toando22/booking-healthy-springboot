@@ -53,6 +53,11 @@ public class SecurityConfig {
                                 "/departments", "/department-details/**", // Trang Khoa (Mới)
                                 "/contact", "/about",       // Trang Liên hệ, Giới thiệu
                                 "/news", "/news/**",  // <-- THÊM DÒNG NÀY (Cho phép xem tin tức)
+                                "/medical-process",
+                                "/working-hours",
+                                "/doctor-schedule",
+                                "/api/chat/**",
+                                "/knowledge",
                                 // === MỞ CỬA CHO CÁC TRANG CHI TIẾT ===
                               //  "/doctors", "/doctors/**",               // Cho phép /doctors VÀ /doctors/1, /doctors/search...
                                 "/services", "/service-details/**",      // Cho phép /services VÀ /service-details/1...

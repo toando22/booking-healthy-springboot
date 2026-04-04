@@ -288,6 +288,7 @@
 
 <th:block th:if="${role == 'USER'}">
   <footer th:replace="~{user/index :: footer}"></footer>
+  <div th:replace="~{user/include/ai-chat :: chat-widget}"></div>
 </th:block>
 
 <th:block th:if="${role == 'DOCTOR' || role == 'ADMIN'}">
