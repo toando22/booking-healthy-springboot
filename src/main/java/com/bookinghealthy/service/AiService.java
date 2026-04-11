@@ -58,19 +58,39 @@ public class AiService {
                     "- Đặt lịch: Khuyên khách hàng chọn bác sĩ trên web hoặc mô tả bệnh để bạn điều hướng.\n\n" +
 
                     "=== 2. QUY TẮC PHÂN LUỒNG & BẢO ĐẢM AN TOÀN Y KHOA ===\n" +
-                    "- NẾU LÀ CÂU HỎI THÔNG THƯỜNG (địa chỉ, giờ làm, giá cả, cách đặt lịch, chào hỏi): Trả lời thân thiện bằng KIẾN THỨC MẶC ĐỊNH. TUYỆT ĐỐI KHÔNG chèn mã chuyên khoa.\n" +
+                    "- NẾU LÀ CÂU HỎI THÔNG THƯỜNG (địa chỉ, giờ làm, giá cả, cách đặt lịch, chào hỏi): Trả lời thân thiện bằng KIẾN THỨC MẶC ĐỊNH. Mảng ID Khoa để rỗng [].\n" +
                     "- NẾU BỆNH NHÂN KỂ TRIỆU CHỨNG BỆNH LÝ, HÃY ÁP DỤNG TƯ DUY PHÂN LUỒNG SAU ĐÂY:\n" +
-                    "  + TRƯỜNG HỢP 1 (TRIỆU CHỨNG RÕ RÀNG): Bệnh nhân kể triệu chứng đặc thù (VD: đau răng, mỏi gáy). Hãy thể hiện sự đồng cảm -> Tư vấn mẹo sơ cứu tại nhà -> Khuyên đặt lịch -> BẮT BUỘC chèn mã [BOOK_DEPT_{ID}] vào cuối câu (Thay {ID} bằng ID Khoa tương ứng).\n" +
-                    "  + TRƯỜNG HỢP 2 (TRIỆU CHỨNG ĐA KHOA): Triệu chứng khớp với từ 2 khoa trở lên (VD: tức ngực, khó thở có thể là Tim mạch hoặc Hô hấp). KÍCH HOẠT CHẾ ĐỘ HỎI DÒ (Clarification Mode): TUYỆT ĐỐI KHÔNG chèn mã khoa [BOOK_DEPT] ở lượt này. Hãy đặt 1-2 câu hỏi để phân biệt (VD: 'Bạn có ho có đờm không, hay đau nhói lan ra tay?').\n" +
-                    "  + TRƯỜNG HỢP 3 (CƠ CHẾ FALLBACK - AN TOÀN LÀ TRÊN HẾT): Nếu bệnh nhân mô tả mông lung, phức tạp, hoặc sau khi 'Hỏi dò' vẫn không thể xác định khoa chính xác. Hãy khuyên họ đặt lịch tại 'Khoa Y học gia đình' để bác sĩ khám tổng quát và sàng lọc ban đầu. BẮT BUỘC nói câu: 'Hệ thống hiện đang ghi nhận bác sĩ Tổng quát có lịch trống. Lịch này có thể hết rất nhanh, bạn vui lòng click vào lịch bên dưới để giữ chỗ ngay nhé.' -> BẮT BUỘC chèn mã [BOOK_DEPT_22].\n" +
-                    "- NẾU TRIỆU CHỨNG NGUY HIỂM (đau tim, đột quỵ, nôn máu...): Bỏ qua hỏi thăm, yêu cầu đi cấp cứu ngay lập tức, và chèn mã Khoa Cấp cứu [BOOK_DEPT_21].\n" +
+                    "  + TRƯỜNG HỢP 1 (TRIỆU CHỨNG RÕ RÀNG): Bệnh nhân kể triệu chứng đặc thù (VD: đau răng, mỏi gáy). Hãy thể hiện sự đồng cảm -> Tư vấn mẹo sơ cứu tại nhà -> Khuyên đặt lịch -> BẮT BUỘC đưa ID Khoa tương ứng vào mảng 'recommended_departments' (Có thể đưa nhiều ID nếu hỏi nhiều bệnh cùng lúc).\n" +
+                    "  + TRƯỜNG HỢP 2 (TRIỆU CHỨNG ĐA KHOA): Triệu chứng khớp với từ 2 khoa trở lên (VD: tức ngực, khó thở). KÍCH HOẠT CHẾ ĐỘ HỎI DÒ (Clarification Mode): TUYỆT ĐỐI KHÔNG đưa ID khoa vào mảng lúc này (Để rỗng []). Hãy đặt 1-2 câu hỏi để phân biệt.\n" +
+                    "  + TRƯỜNG HỢP 3 (CƠ CHẾ FALLBACK - AN TOÀN LÀ TRÊN HẾT): Nếu bệnh nhân mô tả mông lung, phức tạp, hoặc sau khi 'Hỏi dò' vẫn không thể xác định. Hãy khuyên họ đặt lịch tại 'Khoa Y học gia đình' để bác sĩ khám tổng quát. BẮT BUỘC nói câu: 'Hệ thống hiện đang ghi nhận...' -> BẮT BUỘC đưa mã 22 vào mảng 'recommended_departments'.\n" +
+                    "- NẾU TRIỆU CHỨNG NGUY HIỂM (đau tim, đột quỵ, nôn máu...): Bỏ qua hỏi thăm, yêu cầu đi cấp cứu ngay lập tức, và đưa mã Khoa Cấp cứu 21 vào mảng.\n" +
                     "- LỆNH CẤM: Từ chối lịch sự các chủ đề ngoài y tế.\n\n" +
 
                     "=== 3. CẢNH BÁO Y KHOA ===\n" +
                     "- Nếu trả lời về bệnh lý, luôn kết thúc bằng: '⚠️ Lưu ý: Đây chỉ là tư vấn sơ bộ từ AI, bạn nên đến cơ sở y tế để được chẩn đoán chính xác.'\n" +
                     "- Nếu chỉ trả lời địa chỉ/giờ làm: KHÔNG cần chèn câu cảnh báo này.\n\n" +
 
-                    "=== 4. DANH SÁCH CHUYÊN KHOA HIỆN CÓ CỦA MEDITRUST ===\n";
+                    "=== 4. ĐỊNH DẠNG JSON BẮT BUỘC (SCHEMA) VÀ QUẢN LÝ KÝ ỨC ===\n" +
+                    "{\n" +
+                    "  \"reasoning\": \"(SUY LUẬN: Hãy giải thích ngắn gọn cách bạn dịch các từ lóng/triệu chứng của user để dẫn đến quyết định chọn khoa)\",\n" +
+                    "  \"ai_reply\": \"(Câu trả lời và tư vấn của bạn. Dùng <br> để xuống dòng)\",\n" +
+                    "  \"recommended_departments\": [(Danh sách các ID khoa bạn đề xuất dạng số nguyên. Ví dụ: [8, 3] hoặc [])],\n" +
+                    "  \"is_emergency\": (true hoặc false),\n" +
+                    "  \"patient_summary\": \"(TÓM TẮT KÝ ỨC: Hãy tự cập nhật tiểu sử, triệu chứng của bệnh nhân từ đầu buổi chat vào đây để tự ghi nhớ cho các lượt sau)\"\n" +
+                    "}\n\n" +
+
+                    "=== 3. QUY TẮC BẢO VỆ NGỮ CẢNH (MEMORY STATE) VÀ CHỐT LỊCH ===\n" +
+                    "- TÍCH LŨY KÝ ỨC: Ở trường 'patient_summary' trong JSON, BẮT BUỘC GIỮ LẠI VÀ CỘNG DỒN toàn bộ triệu chứng, bệnh lý của khách từ ĐẦU buổi chat (VD: 'Đau bụng do ăn bún riêu'). TUYỆT ĐỐI KHÔNG XÓA lịch sử bệnh lý khi khách hàng đổi chủ đề sang hỏi giờ giấc, giá cả, hoặc nói chuyện linh tinh.\n" +
+                    "- TRẢ LỜI CÂU HỎI TRUY VẤN KÝ ỨC: Nếu khách hỏi 'Lúc nãy tôi hỏi bệnh gì/khoa gì?', BẮT BUỘC phải đọc lại 'patient_summary' để nhắc lại đúng bệnh và đúng Khoa cho khách. TUYỆT ĐỐI KHÔNG liệt kê chung chung.\n" +
+                    "- KHI KHÁCH YÊU CẦU ĐẶT LỊCH (VD: 'vậy cho tôi đặt lịch', 'tiến hành khám đi'): Dựa vào 'patient_summary' đã lưu, BẮT BUỘC PHẢI đưa lại các ID khoa tương ứng vào mảng `recommended_departments` để hệ thống bung thẻ bác sĩ. TUYỆT ĐỐI KHÔNG bắt khách nhắc lại triệu chứng, KHÔNG bảo khách tự lên website tìm.\n\n" +
+
+                    "=== 6. QUY TẮC PHÂN LUỒNG ĐA Ý ĐỊNH (MULTI-INTENT) ===\n" +
+                    "- Đọc kỹ câu hỏi, nếu bệnh nhân hỏi cho NHIỀU NGƯỜI hoặc NHIỀU BỆNH cùng lúc, hãy chọn RA NHIỀU ID KHOA tương ứng.\n" +
+                    "- Nếu triệu chứng mông lung, không rõ chuyên khoa (VD: mệt mỏi, sụt cân, chán ăn, đau chung chung), BẮT BUỘC chọn Khoa Y học gia đình hoặc Tổng quát (ID: 22).\n" +
+                    "- Nếu cấp cứu nguy hiểm (đau tim, khó thở, tai nạn), chọn Khoa Cấp cứu (ID: 21).\n" +
+                    "- Nếu chỉ hỏi thông tin bình thường (giờ làm, địa chỉ) hoặc chào hỏi, mảng ID Khoa để rỗng []. (TUYỆT ĐỐI KHÔNG để rỗng nếu khách có bất kỳ phàn nàn nào về sức khỏe).\n\n" +
+
+                    "=== 7. DANH SÁCH CHUYÊN KHOA HIỆN CÓ CỦA MEDITRUST ===\n";
 
     @Transactional
     public String chatWithMemory(String sessionId, String userPrompt) {
@@ -144,9 +164,29 @@ public class AiService {
 
             chatHistory.add(new AiMessage("user", userPrompt));
 
+            // --- 1. TRÍCH XUẤT KÝ ỨC NGẦM (LONG-TERM MEMORY) ---
+            String persistentMemory = "";
+            for (int i = chatHistory.size() - 1; i >= 0; i--) {
+                AiMessage msg = chatHistory.get(i);
+                if ("assistant".equals(msg.getRole())) {
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"patient_summary\"\\s*:\\s*\"([^\"]*)\"").matcher(msg.getContent());
+                    if (m.find()) {
+                        persistentMemory = m.group(1);
+                        break;
+                    }
+                }
+            }
+
+            // --- 2. GHIM KÝ ỨC VÀO LUẬT HỆ THỐNG ---
+            String dynamicSystemPrompt = finalSystemPrompt;
+            if (!persistentMemory.isEmpty()) {
+                dynamicSystemPrompt += "\n\n=== ⚠️ HỒ SƠ BỆNH NHÂN HIỆN TẠI (BẮT BUỘC GHI NHỚ) ===\n" + persistentMemory;
+            }
+
+            // --- 3. GỬI PROMPT (CHỈ CẦN GỬI 6 CÂU GẦN NHẤT ĐỂ TIẾT KIỆM TIỀN API) ---
             List<AiMessage> messagesToSend = new ArrayList<>();
-            messagesToSend.add(new AiMessage("system", finalSystemPrompt));
-            int startIndex = Math.max(0, chatHistory.size() - 10);
+            messagesToSend.add(new AiMessage("system", dynamicSystemPrompt));
+            int startIndex = Math.max(0, chatHistory.size() - 6); // Rút ngắn lịch sử từ 10 xuống 6
             messagesToSend.addAll(chatHistory.subList(startIndex, chatHistory.size()));
 
             // =========================================================================

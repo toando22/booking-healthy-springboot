@@ -186,27 +186,47 @@ maximizeBtn.addEventListener('click', (e) => {
                             if(firstUserMsg) previewText = firstUserMsg.content;
                         } catch(e) {}
 
-                        html += `
-                            <div class="history-item" data-chat='${item.chatData.replace(/'/g, "&#39;")}'>
-                                <div class="history-date"><i class="bi bi-clock-history"></i> ${dateStr}</div>
-                                <div class="history-preview"><b>Hỏi:</b> ${previewText}</div>
-                            </div>
-                        `;
+                      html += `
+                                                  <div class="history-item" data-session="${item.sessionCode}" data-chat='${item.chatData.replace(/'/g, "&#39;")}'>
+                                                      <div class="history-date"><i class="bi bi-clock-history"></i> ${dateStr}</div>
+                                                      <div class="history-preview"><b>Hỏi:</b> ${previewText}</div>
+                                                  </div>
+                                              `;
                     });
                     historyList.innerHTML = html;
                     document.getElementById('history-loading').style.display = 'none';
 
-                    document.querySelectorAll('.history-item').forEach(el => {
-                        el.addEventListener('click', function() {
-                            const rawData = this.getAttribute('data-chat');
-                            const chatArray = JSON.parse(rawData);
-                            messagesContainer.innerHTML = '';
-                            chatArray.forEach(msg => {
-                                if(msg.role !== 'system') appendMessage(msg.role, msg.content);
-                            });
-                            tabChat.click();
-                        });
-                    });
+                   document.querySelectorAll('.history-item').forEach(el => {
+                                           el.addEventListener('click', function() {
+                                               const rawData = this.getAttribute('data-chat');
+                                               const oldSessionId = this.getAttribute('data-session');
+
+                                               // 1. CẬP NHẬT LẠI SESSION ID ĐỂ NỐI TIẾP CUỘC TRÒ CHUYỆN CŨ
+                                               if (oldSessionId && oldSessionId !== "undefined") {
+                                                   sessionId = oldSessionId;
+                                                   sessionStorage.setItem('meditrust_session_id', oldSessionId);
+                                               }
+
+                                               // 2. VẼ LẠI GIAO DIỆN (CHỈ LẤY PHẦN TEXT, BỎ QUA GỌI API BÁC SĨ ĐỂ TRÁNH SPAM)
+                                               const chatArray = JSON.parse(rawData);
+                                               messagesContainer.innerHTML = '';
+                                               chatArray.forEach(msg => {
+                                                   if (msg.role === 'user') {
+                                                       appendMessage('user', msg.content);
+                                                   } else if (msg.role === 'assistant') {
+                                                       try {
+                                                           let cleanStr = msg.content.replace(/```json/gi, '').replace(/```/g, '').trim();
+                                                           let aiData = JSON.parse(cleanStr);
+                                                           appendMessage('bot', aiData.ai_reply);
+                                                       } catch(e) {
+                                                           appendMessage('bot', msg.content.replace(/\n/g, '<br>'));
+                                                       }
+                                                   }
+                                               });
+
+                                               tabChat.click();
+                                           });
+                                       });
                 }
             } catch(e) { console.error(e); }
         });
@@ -243,103 +263,91 @@ maximizeBtn.addEventListener('click', (e) => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    let aiText = data.answer;
+                    let aiRawText = data.answer;
 
-                   // TÌM VÀ THAY THẾ TOÀN BỘ ĐOẠN if (match) BẰNG ĐOẠN DƯỚI ĐÂY:
-                                   let actionHtml = '';
-                                   const match = aiText.match(/\[BOOK_DEPT_(\d+)\]/);
-                                   if (match) {
-                                       const deptId = match[1];
-                                       aiText = aiText.replace(match[0], '');
-                                       try {
+                                        try {
+                                            // 1. Dọn dẹp markdown và parse JSON
+                                            let cleanJsonStr = aiRawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                                            const aiData = JSON.parse(cleanJsonStr);
 
-                                             //const docRes = await fetch(`/api/chat/doctors/department/${deptId}`);
+                                            // 2. In câu trả lời tư vấn
+                                            typingMsg.innerHTML = aiData.ai_reply;
+                                            if (aiData.is_emergency) {
+                                                typingMsg.innerHTML = `<div style="color: red; font-weight: bold; margin-bottom: 8px;"><i class="bi bi-exclamation-triangle-fill"></i> 🚨 CẢNH BÁO KHẨN CẤP:</div>` + typingMsg.innerHTML;
+                                            }
 
-                                             //chặn lịch trong 3 phút
-                                             const docRes = await fetch(`/api/chat/doctors/department/${deptId}?sessionId=${sessionId}`);
-                                           if (docRes.ok) {
-                                               const doctors = await docRes.json();
-                                               if (doctors.length > 0) {
-                                                  // actionHtml = `<div class="mt-3">
-                                                  //     <p class="mb-2" style="font-size: 13px; font-weight: bold; color: #0d6efd;">
-                                                  //         <i class="bi bi-person-badge"></i> Bác sĩ chuyên khoa đang sẵn sàng:
-                                                  //     </p>
-                                                  //     <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">`;
+                                            // 3. Xử lý đa ý định (Vòng lặp quét mảng recommended_departments)
+                                            const deptIds = aiData.recommended_departments;
+                                            if (deptIds && Array.isArray(deptIds) && deptIds.length > 0) {
+                                                let allActionHtml = `<div class="mt-3">
+                                                    <div style="background: #fff3cd; color: #856404; padding: 6px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; margin-bottom: 10px; border-left: 3px solid #ffeeba; display: flex; align-items: center; gap: 5px;">
+                                                        <i class="bi bi-hourglass-split" style="animation: spin 2s linear infinite;"></i> Hệ thống đang tạm giữ các lịch trống trong 3 phút. Hãy chọn nhanh!
+                                                    </div>`;
 
-                                                  actionHtml = `<div class="mt-3">
-                                                                                          <div style="background: #fff3cd; color: #856404; padding: 6px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; margin-bottom: 10px; border-left: 3px solid #ffeeba; display: flex; align-items: center; gap: 5px;">
-                                                                                              <i class="bi bi-hourglass-split" style="animation: spin 2s linear infinite;"></i>
-                                                                                              Hệ thống đang tạm giữ lịch trống trong 3 phút. Hãy chọn nhanh!
-                                                                                          </div>
-                                                                                          <p class="mb-2" style="font-size: 13px; font-weight: bold; color: #0d6efd;">
-                                                                                              <i class="bi bi-person-badge"></i> Bác sĩ chuyên khoa đang sẵn sàng:
-                                                                                          </p>
-                                                                                          <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">`;
-                                                   for (const doc of doctors) {
-                                                   let slotsHtml = `
-                                                                                           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                                                                               <span style="font-size: 11px; color: #888; font-weight: 600;">Ca trống gần nhất:</span>
-                                                                                               <a href="/appointment?doctorId=${doc.id}"
-                                                                                                  style="font-size: 10px; color: #198754; text-decoration: none; font-weight: bold; background: #e8f5e9; padding: 3px 8px; border-radius: 12px; transition: all 0.2s;"
-                                                                                                  onmouseover="this.style.background='#198754'; this.style.color='white';"
-                                                                                                  onmouseout="this.style.background='#e8f5e9'; this.style.color='#198754';">
-                                                                                                  <i class="bi bi-calendar-plus"></i> Chọn lịch khác
-                                                                                               </a>
-                                                                                           </div>
-                                                                                       `;
+                                                for (let i = 0; i < deptIds.length; i++) {
+                                                    const deptId = deptIds[i];
+                                                    try {
+                                                        const docRes = await fetch(`/api/chat/doctors/department/${deptId}?sessionId=${sessionId}`);
+                                                        if (docRes.ok) {
+                                                            const doctors = await docRes.json();
+                                                            if (doctors && doctors.length > 0) {
+                                                                allActionHtml += `
+                                                                    <p class="mb-2 mt-3" style="font-size: 13px; font-weight: bold; color: #198754;">
+                                                                        <i class="bi bi-hospital"></i> Bác sĩ chuyên khoa đang sẵn sàng:
+                                                                    </p>
+                                                                    <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">`;
 
-                                                       if (doc.availableSlots && doc.availableSlots.length > 0) {
-                                                           slotsHtml += doc.availableSlots.map(time =>
-                                                               `<a href="/appointment?doctorId=${doc.id}"
-                                                                   style="display: inline-block; padding: 4px 8px; margin: 2px; border: 1px solid #0d6efd; color: #0d6efd; border-radius: 5px; text-decoration: none; font-size: 11px; font-weight: 500; transition: all 0.2s;"
-                                                                   onmouseover="this.style.background='#0d6efd'; this.style.color='white';"
-                                                                   onmouseout="this.style.background='white'; this.style.color='#0d6efd';">
-                                                                   ${time}
-                                                               </a>`
-                                                           ).join('');
-                                                       } else {
-                                                           slotsHtml += `<span style="font-size: 11px; color: #dc3545;">Tạm hết lịch trực</span>`;
-                                                       }
+                                                                for (const doc of doctors) {
+                                                                    let slotsHtml = `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                                                            <span style="font-size: 11px; color: #888; font-weight: 600;">Ca trống gần nhất:</span>
+                                                                            <a href="/appointment?doctorId=${doc.id}" style="font-size: 10px; color: #198754; text-decoration: none; font-weight: bold; background: #e8f5e9; padding: 3px 8px; border-radius: 12px;"><i class="bi bi-calendar-plus"></i> Chọn lịch khác</a>
+                                                                        </div>`;
 
-                                                       actionHtml += `
-                                                           <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px; min-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                                                               <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                                                   <img src="${doc.avatar}" onerror="this.src='/assets/img/default-doctor.png'"
-                                                                        style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #f8f9fa; margin-right: 12px;">
-                                                                   <div>
-                                                                       <div style="font-size: 14px; font-weight: bold; color: #333;">${doc.fullName}</div>
-                                                                       <div style="font-size: 12px; color: #666;">${doc.degree} • ${doc.experienceYears} năm KN</div>
-                                                                       <div style="font-size: 12px; color: #ffc107;">⭐⭐⭐⭐⭐ 5.0</div>
-                                                                   </div>
-                                                               </div>
-                                                               <div style="border-top: 1px dashed #eee; padding-top: 8px;">
-                                                                   ${slotsHtml}
-                                                               </div>
-                                                           </div>
-                                                       `;
-                                                   }
+                                                                    if (doc.availableSlots && doc.availableSlots.length > 0) {
+                                                                        slotsHtml += doc.availableSlots.map(time => `<a href="/appointment?doctorId=${doc.id}" style="display: inline-block; padding: 4px 8px; margin: 2px; border: 1px solid #0d6efd; color: #0d6efd; border-radius: 5px; text-decoration: none; font-size: 11px;">${time}</a>`).join('');
+                                                                    } else {
+                                                                        slotsHtml += `<span style="font-size: 11px; color: #dc3545;">Tạm hết lịch trực</span>`;
+                                                                    }
 
-                                                   actionHtml += `
-                                                       <div style="min-width: 120px; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; flex-shrink: 0;">
-                                                           <a href="/doctors?departmentId=${deptId}" style="text-align: center; color: #0d6efd; text-decoration: none; font-weight: bold; font-size: 13px;">
-                                                               <div style="width: 40px; height: 40px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;">
-                                                                   <i class="bi bi-arrow-right"></i>
-                                                               </div>
-                                                               Xem tất cả
-                                                           </a>
-                                                       </div>
-                                                   </div></div>`;
-                                               } else {
-                                                   actionHtml = `<div style="margin-top: 15px;"><a href="/appointment?departmentId=${deptId}" style="background: #198754; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: bold;"><i class="bi bi-calendar2-check"></i> Đặt lịch Khoa này ngay</a></div>`;
-                                               }
-                                           }
-                                       } catch (err) { console.error(err); }
-                                   }
+                                                                    allActionHtml += `
+                                                                        <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px; min-width: 260px; scroll-snap-align: start; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                                                                <img src="${doc.avatar}" onerror="this.src='/assets/img/default-doctor.png'" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #f8f9fa; margin-right: 12px;">
+                                                                                <div>
+                                                                                    <div style="font-size: 14px; font-weight: bold; color: #333;">${doc.fullName}</div>
+                                                                                    <div style="font-size: 12px; color: #666;">${doc.degree} • ${doc.experienceYears} năm KN</div>
+                                                                                    <div style="font-size: 12px; color: #ffc107;">⭐⭐⭐⭐⭐ 5.0</div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div style="border-top: 1px dashed #eee; padding-top: 8px;">${slotsHtml}</div>
+                                                                        </div>`;
+                                                                }
+                                                                allActionHtml += `
+                                                                    <div style="min-width: 120px; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; flex-shrink: 0;">
+                                                                        <a href="/doctors?departmentId=${deptId}" style="text-align: center; color: #0d6efd; text-decoration: none; font-weight: bold; font-size: 13px;">
+                                                                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;"><i class="bi bi-arrow-right"></i></div>
+                                                                            Xem tất cả
+                                                                        </a>
+                                                                    </div></div>`;
+                                                            } else {
+                                                                allActionHtml += `<div class="mt-3 p-3" style="background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;"><p style="font-size: 13px; margin-bottom: 8px;"><strong><i class="bi bi-info-circle text-info"></i> Thông báo:</strong> Chuyên khoa này hiện đang kín lịch.</p><a href="/appointment" style="display: inline-block; background: #0d6efd; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold;">Xem lịch hẹn khác</a></div>`;
+                                                            }
+                                                        }
+                                                    } catch (err) { console.error(err); }
+                                                }
+                                                allActionHtml += `</div>`;
+                                                typingMsg.innerHTML += allActionHtml;
+                                            }
 
-                    typingMsg.innerHTML = aiText.replace(/\n/g, '<br>') + actionHtml;
+                                            // Lưu lại khung HTML (Đã chạy ngầm memory JSON)
+                                            sessionStorage.setItem('meditrust_chat_html', messagesContainer.innerHTML);
 
-                    // THÊM DÒNG NÀY:
-                    sessionStorage.setItem('meditrust_chat_html', messagesContainer.innerHTML);
+                                        } catch (parseError) {
+                                            // FALLBACK: Đề phòng rủi ro AI bị ảo giác sinh ra text thường thay vì JSON
+                                            console.error("Lỗi parse JSON:", parseError);
+                                            typingMsg.innerHTML = aiRawText.replace(/\n/g, '<br>');
+                                            sessionStorage.setItem('meditrust_chat_html', messagesContainer.innerHTML);
+                                        }
                 } else {
                     typingMsg.innerHTML = 'Hệ thống bận.';
                 }
