@@ -101,6 +101,7 @@
           <span class="fw-bold" style="font-size: 15px;">MediTrust AI</span>
         </div>
         <div class="window-controls">
+            <button id="btn-new-chat" title="Tư vấn mới"><i class="bi bi-eraser"></i></button>
           <button type="button" id="btn-maximize"><i class="bi bi-arrows-fullscreen"></i></button>
           <button id="btn-close"><i class="bi bi-x-lg"></i></button>
         </div>
@@ -126,7 +127,9 @@
       </div>
     </div>
 
-    <button type="button" id="ai-chat-toggle" class="ai-chat-toggle"><i class="bi bi-chat-dots-fill"></i></button>
+    <button type="button" id="ai-chat-toggle" class="ai-chat-toggle">
+        <img th:src="@{/assets/img/health/11zon_cropped.png}" alt="AI" style="width: 100%; border-radius: 50%;">
+    </button>
   </div>
 
   <script th:src="@{/assets/js/ai-chat.js}"></script>

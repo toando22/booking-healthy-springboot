@@ -12,8 +12,8 @@ import java.util.*;
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_ReturnUrl = "http://localhost:8080/payment-return"; // URL nhận kết quả
-    public static String vnp_TmnCode = "4314W7H1"; // Mã Website của bạn
-    public static String vnp_HashSecret = "8J4YEL7IOJV0N4DFQ217JMKGOK3VPV8O"; // Secret Key của bạn
+    public static String vnp_TmnCode = "S9U6WCSW"; // Mã Website của bạn
+    public static String vnp_HashSecret = "9J6U7W5KKELXY9XY6GL7EACW161AGTVM"; // Secret Key của bạn
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     // Hàm tiện ích để lấy IP người dùng

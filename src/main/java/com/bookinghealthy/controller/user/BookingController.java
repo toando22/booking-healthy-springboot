@@ -114,7 +114,16 @@ public class BookingController {
                     return "redirect:/appointment";
                 }
             }
+            // === [THÊM MỚI] CASE 3: CHUYỂN KHOẢN NGÂN HÀNG (VietQR) ===
+            else if ("BANK_TRANSFER".equals(paymentMethod)) {
+                booking.setStatus(BookingStatus.PENDING);
+                booking.setPaymentStatus("UNPAID");
+                booking.setPaymentMethod("BANK_TRANSFER");
+                Booking savedBooking = bookingService.save(booking);
 
+                // Chuyển hướng sang trang quét mã QR, truyền theo ID lịch hẹn
+                return "redirect:/checkout-qr?id=" + savedBooking.getId();
+            }
             // CASE 2: THANH TOÁN VNPAY (Mặc định)
             else {
                 booking.setStatus(BookingStatus.PENDING);

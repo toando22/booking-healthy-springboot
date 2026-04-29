@@ -42,6 +42,9 @@ public class AiService {
     // THAY THẾ AiRuleRepository BẰNG DepartmentRepository
     @Autowired private DepartmentRepository departmentRepository;
 
+    @Autowired private com.bookinghealthy.repository.BookingRepository bookingRepository;
+    @Autowired private com.bookinghealthy.repository.MedicalRecordRepository medicalRecordRepository;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // =========================================================================
@@ -71,15 +74,23 @@ public class AiService {
                     "- Nếu chỉ trả lời địa chỉ/giờ làm: KHÔNG cần chèn câu cảnh báo này.\n\n" +
 
                     "=== 4. ĐỊNH DẠNG JSON BẮT BUỘC (SCHEMA) VÀ QUẢN LÝ KÝ ỨC ===\n" +
+                    "BẠN LÀ CỖ MÁY XUẤT JSON. BẠN PHẢI TRẢ VỀ ĐÚNG 6 KEYS. NẾU THIẾU KEY `suggested_prompts`, HỆ THỐNG SẼ LỖI.\n\n" +
+                    "VÍ DỤ MẪU MỘT CÂU TRẢ LỜI ĐÚNG CHUẨN (HÃY BẮT CHƯỚC CẤU TRÚC NÀY):\n" +
                     "{\n" +
                     "  \"reasoning\": \"(SUY LUẬN: Hãy giải thích ngắn gọn cách bạn dịch các từ lóng/triệu chứng của user để dẫn đến quyết định chọn khoa)\",\n" +
                     "  \"ai_reply\": \"(Câu trả lời và tư vấn của bạn. Dùng <br> để xuống dòng)\",\n" +
+                    "  \"suggested_prompts\": [\n" +
+                    "       \"(Suy luận câu trả lời 1 của khách - tối đa 5 từ. VD: Đau quặn từng cơn)\",\n" +
+                    "       \"(Suy luận câu trả lời 2 của khách - tối đa 5 từ. VD: Đau âm ỉ quanh rốn)\",\n" +
+                    "       \"(Suy luận câu trả lời 3 của khách - tối đa 5 từ. VD: Kèm theo buồn nôn)\"\n" +
+                    "  ],\n" +
                     "  \"recommended_departments\": [(Danh sách các ID khoa bạn đề xuất dạng số nguyên. Ví dụ: [8, 3] hoặc [])],\n" +
                     "  \"is_emergency\": (true hoặc false),\n" +
                     "  \"patient_summary\": \"(TÓM TẮT KÝ ỨC: Hãy tự cập nhật tiểu sử, triệu chứng của bệnh nhân từ đầu buổi chat vào đây để tự ghi nhớ cho các lượt sau)\"\n" +
                     "}\n\n" +
+                    "⚠️ NHIỆM VỤ CỦA BẠN: Sinh ra câu trả lời cho User hiện tại, và BẮT BUỘC cấu trúc JSON phải có đủ 6 trường y hệt như ví dụ trên. LUÔN LUÔN tạo ra 3 câu cho `suggested_prompts`.\n\n" +
 
-                    "=== 3. QUY TẮC BẢO VỆ NGỮ CẢNH (MEMORY STATE) VÀ CHỐT LỊCH ===\n" +
+                    "=== 5. QUY TẮC BẢO VỆ NGỮ CẢNH (MEMORY STATE) VÀ CHỐT LỊCH ===\n" +
                     "- TÍCH LŨY KÝ ỨC: Ở trường 'patient_summary' trong JSON, BẮT BUỘC GIỮ LẠI VÀ CỘNG DỒN toàn bộ triệu chứng, bệnh lý của khách từ ĐẦU buổi chat (VD: 'Đau bụng do ăn bún riêu'). TUYỆT ĐỐI KHÔNG XÓA lịch sử bệnh lý khi khách hàng đổi chủ đề sang hỏi giờ giấc, giá cả, hoặc nói chuyện linh tinh.\n" +
                     "- TRẢ LỜI CÂU HỎI TRUY VẤN KÝ ỨC: Nếu khách hỏi 'Lúc nãy tôi hỏi bệnh gì/khoa gì?', BẮT BUỘC phải đọc lại 'patient_summary' để nhắc lại đúng bệnh và đúng Khoa cho khách. TUYỆT ĐỐI KHÔNG liệt kê chung chung.\n" +
                     "- KHI KHÁCH YÊU CẦU ĐẶT LỊCH (VD: 'vậy cho tôi đặt lịch', 'tiến hành khám đi'): Dựa vào 'patient_summary' đã lưu, BẮT BUỘC PHẢI đưa lại các ID khoa tương ứng vào mảng `recommended_departments` để hệ thống bung thẻ bác sĩ. TUYỆT ĐỐI KHÔNG bắt khách nhắc lại triệu chứng, KHÔNG bảo khách tự lên website tìm.\n\n" +
@@ -182,12 +193,44 @@ public class AiService {
             if (!persistentMemory.isEmpty()) {
                 dynamicSystemPrompt += "\n\n=== ⚠️ HỒ SƠ BỆNH NHÂN HIỆN TẠI (BẮT BUỘC GHI NHỚ) ===\n" + persistentMemory;
             }
+            // === [THÊM MỚI]: BƠM BỆNH ÁN CŨ CỦA LẦN KHÁM GẦN NHẤT VÀO PROMPT ===
+            com.bookinghealthy.model.User currentUser = chatSession.getUser();
+            if (currentUser != null) {
+                java.util.Optional<com.bookinghealthy.model.Booking> lastBooking = bookingRepository.findFirstByUserIdAndStatusOrderByAppointmentDateDesc(currentUser.getId(), com.bookinghealthy.model.BookingStatus.COMPLETED);
+
+                if (lastBooking.isPresent()) {
+                    java.util.Optional<com.bookinghealthy.model.MedicalRecord> record = medicalRecordRepository.findByBookingId(lastBooking.get().getId());
+                    if (record.isPresent()) {
+                        com.bookinghealthy.model.MedicalRecord rec = record.get();
+
+                        // Lấy tên bác sĩ an toàn (tránh NullPointerException)
+                        String doctorName = "Bác sĩ";
+                        if (lastBooking.get().getDoctor() != null && lastBooking.get().getDoctor().getUser() != null) {
+                            doctorName = lastBooking.get().getDoctor().getUser().getFullName();
+                        }
+
+                        dynamicSystemPrompt += "\n\n=== ⚠️ LỊCH SỬ BỆNH ÁN TRONG QUÁ KHỨ (CHỈ DÙNG ĐỂ TRẢ LỜI KHI KHÁCH HỎI BỆNH CŨ) ===\n" +
+                                "- Lần khám gần nhất: " + lastBooking.get().getAppointmentDate() + "\n" +
+                                "- Bác sĩ khám: " + doctorName + " (Khoa: " + lastBooking.get().getDoctor().getDepartment().getName() + ")\n" +
+                                "- CHẨN ĐOÁN CỦA BÁC SĨ (BỆNH LÝ): " + (rec.getDiagnosis() != null ? rec.getDiagnosis() : "Không có") + "\n" +
+                                "- Triệu chứng lúc đó: " + (rec.getSymptoms() != null ? rec.getSymptoms() : "Không có") + "\n" +
+                                "- Lời dặn / Đơn thuốc: " + (rec.getDoctorNotes() != null ? rec.getDoctorNotes() : "Không có") + "\n" +
+                                "👉 LỆNH TỐI THƯỢNG: Nếu bệnh nhân hỏi về lần khám trước (Ví dụ: 'lần trước tôi bị sao', 'bác sĩ bảo tôi bị gì'), BẠN BẮT BUỘC PHẢI DÙNG DỮ LIỆU Ở TRÊN ĐỂ TRẢ LỜI CHI TIẾT NGAY LẬP TỨC. Tuyệt đối không được bảo là không nhớ. Luôn xưng hô là 'Em' và gọi bệnh nhân là 'Anh/Chị'.";
+                    }
+                }
+            }
 
             // --- 3. GỬI PROMPT (CHỈ CẦN GỬI 6 CÂU GẦN NHẤT ĐỂ TIẾT KIỆM TIỀN API) ---
             List<AiMessage> messagesToSend = new ArrayList<>();
             messagesToSend.add(new AiMessage("system", dynamicSystemPrompt));
-            int startIndex = Math.max(0, chatHistory.size() - 6); // Rút ngắn lịch sử từ 10 xuống 6
-            messagesToSend.addAll(chatHistory.subList(startIndex, chatHistory.size()));
+            int startIndex = Math.max(0, chatHistory.size() - 6);
+
+            // Lấy danh sách gửi đi, TRỪ câu cuối cùng (câu user vừa gõ)
+            messagesToSend.addAll(chatHistory.subList(startIndex, chatHistory.size() - 1));
+
+            // 3.1. GẮN LỆNH NGẦM VÀO CÂU CUỐI CÙNG (Chỉ dùng gửi cho AI, không lưu DB)
+            String enforcedPrompt = userPrompt + "\n\n(Lệnh hệ thống ngầm: Vẫn giữ nguyên tư duy phân luồng hiện tại, nhưng BẮT BUỘC JSON trả về phải có mảng `suggested_prompts` chứa 3 câu gợi ý ngắn gọn cho bệnh nhân).";
+            messagesToSend.add(new AiMessage("user", enforcedPrompt));
 
             // =========================================================================
             // 4. GỌI API (LLM SẼ TỰ ĐỘNG XUẤT RA MÃ TAG)

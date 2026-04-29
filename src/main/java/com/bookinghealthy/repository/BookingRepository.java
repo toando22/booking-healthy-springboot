@@ -96,4 +96,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByDoctorIdAndStatus(Long doctorId, BookingStatus status);
 
     long countByStatus(BookingStatus status);
+
+    // === THÊM MỚI: Lấy lịch khám HOÀN THÀNH gần nhất của User để AI đọc bệnh án ===
+    @EntityGraph(attributePaths = {"doctor", "doctor.department"})
+    Optional<Booking> findFirstByUserIdAndStatusOrderByAppointmentDateDesc(Long userId, BookingStatus status);
 }

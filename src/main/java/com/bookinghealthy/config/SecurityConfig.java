@@ -58,6 +58,8 @@ public class SecurityConfig {
                                 "/doctor-schedule",
                                 "/api/chat/**",
                                 "/knowledge",
+                                "/api/payment/**", // Mở API Webhook cho Casso/SePay
+                                "/checkout-qr",    // Mở trang hiển thị mã QR
                                 // === MỞ CỬA CHO CÁC TRANG CHI TIẾT ===
                               //  "/doctors", "/doctors/**",               // Cho phép /doctors VÀ /doctors/1, /doctors/search...
                                 "/services", "/service-details/**",      // Cho phép /services VÀ /service-details/1...

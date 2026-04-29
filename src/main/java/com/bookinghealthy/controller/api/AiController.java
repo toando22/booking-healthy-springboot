@@ -38,6 +38,8 @@ public class AiController {
     @Autowired private com.bookinghealthy.repository.DoctorBlockTimeRepository doctorBlockTimeRepository;
     // INJECT SERVICE THẦN THÁNH CỦA BẠN VÀO ĐÂY
     @Autowired private com.bookinghealthy.service.TimeSlotService timeSlotService;
+    // === THÊM DÒNG NÀY VÀO ===
+    @Autowired private com.bookinghealthy.repository.MedicalRecordRepository medicalRecordRepository;
 
 
     // =========================================================================
@@ -244,5 +246,109 @@ public class AiController {
             case SUNDAY: return "CN";
             default: return "";
         }
+    }
+    // =========================================================================
+    // TẠO CÂU CHÀO CÁ NHÂN HÓA (DỰA VÀO BỆNH ÁN CŨ)
+    // =========================================================================
+    @GetMapping("/welcome")
+    public ResponseEntity<String> getWelcomeMessage() {
+        System.out.println("\n========== [DEBUG API WELCOME] START ==========");
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        String defaultGreeting = "Xin chào! Tôi là Trợ lý AI MediTrust. Bạn cần hỗ trợ vấn đề sức khỏe gì hôm nay?";
+
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            System.out.println("[LOG 1] Thất bại: User là Anonymous (Chưa đăng nhập).");
+            return ResponseEntity.ok(defaultGreeting);
+        }
+        // 1. TÌM USER ĐANG ĐĂNG NHẬP (Đã Fix lỗi đăng nhập bằng Google/OAuth2)
+        java.util.Optional<com.bookinghealthy.model.User> currentUserOpt = java.util.Optional.empty();
+        Object principal = auth.getPrincipal();
+
+        if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+            // Đăng nhập thường
+            String username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+            currentUserOpt = userRepository.findByUsername(username);
+        } else if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User) {
+            // NẾU ĐĂNG NHẬP BẰNG GOOGLE (Lấy thẳng email từ token)
+            String email = ((org.springframework.security.oauth2.core.user.OAuth2User) principal).getAttribute("email");
+            if (email != null) {
+                currentUserOpt = userRepository.findByEmail(email);
+            }
+        } else {
+            // Fallback
+            String name = auth.getName();
+            currentUserOpt = userRepository.findByUsername(name);
+            if(currentUserOpt.isEmpty()) currentUserOpt = userRepository.findByEmail(name);
+        }
+
+        if (currentUserOpt.isPresent()) {
+            com.bookinghealthy.model.User user = currentUserOpt.get();
+            System.out.println("[LOG 2] Đã lấy được User. ID: " + user.getId() + " | Tên: " + user.getFullName());
+
+            // 2. TÌM LỊCH KHÁM 'COMPLETED'
+            System.out.println("[LOG 3] Đang Query bảng Booking với UserID=" + user.getId() + " và Status=COMPLETED...");
+            java.util.Optional<com.bookinghealthy.model.Booking> lastBooking = bookingRepository.findFirstByUserIdAndStatusOrderByAppointmentDateDesc(user.getId(), com.bookinghealthy.model.BookingStatus.COMPLETED);
+
+            if (lastBooking.isPresent()) {
+                com.bookinghealthy.model.Booking booking = lastBooking.get();
+                System.out.println("[LOG 4] Đã tìm thấy Booking COMPLETED! BookingID: " + booking.getId());
+
+                // === 1. LẤY TRỌN VẸN TÊN VÀ XỬ LÝ SẠCH SẼ ===
+                String rawName = (booking.getPatientName() != null && !booking.getPatientName().isEmpty()) ? booking.getPatientName() : user.getFullName();
+                String displayName = rawName;
+
+                // Xử lý riêng vụ Google OAuth hay chèn tên vào ngoặc: "Duy Toàn Đỗ (Duy Toàn)"
+                // Nếu thấy ngoặc, lấy luôn cụm từ TRONG ngoặc làm tên hiển thị
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\((.*?)\\)").matcher(rawName);
+                if (m.find()) {
+                    displayName = m.group(1).trim();
+                } else {
+                    displayName = rawName.trim();
+                }
+
+                // === 2. XỬ LÝ XƯNG HÔ (MẶC ĐỊNH LÀ ANH - EM) ===
+                String pronoun = "anh";
+                if (user.getGender() != null) {
+                    if (user.getGender().equalsIgnoreCase("FEMALE") || user.getGender().equalsIgnoreCase("Nữ") || user.getGender().equals("0")) {
+                        pronoun = "chị";
+                    }
+                }
+
+                // 3. TÌM HỒ SƠ BỆNH ÁN
+                System.out.println("[LOG 5] Đang Query bảng MedicalRecord với BookingID=" + booking.getId() + "...");
+                java.util.Optional<com.bookinghealthy.model.MedicalRecord> record = medicalRecordRepository.findByBookingId(booking.getId());
+
+                if (record.isPresent()) {
+                    System.out.println("[LOG 6A] ĐÃ TÌM THẤY Medical Record! ID: " + record.get().getId());
+
+                    if (record.get().getDiagnosis() != null && !record.get().getDiagnosis().trim().isEmpty()) {
+                        String diagnosis = record.get().getDiagnosis().toLowerCase();
+                        System.out.println("[RESULT] Trả về câu chào theo BỆNH LÝ: " + diagnosis);
+
+                        // Câu chào bôi đậm cả Tên (displayName) và Bệnh (diagnosis)
+                        return ResponseEntity.ok("Dạ em chào " + pronoun + " **" + displayName + "**, tình trạng **" + diagnosis + "** của " + pronoun + " sau lần khám trước đã ổn định chưa ạ? Hôm nay em có thể giúp gì thêm cho " + pronoun + " không?");
+                    } else {
+                        System.out.println("[LOG 6B] Có Medical Record nhưng Diagnosis (Chẩn đoán) bị NULL/TRỐNG.");
+                    }
+                } else {
+                    System.out.println("[LOG 6C] CẢNH BÁO: Bác sĩ set COMPLETED nhưng CHƯA TẠO Medical Record!");
+                }
+
+                // FALLBACK: Không có bệnh án hoặc bệnh án rỗng chẩn đoán -> Vẫn chào theo Khoa
+                String deptName = booking.getDoctor().getDepartment().getName().toLowerCase();
+                System.out.println("[RESULT] Trả về câu chào theo KHOA (Fallback): " + deptName);
+
+                // Bôi đậm cả Tên và Khoa
+                return ResponseEntity.ok("Dạ em chào " + pronoun + " **" + displayName + "**, sức khỏe của " + pronoun + " sau lần khám chuyên khoa **" + deptName + "** trước đây đã ổn định chưa ạ? Hôm nay " + pronoun + " cần em hỗ trợ gì không?");
+            }else {
+                System.out.println("[LOG 4] Không tìm thấy Booking nào có Status=COMPLETED của UserID=" + user.getId());
+            }
+        } else {
+            System.out.println("[LOG 2] Lỗi: Không thể map Authentication thành User entity.");
+        }
+
+        System.out.println("[RESULT] Trả về câu chào MẶC ĐỊNH.");
+        System.out.println("========== [DEBUG API WELCOME] END ==========\n");
+        return ResponseEntity.ok(defaultGreeting);
     }
 }

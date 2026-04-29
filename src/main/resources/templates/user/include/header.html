@@ -3,6 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <header th:fragment="header-nav" id="header" class="header d-flex align-items-center fixed-top">
+    <input type="hidden" id="current-user-id" th:value="${#authorization.expression('isAuthenticated()') ? #authentication.name : 'guest'}" />
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
         <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
