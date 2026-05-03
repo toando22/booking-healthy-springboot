@@ -100,4 +100,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // === THÊM MỚI: Lấy lịch khám HOÀN THÀNH gần nhất của User để AI đọc bệnh án ===
     @EntityGraph(attributePaths = {"doctor", "doctor.department"})
     Optional<Booking> findFirstByUserIdAndStatusOrderByAppointmentDateDesc(Long userId, BookingStatus status);
+
+    // === THÊM MỚI: Hỗ trợ Cron Job dọn rác lịch hẹn treo ===
+    // Tìm các lịch PENDING, UNPAID và có thời gian tạo trước một mốc thời gian (cutoffTime)
+    List<Booking> findByStatusAndPaymentStatusAndCreatedAtBefore(BookingStatus status, String paymentStatus, java.time.LocalDateTime cutoffTime);
 }
