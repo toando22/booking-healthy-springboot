@@ -16,7 +16,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
-
+    @Autowired
+    private org.thymeleaf.TemplateEngine templateEngine;
     /**
      * @Async: Chạy tác vụ gửi mail trên một luồng (thread) riêng
      * để user không phải chờ.
@@ -26,48 +27,44 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendBookingConfirmation(Booking booking) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
+            // SỬA Ở ĐÂY: Thay javax bằng jakarta
+            jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper =
+                    new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            // Lấy email người nhận từ User (Bệnh nhân)
-            message.setTo(booking.getUser().getEmail());
+            helper.setTo(booking.getUser().getEmail());
+            helper.setSubject("MediTrust - Xác nhận đặt lịch khám thành công");
 
-            // Tiêu đề Email
-            message.setSubject("MediTrust - Xác nhận đặt lịch khám thành công");
+            // Đổ dữ liệu vào Template HTML
+            org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+            context.setVariable("patientName", booking.getUser().getFullName());
+            context.setVariable("bookingId", booking.getId());
+            context.setVariable("doctorName", "Dr. " + booking.getDoctor().getUser().getFullName());
+            context.setVariable("departmentName", booking.getDoctor().getDepartment().getName());
 
-            // Định dạng ngày giờ cho đẹp
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String formattedDate = booking.getAppointmentDate().format(dateFormatter);
+            // Format ngày
+            java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            context.setVariable("date", booking.getAppointmentDate().format(dateFormatter));
 
-            // Nội dung Email
-            String text = String.format(
-                    "Xin chào %s,\n\n" +
-                            "MediTrust xác nhận bạn đã đặt lịch khám thành công.\n\n" +
-                            "--- CHI TIẾT LỊCH HẸN ---\n" +
-                            "Bác sĩ: Dr. %s\n" +
-                            "Chuyên khoa: %s\n" +
-                            "Ngày hẹn: %s\n" +
-                            "Giờ hẹn: %s\n" +
-                            "Loại hình khám: %s\n" +
-                            "Giá khám: %s VNĐ\n\n" +
-                            "Cảm ơn bạn đã tin tưởng MediTrust!",
+            context.setVariable("time", booking.getAppointmentTime());
+            context.setVariable("type", booking.getAppointmentType());
+            context.setVariable("price", booking.getBookingPrice().toString());
 
-                    booking.getUser().getFullName(),
-                    booking.getDoctor().getUser().getFullName(),
-                    booking.getDoctor().getDepartment().getName(),
-                    formattedDate,
-                    booking.getAppointmentTime(),
-                    booking.getAppointmentType(),
-                    booking.getBookingPrice().toString()
-            );
+            String htmlContent = templateEngine.process("email/booking-confirmation", context);
+            helper.setText(htmlContent, true); // true = gửi dạng HTML
 
-            message.setText(text);
+            // Tạo mã QR (Mã hóa ID lịch hẹn)
+            byte[] qrCode = com.bookinghealthy.util.QRCodeGenerator.getQRCodeImage("BOOKING_ID:" + booking.getId(), 250, 250);
 
-            // Gửi mail
-            mailSender.send(message);
+            // Nhúng ảnh QR trực tiếp vào mail (inline)
+            if (qrCode != null) {
+                helper.addInline("qrCodeImage", new org.springframework.core.io.ByteArrayResource(qrCode), "image/png");
+            }
+
+            mailSender.send(mimeMessage);
 
         } catch (Exception e) {
-            // Ghi log lỗi (quan trọng cho debug)
-            System.err.println("Lỗi khi gửi mail: " + e.getMessage());
+            System.err.println("Lỗi gửi mail HTML + QR: " + e.getMessage());
         }
     }
     // === THÊM PHƯƠNG THỨC MỚI NÀY ===
@@ -75,33 +72,28 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendBookingCancellation(Booking booking, String reason) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(booking.getUser().getEmail());
-            message.setSubject("MediTrust - Thông báo hủy lịch hẹn");
+            jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper =
+                    new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String formattedDate = booking.getAppointmentDate().format(dateFormatter);
+            helper.setTo(booking.getUser().getEmail());
+            helper.setSubject("MediTrust - Thông báo hủy lịch hẹn");
 
-            String text = String.format(
-                    "Xin chào %s,\n\n" +
-                            "Chúng tôi rất tiếc phải thông báo lịch hẹn của bạn đã bị HỦY.\n\n" +
-                            "Lý do: %s\n\n" +
-                            "--- CHI TIẾT LỊCH HẸN ĐÃ HỦY ---\n" +
-                            "Bác sĩ: Dr. %s\n" +
-                            "Ngày hẹn: %s\n" +
-                            "Giờ hẹn: %s\n\n" +
-                            "Vui lòng đặt lại lịch hẹn vào một thời điểm khác. Xin cảm ơn!",
+            org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+            context.setVariable("patientName", booking.getUser().getFullName());
+            context.setVariable("reason", reason);
+            context.setVariable("doctorName", "Dr. " + booking.getDoctor().getUser().getFullName());
 
-                    booking.getUser().getFullName(),
-                    reason, // Hiển thị lý do (Bác sĩ từ chối, Admin hủy,...)
-                    booking.getDoctor().getUser().getFullName(),
-                    formattedDate,
-                    booking.getAppointmentTime()
-            );
-            message.setText(text);
-            mailSender.send(message);
+            java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            context.setVariable("date", booking.getAppointmentDate().format(dateFormatter));
+            context.setVariable("time", booking.getAppointmentTime());
+
+            String htmlContent = templateEngine.process("email/booking-cancellation", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Lỗi khi gửi mail HỦY: " + e.getMessage());
+            System.err.println("Lỗi khi gửi mail HTML HỦY LỊCH: " + e.getMessage());
         }
     }
     // === 1. GỬI XÁC NHẬN CHO ỨNG VIÊN ===
@@ -109,17 +101,23 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendCandidateConfirmation(Candidate candidate) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(candidate.getEmail());
-            message.setSubject("MediTrust - Xác nhận ứng tuyển: " + candidate.getJobPosting().getTitle());
-            message.setText("Chào " + candidate.getFullName() + ",\n\n" +
-                    "Cảm ơn bạn đã quan tâm và ứng tuyển vào vị trí " + candidate.getJobPosting().getTitle() + " tại MediTrust.\n" +
-                    "Hồ sơ của bạn đã được hệ thống ghi nhận.\n\n" +
-                    "Bộ phận Tuyển dụng sẽ xem xét và phản hồi lại bạn trong thời gian sớm nhất.\n\n" +
-                    "Trân trọng,\nMediTrust HR Team");
-            mailSender.send(message);
+            jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper =
+                    new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(candidate.getEmail());
+            helper.setSubject("MediTrust - Xác nhận ứng tuyển: " + candidate.getJobPosting().getTitle());
+
+            org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+            context.setVariable("candidateName", candidate.getFullName());
+            context.setVariable("jobTitle", candidate.getJobPosting().getTitle());
+
+            String htmlContent = templateEngine.process("email/candidate-confirmation", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Lỗi gửi mail ứng viên: " + e.getMessage());
+            System.err.println("Lỗi gửi mail HTML xác nhận ứng viên: " + e.getMessage());
         }
     }
     // === 2. GỬI THÔNG BÁO CHO ADMIN ===
@@ -127,18 +125,30 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendNewCandidateNotification(Candidate candidate) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo("doduytoan2201@gmail.com"); // Email Admin nhận tin
-            message.setSubject("[HR] Ứng viên mới: " + candidate.getJobPosting().getTitle());
-            message.setText("Hệ thống vừa nhận được hồ sơ mới:\n\n" +
-                    "Vị trí: " + candidate.getJobPosting().getTitle() + "\n" +
-                    "Ứng viên: " + candidate.getFullName() + "\n" +
-                    "Email: " + candidate.getEmail() + "\n" +
-                    "SĐT: " + candidate.getPhone() + "\n\n" +
-                    "Vui lòng truy cập trang quản trị để xem CV chi tiết.");
-            mailSender.send(message);
+            jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper =
+                    new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo("doduytoan2201@gmail.com"); // Email Admin nhận tin
+            helper.setSubject("[HR] Ứng viên mới: " + candidate.getJobPosting().getTitle());
+
+            org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+            context.setVariable("title", "Thông báo hồ sơ mới");
+
+            String body = String.format(
+                    "<p>Hệ thống vừa nhận được hồ sơ từ <strong>%s</strong></p>" +
+                            "<ul><li>Vị trí: %s</li><li>Email: %s</li><li>SĐT: %s</li></ul>" +
+                            "<p>Vui lòng truy cập trang quản trị để xem CV chi tiết.</p>",
+                    candidate.getFullName(), candidate.getJobPosting().getTitle(), candidate.getEmail(), candidate.getPhone()
+            );
+            context.setVariable("bodyContent", body);
+
+            String htmlContent = templateEngine.process("email/general-notification", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Lỗi gửi mail admin: " + e.getMessage());
+            System.err.println("Lỗi gửi mail HTML cho admin: " + e.getMessage());
         }
     }
 
@@ -147,13 +157,24 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendCandidateResult(Candidate candidate, String subject, String content) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(candidate.getEmail());
-            message.setSubject(subject);
-            message.setText(content);
-            mailSender.send(message);
+            jakarta.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
+            org.springframework.mail.javamail.MimeMessageHelper helper =
+                    new org.springframework.mail.javamail.MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(candidate.getEmail());
+            helper.setSubject(subject);
+
+            org.thymeleaf.context.Context context = new org.thymeleaf.context.Context();
+            context.setVariable("title", "Thông báo từ Bộ phận Tuyển dụng");
+            // Biến \n thành thẻ <br> để HTML hiểu được việc xuống dòng
+            context.setVariable("bodyContent", content.replace("\n", "<br>"));
+
+            String htmlContent = templateEngine.process("email/general-notification", context);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(mimeMessage);
         } catch (Exception e) {
-            System.err.println("Lỗi gửi mail kết quả: " + e.getMessage());
+            System.err.println("Lỗi gửi mail HTML kết quả ứng viên: " + e.getMessage());
         }
     }
 }
