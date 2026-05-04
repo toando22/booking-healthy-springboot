@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
 @Controller
 @RequestMapping("/user/medical-record")
 public class UserMedicalRecordController {
@@ -29,7 +30,11 @@ public class UserMedicalRecordController {
 
     @Autowired
     private UserService userService;
+    @Autowired private com.bookinghealthy.repository.VitalSignRepository vitalSignRepository;
+    @Autowired private com.bookinghealthy.repository.PrescriptionItemRepository prescriptionItemRepository;
 
+    @Autowired
+    private com.bookinghealthy.repository.MedicalAddendumRepository medicalAddendumRepository;
     // === HÀM LẤY USER CHUẨN (HỖ TRỢ CẢ GOOGLE & LOCAL) ===
     private User getCurrentUser(Authentication authentication) {
         Object principal = authentication.getPrincipal();
@@ -80,7 +85,13 @@ public class UserMedicalRecordController {
             }
 
             model.addAttribute("record", record);
+            // Kéo danh sách phụ lục EMR (nếu có)
+            model.addAttribute("addendums", medicalAddendumRepository.findByMedicalRecordIdOrderByCreatedAtAsc(record.getId()));
             model.addAttribute("booking", booking);
+
+            // Kéo dữ liệu EMR mới xuống (Nếu là bệnh án cũ thì nó sẽ tự null, không gây lỗi)
+            model.addAttribute("vitals", vitalSignRepository.findByMedicalRecordId(record.getId()).orElse(null));
+            model.addAttribute("prescriptionItems", prescriptionItemRepository.findByMedicalRecordId(record.getId()));
 
             // Cấu hình giao diện User
             model.addAttribute("role", "USER");

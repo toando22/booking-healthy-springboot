@@ -41,4 +41,8 @@ public class MedicalRecord {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt; // Ngày giờ tạo hồ sơ
+
+    // === THÊM MỚI (GIAI ĐOẠN 1): Mã chuẩn hóa bệnh ICD-10 ===
+    @Column(name = "diagnosis_code", length = 50)
+    private String diagnosisCode; // Mã ICD-10 (Ví dụ: J00, E11)
 }
