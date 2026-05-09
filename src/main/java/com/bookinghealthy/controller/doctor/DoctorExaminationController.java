@@ -62,7 +62,9 @@ public class DoctorExaminationController {
         );
 
         // Logic kiểm tra: Chỉ cho phép nút "Khám" hiện ra nếu ngày chọn là Hôm nay
-        boolean isToday = date.equals(LocalDate.now());
+        //boolean isToday = date.equals(LocalDate.now());
+
+        boolean isToday = true;
 
         model.addAttribute("confirmedBookings", confirmedBookings);
         model.addAttribute("completedBookings", completedBookings);

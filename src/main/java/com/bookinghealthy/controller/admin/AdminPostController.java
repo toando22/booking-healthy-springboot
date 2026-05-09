@@ -70,7 +70,7 @@ public class AdminPostController {
             if (!imageFile.isEmpty()) {
                 // Nếu upload ảnh mới -> Lưu và cập nhật tên
                 String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-                String uploadDir = "src/main/resources/static/uploads/";
+                String uploadDir = "uploads/";
                 File dir = new File(uploadDir);
                 if (!dir.exists()) dir.mkdirs();
                 Path path = Paths.get(uploadDir + fileName);

@@ -34,8 +34,8 @@ public class AuthService {
         user.setFullName(dto.getFullName());
         user.setPhone(dto.getPhone());
 
-        Role roleUser = roleRepository.findByName("USER")
-                .orElseGet(() -> roleRepository.save(new Role(null, "USER")));
+        Role roleUser = roleRepository.findByName("ROLE_USER")
+                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_USER")));
         user.setRoles(Collections.singleton(roleUser));
 
         return userRepository.save(user);

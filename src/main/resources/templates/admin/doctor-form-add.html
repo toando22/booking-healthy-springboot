@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Điền thông tin Bác sĩ</h5>
 
-                    <form th:action="@{/admin/manage-doctor/save}" method="post" class="row g-3">
+                    <form th:action="@{/admin/manage-doctor/save}" method="post" class="row g-3" enctype="multipart/form-data">
 
                         <h5 class="card-title pb-0">1. Thông tin tài khoản</h5>
 
@@ -53,6 +53,11 @@
                             <label for="phone" class="form-label">Số điện thoại</label>
                             <input type="tel" th:field="${user.phone}" class="form-control" id="phone">
                         </div>
+                        <div class="col-12 mt-3">
+                            <label class="form-label">Ảnh đại diện</label>
+                            <input type="file" name="avatarFile" class="form-control" accept="image/png, image/jpeg, image/jpg">
+                        </div>
+
 
                         <h5 class="card-title pb-0 mt-4">2. Thông tin chuyên môn</h5>
 
