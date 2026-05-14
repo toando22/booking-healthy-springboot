@@ -61,10 +61,10 @@ public class DoctorExaminationController {
                 BookingStatus.COMPLETED
         );
 
-        // Logic kiểm tra: Chỉ cho phép nút "Khám" hiện ra nếu ngày chọn là Hôm nay
-        //boolean isToday = date.equals(LocalDate.now());
+        //Logic kiểm tra: Chỉ cho phép nút "Khám" hiện ra nếu ngày chọn là Hôm nay
+        boolean isToday = date.equals(LocalDate.now());
 
-        boolean isToday = true;
+        //boolean isToday = true;
 
         model.addAttribute("confirmedBookings", confirmedBookings);
         model.addAttribute("completedBookings", completedBookings);
