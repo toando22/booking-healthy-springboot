@@ -7,9 +7,12 @@ import com.bookinghealthy.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,4 +107,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // === THÊM MỚI: Hỗ trợ Cron Job dọn rác lịch hẹn treo ===
     // Tìm các lịch PENDING, UNPAID và có thời gian tạo trước một mốc thời gian (cutoffTime)
     List<Booking> findByStatusAndPaymentStatusAndCreatedAtBefore(BookingStatus status, String paymentStatus, java.time.LocalDateTime cutoffTime);
+
+    // === THỐNG KÊ DASHBOARD ADMIN ===
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT COALESCE(SUM(b.bookingPrice), 0) FROM Booking b WHERE b.paymentStatus IN ('PAID', 'REFUNDED') AND b.createdAt BETWEEN :start AND :end")
+    BigDecimal sumDepositByCreatedAtBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT COALESCE(SUM(b.bookingPrice), 0) FROM Booking b WHERE b.paymentStatus IN ('PAID', 'REFUNDED')")
+    BigDecimal sumTotalDeposit();
+
+    @Query("SELECT COALESCE(SUM(b.bookingPrice), 0) FROM Booking b WHERE b.paymentStatus = 'REFUNDED' AND b.createdAt BETWEEN :start AND :end")
+    BigDecimal sumRefundByCreatedAtBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT COALESCE(SUM(b.bookingPrice), 0) FROM Booking b WHERE b.paymentStatus = 'REFUNDED'")
+    BigDecimal sumTotalRefund();
 }
