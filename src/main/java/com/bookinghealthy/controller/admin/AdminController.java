@@ -3,6 +3,7 @@ package com.bookinghealthy.controller.admin;
 import com.bookinghealthy.model.*;
 import com.bookinghealthy.repository.BookingRepository;
 import com.bookinghealthy.repository.RoleRepository;
+import com.bookinghealthy.repository.ReviewRepository;
 import com.bookinghealthy.service.ReviewService;
 import com.bookinghealthy.service.UserService;
 import jakarta.validation.Valid;
@@ -17,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet; // <-- THÊM IMPORT
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +34,7 @@ public class AdminController {
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Autowired private ReviewService reviewService; // <-- Inject Review Service
+    @Autowired private ReviewRepository reviewRepository;
 
     // === THÊM REPO NÀY ĐỂ ĐẾM ===
     @Autowired
@@ -65,6 +69,84 @@ public class AdminController {
         // 4. DANH SÁCH LỊCH HẸN (CŨ)
         List<Booking> allRecentBookings = bookingRepository.findAllByOrderByCreatedAtDesc();
 
+        // === CÁC CHỈ SỐ PHÂN TÍCH TĂNG GIẢM VÀ 2 THẺ MỚI ===
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfThisMonth = now.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfThisMonth = now;
+        LocalDateTime startOfLastMonth = startOfThisMonth.minusMonths(1);
+        LocalDateTime endOfLastMonth = now.minusMonths(1);
+
+        // A. Lịch hẹn trend
+        long currentBookings = bookingRepository.countByCreatedAtBetween(startOfThisMonth, endOfThisMonth);
+        long lastBookings = bookingRepository.countByCreatedAtBetween(startOfLastMonth, endOfLastMonth);
+        double bookingDiffPercent = 0.0;
+        String bookingTrend = "flat";
+        if (lastBookings > 0) {
+            bookingDiffPercent = ((double) (currentBookings - lastBookings) / lastBookings) * 100;
+            if (bookingDiffPercent > 0) bookingTrend = "up";
+            else if (bookingDiffPercent < 0) bookingTrend = "down";
+        } else if (currentBookings > 0) {
+            bookingDiffPercent = 100.0;
+            bookingTrend = "up";
+        }
+        String bookingDiffPercentStr = String.format("%.1f", Math.abs(bookingDiffPercent));
+
+        // B. Điểm đánh giá trend
+        Double currentRating = reviewRepository.getAverageRatingBetween(startOfThisMonth, endOfThisMonth);
+        Double lastRating = reviewRepository.getAverageRatingBetween(startOfLastMonth, endOfLastMonth);
+        if (currentRating == null) currentRating = 0.0;
+        if (lastRating == null) lastRating = 0.0;
+        double ratingDiff = currentRating - lastRating;
+        String ratingTrend = "flat";
+        String ratingDiffStr = "0.0";
+        if (ratingDiff > 0) {
+            ratingTrend = "up";
+            ratingDiffStr = String.format("+%.1f", ratingDiff);
+        } else if (ratingDiff < 0) {
+            ratingTrend = "down";
+            ratingDiffStr = String.format("%.1f", ratingDiff);
+        }
+
+        // C. Tổng tiền đặt cọc và trend
+        BigDecimal totalDeposit = bookingRepository.sumTotalDeposit();
+        BigDecimal currentDeposit = bookingRepository.sumDepositByCreatedAtBetween(startOfThisMonth, endOfThisMonth);
+        BigDecimal lastDeposit = bookingRepository.sumDepositByCreatedAtBetween(startOfLastMonth, endOfLastMonth);
+        if (currentDeposit == null) currentDeposit = BigDecimal.ZERO;
+        if (lastDeposit == null) lastDeposit = BigDecimal.ZERO;
+        
+        double depositDiffPercent = 0.0;
+        String depositTrend = "flat";
+        if (lastDeposit.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal diff = currentDeposit.subtract(lastDeposit);
+            depositDiffPercent = diff.multiply(new BigDecimal(100)).divide(lastDeposit, 1, java.math.RoundingMode.HALF_UP).doubleValue();
+            if (depositDiffPercent > 0) depositTrend = "up";
+            else if (depositDiffPercent < 0) depositTrend = "down";
+        } else if (currentDeposit.compareTo(BigDecimal.ZERO) > 0) {
+            depositDiffPercent = 100.0;
+            depositTrend = "up";
+        }
+        String depositDiffPercentStr = String.format("%.1f", Math.abs(depositDiffPercent));
+
+        // D. Tiền hoàn trả và trend
+        BigDecimal totalRefund = bookingRepository.sumTotalRefund();
+        BigDecimal currentRefund = bookingRepository.sumRefundByCreatedAtBetween(startOfThisMonth, endOfThisMonth);
+        BigDecimal lastRefund = bookingRepository.sumRefundByCreatedAtBetween(startOfLastMonth, endOfLastMonth);
+        if (currentRefund == null) currentRefund = BigDecimal.ZERO;
+        if (lastRefund == null) lastRefund = BigDecimal.ZERO;
+        
+        double refundDiffPercent = 0.0;
+        String refundTrend = "flat";
+        if (lastRefund.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal diff = currentRefund.subtract(lastRefund);
+            refundDiffPercent = diff.multiply(new BigDecimal(100)).divide(lastRefund, 1, java.math.RoundingMode.HALF_UP).doubleValue();
+            if (refundDiffPercent > 0) refundTrend = "up";
+            else if (refundDiffPercent < 0) refundTrend = "down";
+        } else if (currentRefund.compareTo(BigDecimal.ZERO) > 0) {
+            refundDiffPercent = 100.0;
+            refundTrend = "up";
+        }
+        String refundDiffPercentStr = String.format("%.1f", Math.abs(refundDiffPercent));
+
         // Gửi số liệu ra view
         model.addAttribute("patientCount", patientCount);
         model.addAttribute("doctorCount", doctorCount);
@@ -78,7 +160,22 @@ public class AdminController {
         // Stats cho đánh giá
         model.addAttribute("recentReviews", recentGlobalReviews);
         model.addAttribute("ratingDist", globalRatingDist);
-        model.addAttribute("avgRating", globalAvgRating);
+        model.addAttribute("avgRating", globalAvgRating != null ? globalAvgRating : 0.0);
+
+        // Trends
+        model.addAttribute("bookingDiffPercent", bookingDiffPercentStr);
+        model.addAttribute("bookingTrend", bookingTrend);
+
+        model.addAttribute("ratingDiff", ratingDiffStr);
+        model.addAttribute("ratingTrend", ratingTrend);
+
+        model.addAttribute("totalDeposit", totalDeposit);
+        model.addAttribute("depositDiffPercent", depositDiffPercentStr);
+        model.addAttribute("depositTrend", depositTrend);
+
+        model.addAttribute("totalRefund", totalRefund);
+        model.addAttribute("refundDiffPercent", refundDiffPercentStr);
+        model.addAttribute("refundTrend", refundTrend);
 
         model.addAttribute("listBookings", allRecentBookings);
 

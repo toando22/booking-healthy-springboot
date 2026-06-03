@@ -228,6 +228,20 @@
     .activity-item:last-child { padding-bottom: 0; }
     .activity-item::before { content: ""; position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid #1977cc; }
     .review-avatar-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+
+    /* Custom card styles for ratings, deposits and refunds */
+    .dashboard .rating-card .card-icon {
+      color: #ffc107;
+      background: #fffdf0;
+    }
+    .dashboard .deposit-card .card-icon {
+      color: #89087e;
+      background: #f8e6f7;
+    }
+    .dashboard .refund-card .card-icon {
+      color: #e52b50;
+      background: #fdecf0;
+    }
   </style>
 </head>
 
@@ -250,7 +264,7 @@
   <section class="section dashboard">
     <div class="row">
 
-      <div class="col-xxl-3 col-md-6">
+      <div class="col-xxl-4 col-md-6">
         <div class="card info-card revenue-card">
           <div class="card-body">
             <h5 class="card-title">Tổng số Bệnh nhân</h5>
@@ -267,7 +281,7 @@
         </div>
       </div>
 
-      <div class="col-xxl-3 col-md-6">
+      <div class="col-xxl-4 col-md-6">
         <div class="card info-card customers-card">
           <div class="card-body">
             <h5 class="card-title">Tổng số Bác sĩ</h5>
@@ -284,7 +298,7 @@
         </div>
       </div>
 
-      <div class="col-xxl-3 col-md-6">
+      <div class="col-xxl-4 col-md-6">
         <div class="card info-card sales-card">
           <div class="card-body">
             <h5 class="card-title">Tổng số Lịch hẹn</h5>
@@ -294,24 +308,94 @@
               </div>
               <div class="ps-3">
                 <h6 th:text="${bookingCount}">0</h6>
-                <span class="text-muted small pt-2 ps-1">lượt đặt</span>
+                <span th:if="${bookingTrend == 'up'}" class="text-success small pt-1 fw-bold">
+                  <i class="bi bi-arrow-up-short"></i> <span th:text="${bookingDiffPercent} + '% tăng'">0% tăng</span>
+                </span>
+                <span th:if="${bookingTrend == 'down'}" class="text-danger small pt-1 fw-bold">
+                  <i class="bi bi-arrow-down-short"></i> <span th:text="${bookingDiffPercent} + '% giảm'">0% giảm</span>
+                </span>
+                <span th:if="${bookingTrend == 'flat'}" class="text-muted small pt-1 fw-bold">
+                  <span th:text="${bookingDiffPercent} + '% không đổi'">0% không đổi</span>
+                </span>
+                <span class="text-muted small pt-2 ps-1">so với tháng trước</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-xxl-3 col-md-6">
-        <div class="card info-card customers-card">
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card rating-card">
           <div class="card-body">
             <h5 class="card-title">Điểm Chất lượng</h5>
             <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center text-warning bg-light">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-star-fill"></i>
               </div>
               <div class="ps-3">
                 <h6 th:text="${avgRating}">0.0</h6>
-                <span class="text-muted small pt-2 ps-1">trung bình</span>
+                <span th:if="${ratingTrend == 'up'}" class="text-success small pt-1 fw-bold">
+                  <i class="bi bi-arrow-up-short"></i> <span th:text="${ratingDiff} + ' tăng'">0.0 tăng</span>
+                </span>
+                <span th:if="${ratingTrend == 'down'}" class="text-danger small pt-1 fw-bold">
+                  <i class="bi bi-arrow-down-short"></i> <span th:text="${ratingDiff} + ' giảm'">0.0 giảm</span>
+                </span>
+                <span th:if="${ratingTrend == 'flat'}" class="text-muted small pt-1 fw-bold">
+                  <span th:text="${ratingDiff} + ' không đổi'">0.0 không đổi</span>
+                </span>
+                <span class="text-muted small pt-2 ps-1">so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card deposit-card">
+          <div class="card-body">
+            <h5 class="card-title">Tổng tiền đặt cọc</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+              <div class="ps-3">
+                <h6 th:text="${#numbers.formatDecimal(totalDeposit, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h6>
+                <span th:if="${depositTrend == 'up'}" class="text-success small pt-1 fw-bold">
+                  <i class="bi bi-arrow-up-short"></i> <span th:text="${depositDiffPercent} + '% tăng'">0% tăng</span>
+                </span>
+                <span th:if="${depositTrend == 'down'}" class="text-danger small pt-1 fw-bold">
+                  <i class="bi bi-arrow-down-short"></i> <span th:text="${depositDiffPercent} + '% giảm'">0% giảm</span>
+                </span>
+                <span th:if="${depositTrend == 'flat'}" class="text-muted small pt-1 fw-bold">
+                  <span th:text="${depositDiffPercent} + '% không đổi'">0% không đổi</span>
+                </span>
+                <span class="text-muted small pt-2 ps-1">so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card refund-card">
+          <div class="card-body">
+            <h5 class="card-title">Tiền hoàn trả</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </div>
+              <div class="ps-3">
+                <h6 th:text="${#numbers.formatDecimal(totalRefund, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</h6>
+                <span th:if="${refundTrend == 'up'}" class="text-success small pt-1 fw-bold">
+                  <i class="bi bi-arrow-up-short"></i> <span th:text="${refundDiffPercent} + '% tăng'">0% tăng</span>
+                </span>
+                <span th:if="${refundTrend == 'down'}" class="text-danger small pt-1 fw-bold">
+                  <i class="bi bi-arrow-down-short"></i> <span th:text="${refundDiffPercent} + '% giảm'">0% giảm</span>
+                </span>
+                <span th:if="${refundTrend == 'flat'}" class="text-muted small pt-1 fw-bold">
+                  <span th:text="${refundDiffPercent} + '% không đổi'">0% không đổi</span>
+                </span>
+                <span class="text-muted small pt-2 ps-1">so với tháng trước</span>
               </div>
             </div>
           </div>
