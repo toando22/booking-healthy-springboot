@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +46,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 3. Tính điểm trung bình sao (Toàn hệ thống)
     @Query("SELECT AVG(r.rating) FROM Review r")
     Double getGlobalAverageRating();
-
-    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.createdAt BETWEEN :start AND :end")
-    Double getAverageRatingBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
