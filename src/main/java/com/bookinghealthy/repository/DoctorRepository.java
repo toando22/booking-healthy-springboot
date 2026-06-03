@@ -42,4 +42,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "(:keyword IS NULL OR :keyword = '' OR LOWER(d.user.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
             "(:departmentId IS NULL OR d.department.id = :departmentId)")
     List<Doctor> searchDoctors(@Param("keyword") String keyword, @Param("departmentId") Long departmentId);
+    // Tìm Doctor thông qua ID của User
+    @EntityGraph(attributePaths = {"user", "department"})
+    Optional<Doctor> findByUserId(Long userId);
 }

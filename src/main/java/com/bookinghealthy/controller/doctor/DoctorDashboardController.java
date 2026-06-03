@@ -246,4 +246,32 @@ public class DoctorDashboardController {
         ra.addAttribute("selectedDate", date);
         return "redirect:/doctor/schedule-register";
     }
+    // === THÊM API ĐỂ TRẢ VỀ LỜI NHẮC NHỞ NHANH TRÊN DASHBOARD ===
+    @GetMapping("/api/quick-review-advice")
+    @ResponseBody
+    public Map<String, String> getQuickReviewAdvice(Authentication authentication) {
+        Doctor currentDoctor = getLoggedInDoctor(authentication);
+        Double avgRating = reviewService.getAverageRating(currentDoctor.getId());
+
+        String advice = "Chưa có đủ đánh giá.";
+        String colorClass = "text-muted";
+
+        if (avgRating != null) {
+            if (avgRating >= 4.5) {
+                advice = "Tuyệt vời! Hãy tiếp tục duy trì thái độ tích cực nhé.";
+                colorClass = "text-success fw-bold";
+            } else if (avgRating >= 3.5) {
+                advice = "Tốt! Nhưng có vài điểm nhỏ cần cải thiện để đạt 5 sao.";
+                colorClass = "text-warning text-dark fw-bold";
+            } else {
+                advice = "Cảnh báo! Điểm đánh giá đang thấp, cần khắc phục ngay.";
+                colorClass = "text-danger fw-bold";
+            }
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("advice", advice);
+        response.put("colorClass", colorClass);
+        return response;
+    }
 }

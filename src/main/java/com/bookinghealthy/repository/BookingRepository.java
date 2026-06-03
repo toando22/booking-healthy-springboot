@@ -104,6 +104,28 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @EntityGraph(attributePaths = {"doctor", "doctor.department"})
     Optional<Booking> findFirstByUserIdAndStatusOrderByAppointmentDateDesc(Long userId, BookingStatus status);
 
+    // === THÊM MỚI: Khởi tạo cho tính năng AI Bác sĩ ===
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.doctor.id = :doctorId AND b.appointmentDate BETWEEN :startDate AND :endDate")
+    long countByDoctorIdAndDateRange(Long doctorId, @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.doctor.id = :doctorId AND b.status != :status AND b.appointmentDate BETWEEN :startDate AND :endDate")
+    long countByDoctorIdAndStatusNotAndDateRange(Long doctorId, BookingStatus status, @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.doctor.id = :doctorId AND b.status = :status AND b.appointmentDate BETWEEN :startDate AND :endDate")
+    long countByDoctorIdAndStatusAndDateRange(Long doctorId, BookingStatus status, @org.springframework.data.repository.query.Param("startDate") java.time.LocalDate startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDate endDate);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.doctor.id = :doctorId AND b.appointmentDate <= :currentDate AND b.status = :completedStatus AND NOT EXISTS (SELECT m FROM MedicalRecord m WHERE m.booking.id = b.id AND m.status = 'COMPLETED')")
+    long countIncompleteRecordsByDoctor(Long doctorId, BookingStatus completedStatus, @org.springframework.data.repository.query.Param("currentDate") java.time.LocalDate currentDate);
+    // Lấy chi tiết lịch khám từ ngày A đến ngày B để cấp dữ liệu cho AI trả lời chi tiết
+    @EntityGraph(attributePaths = {"user"})
+    @Query("SELECT b FROM Booking b WHERE b.doctor.id = :doctorId " +
+            "AND b.appointmentDate BETWEEN :startDate AND :endDate " +
+            "AND b.status NOT IN ('CANCELED', 'REJECTED') " +
+            "ORDER BY b.appointmentDate ASC, b.appointmentTime ASC")
+    List<Booking> findDetailedBookingsForAi(
+            @org.springframework.data.repository.query.Param("doctorId") Long doctorId,
+            @org.springframework.data.repository.query.Param("startDate") LocalDate startDate,
+            @org.springframework.data.repository.query.Param("endDate") LocalDate endDate);
     // === THÊM MỚI: Hỗ trợ Cron Job dọn rác lịch hẹn treo ===
     // Tìm các lịch PENDING, UNPAID và có thời gian tạo trước một mốc thời gian (cutoffTime)
     List<Booking> findByStatusAndPaymentStatusAndCreatedAtBefore(BookingStatus status, String paymentStatus, java.time.LocalDateTime cutoffTime);
