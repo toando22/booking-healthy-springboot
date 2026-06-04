@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+import static com.bookinghealthy.model.MedicalRecordStatus.*;
+
 @Entity
 @Table(name = "medical_records")
 @Getter
@@ -45,4 +47,8 @@ public class MedicalRecord {
     // === THÊM MỚI (GIAI ĐOẠN 1): Mã chuẩn hóa bệnh ICD-10 ===
     @Column(name = "diagnosis_code", length = 50)
     private String diagnosisCode; // Mã ICD-10 (Ví dụ: J00, E11)
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MedicalRecordStatus status = DRAFT; // DRAFT, COMPLETED
 }
