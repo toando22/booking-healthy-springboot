@@ -104,4 +104,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // === THÊM MỚI: Hỗ trợ Cron Job dọn rác lịch hẹn treo ===
     // Tìm các lịch PENDING, UNPAID và có thời gian tạo trước một mốc thời gian (cutoffTime)
     List<Booking> findByStatusAndPaymentStatusAndCreatedAtBefore(BookingStatus status, String paymentStatus, java.time.LocalDateTime cutoffTime);
+
+    // === AI AGENT FOR DOCTOR ===
+    @EntityGraph(attributePaths = {"user"})
+    List<Booking> findByDoctorIdAndAppointmentDateOrderByAppointmentTimeAsc(Long doctorId, LocalDate appointmentDate);
 }

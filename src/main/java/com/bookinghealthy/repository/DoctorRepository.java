@@ -1,6 +1,7 @@
 package com.bookinghealthy.repository;
 
 import com.bookinghealthy.model.Doctor;
+import com.bookinghealthy.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,4 +43,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "(:keyword IS NULL OR :keyword = '' OR LOWER(d.user.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
             "(:departmentId IS NULL OR d.department.id = :departmentId)")
     List<Doctor> searchDoctors(@Param("keyword") String keyword, @Param("departmentId") Long departmentId);
+
+    Doctor findByUser(User user);
 }
