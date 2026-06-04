@@ -79,7 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         // --- 4. PHÂN QUYỀN BÁC SĨ (BẮT BUỘC ROLE_DOCTOR) ---
-                        .requestMatchers("/doctor/**", "/api/doctor/assistant/**").hasRole("DOCTOR")
+                        .requestMatchers("/doctor/**").hasRole("DOCTOR")
 
                         // --- 5. CÁC TRANG CẦN ĐĂNG NHẬP (USER, DOCTOR, ADMIN đều được) ---
                         .requestMatchers(

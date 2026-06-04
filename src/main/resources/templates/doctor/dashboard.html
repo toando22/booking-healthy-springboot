@@ -112,6 +112,17 @@
                                         <span class="text-muted small pt-2 ps-1">trung bình</span>
                                     </div>
                                 </div>
+
+                                <!-- THÊM ĐOẠN NÀY DÀNH CHO AI NHẮC NHỞ -->
+                                <div class="mt-2 border-top pt-2">
+                                    <div id="ai-review-advice" onclick="triggerAiReviewAnalysis()"
+                                         class="text-muted"
+                                         style="cursor: pointer; display: block; font-size: 0.75rem; line-height: 1.4; transition: all 0.3s ease;">
+                                        <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true" style="width: 10px; height: 10px;"></span>
+                                        <span class="fst-italic">Đang tải phân tích...</span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -268,9 +279,69 @@
 
 <th:block th:replace="~{admin/include/footer :: footer}"></th:block>
 
+<th:block th:replace="~{doctor/include/ai-chat-doctor :: chat-widget}"></th:block>
+
 <script th:src="@{/assets-admin/vendor/apexcharts/apexcharts.min.js}"></script>
 <script th:src="@{/assets-admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/assets-admin/js/main.js}"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Gọi API lấy lời nhắc nhở nhanh dựa trên số sao khi trang vừa tải xong
+        fetch('/api/doctor/chat/quick-review-advice')
+            .then(response => response.json())
+            .then(data => {
+                const adviceDiv = document.getElementById('ai-review-advice');
+                if (adviceDiv) {
+                    adviceDiv.innerHTML = `
+                        <i class="bi bi-robot me-1"></i>
+                        <span class="${data.colorClass}">${data.advice}</span>
+                        <br>
+                        <small class="text-primary text-decoration-underline" style="font-size: 11px;">
+                            Bấm để AI phân tích chi tiết
+                        </small>`;
+                }
+            })
+            .catch(error => {
+                const adviceDiv = document.getElementById('ai-review-advice');
+                if (adviceDiv) adviceDiv.innerHTML = "Không thể tải gợi ý từ trợ lý.";
+            });
+    });
 
+    // 2. Hàm xử lý sự kiện click vào ô Đánh giá để kích hoạt Trợ lý ảo phân tích sâu
+    function triggerAiReviewAnalysis() {
+        // Ánh xạ chính xác 100% theo các ID thực tế trong widget chat của hệ thống
+        const toggleBtn = document.getElementById('ai-chat-toggle-doctor');
+        const chatBox = document.getElementById('ai-chat-box-doctor');
+        const chatInput = document.getElementById('ai-chat-input-doctor');
+        const sendBtn = document.getElementById('ai-chat-send-doctor');
+
+        // Kiểm tra an toàn xem các thành phần chatbot đã được load lên DOM chưa
+        if (!toggleBtn || !chatBox || !chatInput || !sendBtn) {
+            console.error("Lỗi UX: Hệ thống chưa tìm thấy các ID thành phần của Trợ lý Bác sĩ.");
+            return;
+        }
+
+        // Nếu khung chat đang đóng (đang chứa class ẩn 'd-none')
+        if (chatBox.classList.contains('d-none')) {
+            // Giả lập hành vi click vào nút tròn để kích hoạt chuỗi hàm loadWelcomeMessage() và mở khung của file gốc
+            toggleBtn.click();
+        }
+
+        // Trễ 350ms đợi khung chat thực hiện xong hiệu ứng mở và lưu trạng thái vào sessionStorage
+        setTimeout(() => {
+            // Tự động điền câu hỏi phân tích đánh giá y khoa vào ô nhập liệu
+            chatInput.value = "Hãy phân tích các đánh giá bằng chữ gần đây của bệnh nhân và chỉ ra điểm tôi làm tốt, điểm cần cải thiện.";
+
+            // Kích hoạt sự kiện 'input' để đồng bộ hóa nếu hệ thống có kiểm soát chuỗi nhập liệu
+            chatInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // Đưa con trỏ chuột tập trung vào ô nhập liệu
+            chatInput.focus();
+
+            // Giả lập click nút gửi tin nhắn đi
+            sendBtn.click();
+        }, 350);
+    }
+</script>
 </body>
 </html>

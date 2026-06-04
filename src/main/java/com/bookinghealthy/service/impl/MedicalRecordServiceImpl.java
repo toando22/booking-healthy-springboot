@@ -3,6 +3,7 @@ package com.bookinghealthy.service.impl;
 import com.bookinghealthy.model.Booking;
 import com.bookinghealthy.model.BookingStatus;
 import com.bookinghealthy.model.MedicalRecord;
+import com.bookinghealthy.model.MedicalRecordStatus;
 import com.bookinghealthy.repository.BookingRepository;
 import com.bookinghealthy.repository.MedicalRecordRepository;
 import com.bookinghealthy.service.MedicalRecordService;
@@ -20,7 +21,6 @@ import com.bookinghealthy.repository.MedicalAttachmentRepository;
 import com.bookinghealthy.repository.AllergyRepository;
 import com.bookinghealthy.repository.UserRepository;
 import java.util.List;
-// Thêm import này
 import com.bookinghealthy.model.MedicalAddendum;
 import com.bookinghealthy.repository.MedicalAddendumRepository;
 
@@ -66,6 +66,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         record.setDiagnosis(diagnosis);
         record.setPrescription(prescription);
         record.setDoctorNotes(doctorNotes);
+        record.setStatus(MedicalRecordStatus.COMPLETED);
 
         medicalRecordRepository.save(record);
 
@@ -112,6 +113,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         record.setDiagnosisCode(diagnosisCode); // Mã ICD-10
         record.setPrescription(prescriptionText); // Đơn thuốc dạng text (nếu bác sĩ vẫn thích nhập tay)
         record.setDoctorNotes(doctorNotes);
+        record.setStatus(MedicalRecordStatus.COMPLETED);
 
         // Lưu để lấy ID (Các bảng con cần ID này)
         MedicalRecord savedRecord = medicalRecordRepository.save(record);
