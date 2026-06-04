@@ -84,6 +84,28 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.setItem('meditrust_chat_state_doctor', 'open');
         chatInput.focus();
         loadWelcomeMessage();
+
+        // --- THÊM ĐOẠN NÀY ĐỂ LIVE UPDATE SỐ LIỆU MÀ KHÔNG CẦN CLEAR LỊCH SỬ CHAT ---
+        fetch('/api/doctor/chat/welcome')
+            .then(res => res.text())
+            .then(newWelcomeHtml => {
+                // Định dạng lại các thẻ in đậm
+                let formattedText = newWelcomeHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                // Trích xuất nội dung bên trong thẻ <span id='live-welcome-stats'> của backend trả về
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = formattedText;
+                const newStats = tempDiv.querySelector('#live-welcome-stats');
+
+                // Ghi đè vào dòng tin nhắn chào mừng đầu tiên đang có sẵn trên màn hình
+                const existingStatsSpan = document.getElementById('live-welcome-stats');
+                if (existingStatsSpan && newStats) {
+                    existingStatsSpan.innerHTML = newStats.innerHTML;
+                    sessionStorage.setItem('meditrust_chat_html_doctor', messagesContainer.innerHTML); // Lưu lại
+                }
+            })
+            .catch(e => console.log("Lỗi cập nhật số liệu ngầm: ", e));
+        // -------------------------------------------------------------------------
     });
 
     function loadWelcomeMessage() {
