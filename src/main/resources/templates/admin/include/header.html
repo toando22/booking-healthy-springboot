@@ -1,96 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org"-->
-<!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
-
-<!--<head th:fragment="header(title)">-->
-<!--    <meta charset="utf-8">-->
-<!--    <meta content="width=device-width, initial-scale=1.0" name="viewport">-->
-
-<!--    <title th:text="${title} ?: 'Dashboard - BookingHealthy'">Dashboard</title>-->
-<!--    <meta content="" name="description">-->
-<!--    <meta content="" name="keywords">-->
-
-<!--    <link th:href="@{/assets-admin/img/favicon.png}" rel="icon">-->
-<!--    <link th:href="@{/assets-admin/img/apple-touch-icon.png}" rel="apple-touch-icon">-->
-
-<!--    <link href="https://fonts.gstatic.com" rel="preconnect">-->
-<!--    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">-->
-
-<!--    <link th:href="@{/assets-admin/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/quill/quill.snow.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/quill/quill.bubble.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/remixicon/remixicon.css}" rel="stylesheet">-->
-<!--    <link th:href="@{/assets-admin/vendor/simple-datatables/style.css}" rel="stylesheet">-->
-
-<!--    <link th:href="@{/assets-admin/css/style.css}" rel="stylesheet">-->
-<!--</head>-->
-
-<!--<body>-->
-
-<!--<header th:fragment="header-nav" id="header" class="header fixed-top d-flex align-items-center">-->
-
-<!--    <div class="d-flex align-items-center justify-content-between">-->
-<!--        <a th:href="@{/admin/dashboard}" class="logo d-flex align-items-center">-->
-<!--            <img th:src="@{/assets-admin/img/logo.png}" alt="">-->
-<!--            <span class="d-none d-lg-block">BookingHealthy</span>-->
-<!--        </a>-->
-<!--        <i class="bi bi-list toggle-sidebar-btn"></i>-->
-<!--    </div>-->
-
-<!--    <nav class="header-nav ms-auto">-->
-<!--        <ul class="d-flex align-items-center">-->
-
-<!--            <li class="nav-item dropdown pe-3">-->
-
-<!--                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">-->
-<!--                    <img th:if="${#authentication.principal.avatar != null}"-->
-<!--                         th:src="@{'/uploads/' + ${#authentication.principal.avatar}}" alt="Profile" class="rounded-circle">-->
-<!--                    <img th:if="${#authentication.principal.avatar == null}"-->
-<!--                         th:src="@{/assets/img/default-doctor.png}" alt="Profile" class="rounded-circle">-->
-
-<!--                    <span class="d-none d-md-block dropdown-toggle ps-2"-->
-<!--                          th:text="${#authentication.principal.fullName}">Admin Name</span>-->
-<!--                </a>-->
-
-<!--                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">-->
-<!--                    <li class="dropdown-header">-->
-<!--                        <h6 th:text="${#authentication.principal.fullName}">Tên User</h6>-->
-
-<!--                        <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Quản trị viên</span>-->
-<!--                        <span th:if="${#authorization.expression('hasRole(''DOCTOR'')')}">Bác sĩ chuyên khoa</span>-->
-<!--                    </li>-->
-<!--                    <li>-->
-<!--                        <hr class="dropdown-divider">-->
-<!--                    </li>-->
-
-<!--                    <li>-->
-<!--                        <a class="dropdown-item d-flex align-items-center" th:href="@{/profile}">-->
-<!--                            <i class="bi bi-person"></i>-->
-<!--                            <span>Hồ sơ cá nhân</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    <li>-->
-<!--                        <hr class="dropdown-divider">-->
-<!--                    </li>-->
-
-<!--                    <li>-->
-<!--                        <a class="dropdown-item d-flex align-items-center" th:href="@{/logout}">-->
-<!--                            <i class="bi bi-box-arrow-right"></i>-->
-<!--                            <span>Đăng xuất</span>-->
-<!--                        </a>-->
-<!--                    </li>-->
-
-<!--                </ul></li></ul>-->
-<!--    </nav>-->
-
-<!--</header>-->
-
-<!--</body>-->
-<!--</html>-->
-
-<!--Cập nhật 3/12: 22:16 (bên trên dùng được)-->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -98,17 +5,11 @@
 <head th:fragment="header(title)">
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
     <title th:text="${title} ?: 'Dashboard - BookingHealthy'">Dashboard</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-
     <link th:href="@{/assets-admin/img/favicon.png}" rel="icon">
     <link th:href="@{/assets-admin/img/apple-touch-icon.png}" rel="apple-touch-icon">
-
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
     <link th:href="@{/assets-admin/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/assets-admin/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
     <link th:href="@{/assets-admin/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
@@ -116,7 +17,6 @@
     <link th:href="@{/assets-admin/vendor/quill/quill.bubble.css}" rel="stylesheet">
     <link th:href="@{/assets-admin/vendor/remixicon/remixicon.css}" rel="stylesheet">
     <link th:href="@{/assets-admin/vendor/simple-datatables/style.css}" rel="stylesheet">
-
     <link th:href="@{/assets-admin/css/style.css}" rel="stylesheet">
 </head>
 
@@ -130,128 +30,45 @@
             <span class="d-none d-lg-block">BookingHealthy</span>
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div><nav class="header-nav ms-auto">
-    <ul class="d-flex align-items-center">
+    </div>
 
-        <li class="nav-item dropdown pe-3">
+    <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
 
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                <img th:src="${#authentication.principal.avatar != null && !#strings.isEmpty(#authentication.principal.avatar)}
-                                 ? @{'/uploads/' + ${#authentication.principal.avatar}}
-                                 : @{/assets-admin/img/profile-img.jpg}"
-                     alt="Profile" class="rounded-circle">
-
-                <span class="d-none d-md-block dropdown-toggle ps-2"
-                      th:text="${#authentication.principal.fullName}">Admin</span>
-            </a><ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-                <h6 th:text="${#authentication.principal.fullName}">Tên Admin</h6>
-                <span>Quản trị viên</span>
-            </li>
-            <li>
-                <hr class="dropdown-divider">
+            <!-- NÚT MỞ AI SIDEBAR (Lệnh cực mạnh) -->
+            <li class="nav-item pe-3">
+                <button type="button" class="nav-link nav-icon" onclick="window.toggleMediTrustAI();" style="border:none; background:none; cursor:pointer;">
+                    <i class="bi bi-stars" style="color: #198754; font-size: 1.4rem;"></i>
+                </button>
             </li>
 
-            <li>
-                <a class="dropdown-item d-flex align-items-center" th:href="@{/user/profile}">
-                    <i class="bi bi-person"></i>
-                    <span>Hồ sơ cá nhân</span>
+            <li class="nav-item dropdown pe-3">
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <img th:src="${#authentication.principal.avatar != null && !#strings.isEmpty(#authentication.principal.avatar)}
+                                     ? @{'/uploads/' + ${#authentication.principal.avatar}}
+                                     : @{/assets-admin/img/profile-img.jpg}"
+                         alt="Profile" class="rounded-circle">
+                    <span class="d-none d-md-block dropdown-toggle ps-2"
+                          th:text="${#authentication.principal.fullName}">Admin</span>
                 </a>
-            </li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
 
-            <li>
-                <a class="dropdown-item d-flex align-items-center" th:href="@{/logout}">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Đăng xuất</span>
-                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <li class="dropdown-header">
+                        <h6 th:text="${#authentication.principal.fullName}">Tên Admin</h6>
+                        <span>Quản trị viên</span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item d-flex align-items-center" th:href="@{/user/profile}"><i class="bi bi-person"></i> <span>Hồ sơ</span></a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item d-flex align-items-center" th:href="@{/logout}"><i class="bi bi-box-arrow-right"></i> <span>Đăng xuất</span></a></li>
+                </ul>
             </li>
+        </ul>
+    </nav>
 
-        </ul></li></ul>
-</nav></header></body>
+    <!-- NHÚNG SIDEBAR TRỰC TIẾP VÀO HEADER ĐỂ CHẮC CHẮN NÓ LUÔN TỒN TẠI -->
+    <div th:replace="~{admin/include/ai-chat :: chat-widget}"></div>
+</header>
+
+</body>
 </html>
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org"-->
-<!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
-
-<!--<head th:fragment="header-css">-->
-<!--</head>-->
-
-<!--<header th:fragment="header-nav" id="header" class="header d-flex align-items-center fixed-top">-->
-<!--    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">-->
-
-<!--        <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">-->
-<!--            <h1 class="sitename">MediTrust</h1>-->
-<!--        </a>-->
-
-<!--        <nav id="navmenu" class="navmenu">-->
-<!--            <ul>-->
-<!--                <li><a th:href="@{/}" class="active">Trang chủ</a></li>-->
-<!--                <li><a th:href="@{/about}">Giới thiệu</a></li>-->
-<!--                <li><a th:href="@{/departments}">Chuyên khoa</a></li>-->
-<!--                <li><a th:href="@{/doctors}">Đội ngũ bác sĩ</a></li>-->
-
-<!--                <li class="dropdown"><a href="#"><span>Tin tức</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--                    <ul>-->
-<!--                        <li><a href="#">Hoạt động & Sự kiện</a></li>-->
-<!--                        <li><a href="#">Y học thường thức</a></li>-->
-<!--                        <li><a href="#">Tuyển dụng</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-
-<!--                <li class="dropdown"><a href="#"><span>Lịch làm việc</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--                    <ul>-->
-<!--                        <li><a href="#">Giờ làm việc</a></li>-->
-<!--                        <li><a href="#">Lịch trực bác sĩ</a></li>-->
-<!--                        <li><a href="#">Quy trình khám bệnh</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-
-<!--                <li><a th:href="@{/contact}">Liên hệ</a></li>-->
-<!--            </ul>-->
-<!--            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>-->
-<!--        </nav>-->
-
-<!--        <div sec:authorize="!isAuthenticated()" class="d-flex gap-2">-->
-<!--            <a class="btn-getstarted" th:href="@{/login}">Đăng nhập</a>-->
-<!--        </div>-->
-
-<!--        <div sec:authorize="isAuthenticated()" class="dropdown ms-3">-->
-<!--            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                <img th:src="${#authentication.principal.avatar != null ? '/uploads/' + #authentication.principal.avatar : '/assets/img/default-avatar.png'}"-->
-<!--                     alt="Avatar" class="rounded-circle" width="40" height="40" style="object-fit: cover;">-->
-<!--                <span class="ms-2 d-none d-sm-inline fw-bold text-dark"-->
-<!--                      th:text="${#authentication.principal.fullName}">User Name</span>-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">-->
-<!--                <li><a class="dropdown-item" th:href="@{/user/profile}">Hồ sơ cá nhân</a></li>-->
-<!--                <li><a class="dropdown-item" th:href="@{/user/profile#booking-history}">Lịch sử khám bệnh</a></li>-->
-
-<!--                <li sec:authorize="hasRole('ADMIN')">-->
-<!--                    <hr class="dropdown-divider">-->
-<!--                </li>-->
-<!--                <li sec:authorize="hasRole('ADMIN')">-->
-<!--                    <a class="dropdown-item text-danger" th:href="@{/admin/dashboard}">Trang Quản trị (Admin)</a>-->
-<!--                </li>-->
-
-<!--                <li sec:authorize="hasRole('DOCTOR')">-->
-<!--                    <hr class="dropdown-divider">-->
-<!--                </li>-->
-<!--                <li sec:authorize="hasRole('DOCTOR')">-->
-<!--                    <a class="dropdown-item text-primary" th:href="@{/doctor/dashboard}">Trang Bác sĩ</a>-->
-<!--                </li>-->
-
-<!--                <li><hr class="dropdown-divider"></li>-->
-
-<!--                <li>-->
-<!--                    <form th:action="@{/logout}" method="post">-->
-<!--                        <button type="submit" class="dropdown-item">Đăng xuất</button>-->
-<!--                    </form>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</header>-->
-<!--</html>-->

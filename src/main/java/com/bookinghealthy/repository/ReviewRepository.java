@@ -50,4 +50,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.createdAt BETWEEN :start AND :end")
     Double getAverageRatingBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    // Tìm các đánh giá dựa vào danh sách số sao (Ví dụ: 1 sao, 2 sao)
+    List<Review> findByRatingInOrderByCreatedAtDesc(List<Integer> ratings);
 }

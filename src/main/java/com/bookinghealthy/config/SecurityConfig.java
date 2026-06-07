@@ -76,10 +76,10 @@ public class SecurityConfig {
 
                         // --- 3. PHÂN QUYỀN ADMIN (BẮT BUỘC ROLE_ADMIN) ---
                         // Sửa: Dùng "/admin/**" để bao gồm TẤT CẢ các trang con
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/api/admin/chat/**").hasRole("ADMIN")
 
                         // --- 4. PHÂN QUYỀN BÁC SĨ (BẮT BUỘC ROLE_DOCTOR) ---
-                        .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/doctor/**", "/api/doctor/chat/**").hasRole("DOCTOR")
 
                         // --- 5. CÁC TRANG CẦN ĐĂNG NHẬP (USER, DOCTOR, ADMIN đều được) ---
                         .requestMatchers(

@@ -36,6 +36,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     @EntityGraph(attributePaths = {"user", "department"})
     Optional<Doctor> findByUser_Username(String username);
 
+    Optional<Doctor> findByUserId(Long userId);
+    
+    Doctor findByUser(com.bookinghealthy.model.User user);
+
     // === THÊM HÀM TÌM KIẾM NÂNG CAO ===
     @EntityGraph(attributePaths = {"user", "user.roles", "department"})
     @Query("SELECT d FROM Doctor d WHERE " +
