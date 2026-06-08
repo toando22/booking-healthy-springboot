@@ -4,6 +4,7 @@ import com.bookinghealthy.dto.AdminDashboardSummaryDTO;
 import com.bookinghealthy.dto.ai.ChatRequest;
 import com.bookinghealthy.service.AdminDashboardService;
 import com.bookinghealthy.service.AiService;
+import com.bookinghealthy.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +28,7 @@ public class AdminAiController {
 
     @Autowired private AdminDashboardService adminDashboardService;
     @Autowired private AiService aiService;
+    @Autowired private PostService postService;
 
     private static final String ADMIN_SYSTEM_PROMPT_TEMPLATE =
             "Bạn là Trợ lý Điều hành AI của phòng khám MediTrust. Nhiệm vụ của bạn là phân tích dữ liệu và báo cáo tình hình kinh doanh cho Giám đốc (Admin) một cách chuyên nghiệp, súc tích và tập trung vào các con số. Luôn xưng là 'em' và gọi người dùng là 'sếp'.\n\n" +
@@ -36,12 +38,14 @@ public class AdminAiController {
             "1.  **Tập trung vào dữ liệu:** Luôn trích dẫn con số chính xác từ báo cáo.\n" +
             "2.  **So sánh và phân tích:** Khi được hỏi về xu hướng (trend), hãy so sánh các chỉ số và đưa ra nhận định (ví dụ: 'Doanh thu tháng này tăng trưởng 15.2%% so với tháng trước').\n" +
             "3.  **Cảnh báo vấn đề:** Nếu thấy chỉ số tiêu cực (ví dụ: có đánh giá 1 sao, tỷ lệ hủy lịch cao), hãy chủ động nhấn mạnh vấn đề đó.\n" +
-            "4.  **Tự nhiên:** Trả lời như một người trợ lý thực thụ, không chỉ liệt kê lại con số.\n\n" +
+            "4.  **Tin tức y tế:** Nếu có bản nháp tin tức y tế khẩn cấp, hãy thông báo cho sếp biết và hướng dẫn sếp vào mục 'Quản lý Tin tức' để kiểm duyệt, sau đó có thể phân tích sơ bộ nếu sếp yêu cầu.\n" +
+            "5.  **Tự nhiên:** Trả lời như một người trợ lý thực thụ, không chỉ liệt kê lại con số.\n\n" +
             "Bây giờ, hãy trả lời câu hỏi của sếp.";
 
     @GetMapping("/welcome")
-    public ResponseEntity<String> getWelcomeMessage() {
+    public ResponseEntity<Map<String, Object>> getWelcomeMessage() {
         AdminDashboardSummaryDTO summary = adminDashboardService.getDashboardSummary();
+        long draftNewsCount = postService.countDrafts();
         
         DecimalFormat currencyFormatter = new DecimalFormat("#,###'đ'");
         String revenueStr = currencyFormatter.format(summary.getFinancialStats().getRevenueThisMonth());
@@ -64,23 +68,27 @@ public class AdminAiController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                .body(sb.toString());
+                .body(Map.of(
+                    "message", sb.toString(),
+                    "draftNewsCount", draftNewsCount
+                ));
     }
 
     @PostMapping("/ask")
     public ResponseEntity<?> chatWithAdminAssistant(@RequestBody ChatRequest chatRequest) {
         String userPrompt = chatRequest.getPrompt().toLowerCase();
         AdminDashboardSummaryDTO summary = adminDashboardService.getDashboardSummary();
+        long draftNewsCount = postService.countDrafts();
 
         // --- 1. XỬ LÝ NHANH CÁC CÂU LỆNH ĐƠN GIẢN (KHÔNG GỌI AI) ---
-        String directResponse = detectSimpleIntent(userPrompt, summary);
+        String directResponse = detectSimpleIntent(userPrompt, summary, draftNewsCount);
         if (directResponse != null) {
             return ResponseEntity.ok(Map.of("answer", directResponse));
         }
 
         // --- 2. NẾU LÀ CÂU HỎI PHỨC TẠP MỚI GỌI AI ---
         // Format bản báo cáo thành một chuỗi text để "nhồi" vào prompt
-        String summaryText = formatSummaryToText(summary);
+        String summaryText = formatSummaryToText(summary, draftNewsCount);
 
         // Xây dựng "siêu prompt" cuối cùng
         String finalSystemPrompt = String.format(ADMIN_SYSTEM_PROMPT_TEMPLATE, summaryText);
@@ -95,9 +103,17 @@ public class AdminAiController {
         return ResponseEntity.ok(Map.of("answer", aiResponse));
     }
 
-    private String detectSimpleIntent(String prompt, AdminDashboardSummaryDTO summary) {
+    private String detectSimpleIntent(String prompt, AdminDashboardSummaryDTO summary, long draftNewsCount) {
         DecimalFormat currencyFormatter = new DecimalFormat("#,###'đ'");
         DecimalFormat percentFormatter = new DecimalFormat("#,##0.0'%';-#,##0.0'%'");
+
+        if (prompt.contains("tin khẩn cấp") || prompt.contains("bản nháp tin tức")) {
+            if (draftNewsCount > 0) {
+                return String.format("Dạ sếp, hệ thống vừa tự động thu thập được **%d bản tin y tế khẩn cấp**. Sếp vui lòng truy cập vào mục **Quản lý Tin tức** ở menu bên trái để kiểm duyệt và xuất bản nhé!", draftNewsCount);
+            } else {
+                return "Dạ, hiện tại không có bản tin khẩn cấp nào cần sếp duyệt ạ.";
+            }
+        }
 
         if (prompt.contains("doanh thu")) {
             return String.format("Dạ sếp, **doanh thu tháng này** hiện đạt **%s**. Xu hướng so với tháng trước là **%s** ạ.",
@@ -147,7 +163,7 @@ public class AdminAiController {
         return ResponseEntity.ok("Đã xóa lịch sử chat của phiên Admin: " + sessionId);
     }
 
-    private String formatSummaryToText(AdminDashboardSummaryDTO summary) {
+    private String formatSummaryToText(AdminDashboardSummaryDTO summary, long draftNewsCount) {
         DecimalFormat currencyFormatter = new DecimalFormat("#,###'đ'");
         DecimalFormat percentFormatter = new DecimalFormat("#,##0.0'%';-#,##0.0'%'");
 
@@ -179,6 +195,9 @@ public class AdminAiController {
         } else {
             sb.append("- Không có đánh giá tiêu cực nào gần đây.\n");
         }
+        
+        sb.append("\n--- CẢNH BÁO HỆ THỐNG ---\n");
+        sb.append(String.format("- Số bản nháp tin tức y tế khẩn cấp đang chờ duyệt: %d\n", draftNewsCount));
 
         return sb.toString();
     }

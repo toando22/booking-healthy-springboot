@@ -59,20 +59,32 @@ document.addEventListener('DOMContentLoaded', function() {
             messagesBox.innerHTML = '<div class="admin-chat-msg bot"><div class="admin-typing-dots"><span></span><span></span><span></span></div></div>';
             
             fetch('/api/admin/chat/welcome')
-                .then(res => res.text())
-                .then(markdown => {
+                .then(res => res.json())
+                .then(data => {
                     messagesBox.innerHTML = ''; // Xóa dots
+                    
+                    // Render câu chào
+                    const markdown = data.message;
                     const htmlContent = (typeof marked !== 'undefined') ? marked.parse(markdown) : markdown;
                     appendMessage('bot', htmlContent);
                     
-                    const quickBtns = `
-                        <div class="quick-replies-container">
+                    // Khởi tạo container nút bấm
+                    let quickBtnsHTML = '<div class="quick-replies-container">';
+                    
+                    // Nếu có bản nháp, chèn nút Cảnh báo đỏ lên ĐẦU TIÊN
+                    if (data.draftNewsCount && data.draftNewsCount > 0) {
+                        quickBtnsHTML += `<button class="quick-reply-btn" style="border-color: #dc3545; color: #dc3545; font-weight: bold; background-color: #fff8f8;" onclick="window.sendQuickReplyAdmin('Có bao nhiêu bản nháp tin tức y tế khẩn cấp cần duyệt?')">🚨 Tin khẩn cấp (${data.draftNewsCount})</button>`;
+                    }
+                    
+                    // Thêm các nút mặc định
+                    quickBtnsHTML += `
                             <button class="quick-reply-btn" onclick="window.sendQuickReplyAdmin('Doanh thu tháng này?')">💰 Doanh thu</button>
                             <button class="quick-reply-btn" onclick="window.sendQuickReplyAdmin('Tỷ lệ hủy lịch?')">📉 Hủy lịch</button>
                             <button class="quick-reply-btn" onclick="window.sendQuickReplyAdmin('Bác sĩ tốt nhất?')">👨‍⚕️ Top Bác sĩ</button>
                             <button class="quick-reply-btn" onclick="window.sendQuickReplyAdmin('Xem đánh giá tiêu cực')">⚠️ Đánh giá xấu</button>
                         </div>`;
-                    messagesBox.insertAdjacentHTML('beforeend', quickBtns);
+                        
+                    messagesBox.insertAdjacentHTML('beforeend', quickBtnsHTML);
                     saveCache();
                 })
                 .catch(err => {

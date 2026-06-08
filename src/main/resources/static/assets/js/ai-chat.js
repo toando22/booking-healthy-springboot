@@ -770,10 +770,59 @@ maximizeBtn.addEventListener('click', (e) => {
             }, 2000);
         }
 
-        // 3. Hàm tắt Tour
+        // 3. Hàm tắt Tour và chuyển sang Tour Cảnh báo Khẩn cấp
         function closeTourGuide() {
-            tourGuideBox.classList.remove('show');
-            localStorage.setItem('meditrust_tour_seen', 'true'); // Lưu lại để mãi mãi ko hiện làm phiền khách nữa
+            localStorage.setItem('meditrust_tour_seen', 'true'); // Đã xem tour cơ bản
+
+            // Kiểm tra tin tức y tế khẩn cấp
+            fetch('/api/public/news/latest-alert')
+                .then(response => {
+                    if (response.status === 204) {
+                        return null; // Không có bài viết nào
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        const lastAlertId = localStorage.getItem('meditrust_last_alert_id');
+                        if (lastAlertId === data.id.toString()) {
+                            // Đã xem cảnh báo này rồi thì đóng luôn
+                            tourGuideBox.classList.remove('show');
+                            return;
+                        }
+
+                        // Nếu có bài viết mới và chưa xem, đổi giao diện Tour Guide
+                        tourGuideBox.innerHTML = `
+                            <div class="tour-guide-title text-danger"><i class="bi bi-exclamation-triangle-fill fs-4"></i> Cảnh báo Y tế</div>
+                            <div class="tour-guide-desc">
+                                <strong>${data.title}</strong><br/>
+                                <span style="font-size: 0.9em;">${data.summary}</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button id="btn-read-alert" class="tour-guide-btn" style="background-color: #dc3545; color: white;">Đọc tiếp</button>
+                                <button id="btn-skip-alert" class="tour-guide-btn" style="background-color: #6c757d; color: white;">Bỏ qua</button>
+                            </div>
+                            <div style="clear:both;"></div>
+                        `;
+
+                        document.getElementById('btn-read-alert').addEventListener('click', function() {
+                            localStorage.setItem('meditrust_last_alert_id', data.id.toString());
+                            window.location.href = '/news/' + data.id;
+                        });
+
+                        document.getElementById('btn-skip-alert').addEventListener('click', function() {
+                            localStorage.setItem('meditrust_last_alert_id', data.id.toString());
+                            tourGuideBox.classList.remove('show');
+                        });
+                    } else {
+                        // Không có dữ liệu, ẩn luôn
+                        tourGuideBox.classList.remove('show');
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải tin tức khẩn cấp:", err);
+                    tourGuideBox.classList.remove('show');
+                });
         }
 
         // Tắt khi ấn nút "Đã hiểu"
@@ -781,7 +830,8 @@ maximizeBtn.addEventListener('click', (e) => {
 
         // Tắt khi ấn mở Icon Chat (Khách tự mò mở thì tắt luôn hướng dẫn)
         toggleBtn.addEventListener('click', function() {
-            closeTourGuide();
+            tourGuideBox.classList.remove('show');
+            localStorage.setItem('meditrust_tour_seen', 'true');
         });
 
         // 4. Tắt hiệu ứng nhún nhảy khi khách bắt đầu bấm giữ để KÉO THẢ icon

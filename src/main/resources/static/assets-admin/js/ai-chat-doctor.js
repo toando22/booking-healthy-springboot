@@ -254,4 +254,116 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // ==========================================
+    // TOUR GUIDE CẢNH BÁO Y TẾ CHO BÁC SĨ
+    // ==========================================
+    function checkDoctorEmergencyAlert() {
+        // Nếu khung chat đang mở thì không hiện Tour Guide
+        if (sessionStorage.getItem('meditrust_chat_state_doctor') === 'open') return;
+
+        fetch('/api/public/news/latest-alert')
+            .then(response => {
+                if (response.status === 204) {
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    const lastAlertId = localStorage.getItem('meditrust_doctor_last_alert_id');
+                    if (lastAlertId === data.id.toString()) {
+                        return; // Đã xem rồi
+                    }
+
+                    // CSS cho Tour Guide Bác sĩ
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+                        .tour-guide-box-doctor {
+                            position: fixed;
+                            bottom: 110px;
+                            right: 25px;
+                            width: 320px;
+                            background: #fff;
+                            border: 2px solid #198754;
+                            border-radius: 12px;
+                            padding: 16px;
+                            box-shadow: 0 10px 30px rgba(25, 135, 84, 0.25);
+                            z-index: 10000;
+                            opacity: 0;
+                            visibility: hidden;
+                            transform: translateY(20px) scale(0.9);
+                            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                        }
+                        .tour-guide-box-doctor.show {
+                            opacity: 1;
+                            visibility: visible;
+                            transform: translateY(0) scale(1);
+                        }
+                        .tour-guide-box-doctor::after {
+                            content: '';
+                            position: absolute;
+                            bottom: -12px;
+                            right: 22px;
+                            border-width: 12px 12px 0;
+                            border-style: solid;
+                            border-color: #198754 transparent transparent transparent;
+                        }
+                        .tour-guide-title-doc { font-weight: 800; color: #dc3545; margin-bottom: 8px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+                        .tour-guide-desc-doc { font-size: 13px; color: #444; margin-bottom: 12px; line-height: 1.5; }
+                        .tour-guide-btn-doc {
+                            background: #198754; color: white; border: none; padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; transition: 0.2s;
+                        }
+                        .tour-guide-btn-doc:hover { transform: scale(1.05); }
+                    `;
+                    document.head.appendChild(style);
+
+                    // HTML cho Tour Guide Bác sĩ
+                    const tourGuideHtml = `
+                        <div id="chat-tour-guide-doctor" class="tour-guide-box-doctor show">
+                            <div class="tour-guide-title-doc"><i class="bi bi-exclamation-triangle-fill fs-4"></i> Cập nhật Dịch tễ Khẩn cấp</div>
+                            <div class="tour-guide-desc-doc">
+                                <strong>${data.title}</strong><br/>
+                                <span style="font-size: 0.9em;">${data.summary}</span>
+                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; font-style: italic; color: #198754;">
+                                    Bác sĩ vui lòng lưu ý các triệu chứng lâm sàng liên quan trong quá trình khám bệnh.
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end;">
+                                <button id="btn-skip-alert-doc" class="tour-guide-btn-doc" style="background-color: #6c757d;">Đã nắm rõ</button>
+                                <button id="btn-read-alert-doc" class="tour-guide-btn-doc">Xem chi tiết</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.insertAdjacentHTML('beforeend', tourGuideHtml);
+
+                    const tourGuideBox = document.getElementById('chat-tour-guide-doctor');
+
+                    document.getElementById('btn-read-alert-doc').addEventListener('click', function() {
+                        localStorage.setItem('meditrust_doctor_last_alert_id', data.id.toString());
+                        window.open('/admin/manage-news/edit/' + data.id, '_blank'); // Mở bài viết trong trang quản lý hoặc trang nào đó phù hợp. Tạm dùng link edit (nếu Bác sĩ có quyền) hoặc trang xem chung. Hoặc đơn giản là ẩn và để bác sĩ vào mục tin tức. Thực tế Bác sĩ có thể không vào đc admin/manage-news. Tạm trỏ về màn Dashboard hoặc bỏ link này. Thực ra Bác sĩ chưa có module xem tin tức nội bộ, tạm thời ẩn đi và thông báo.
+                        // Sửa lại: Chuyển hướng đến bài viết phía public (vì bài viết đã PUBLISHED)
+                        window.open('/news/' + data.id, '_blank');
+                        tourGuideBox.classList.remove('show');
+                    });
+
+                    document.getElementById('btn-skip-alert-doc').addEventListener('click', function() {
+                        localStorage.setItem('meditrust_doctor_last_alert_id', data.id.toString());
+                        tourGuideBox.classList.remove('show');
+                    });
+
+                    // Ẩn Tour Guide khi mở hộp thoại chat AI
+                    toggleBtn.addEventListener('click', function() {
+                        if (tourGuideBox) {
+                            tourGuideBox.classList.remove('show');
+                        }
+                    });
+                }
+            })
+            .catch(err => console.error("Lỗi khi tải tin tức khẩn cấp (Doctor):", err));
+    }
+
+    // Delay 2s sau khi load trang rồi mới check để khỏi giật màn hình
+    setTimeout(checkDoctorEmergencyAlert, 2000);
+
 });

@@ -35,6 +35,10 @@ public class Post {
 
     // === THÊM CỘT NÀY ===
     private String category; // Giá trị: "NEWS" (Tin tức) hoặc "KNOWLEDGE" (Y học)
+    
+    @Column(nullable = false)
+    private String status = "PUBLISHED"; // Giá trị: "DRAFT" (Nháp) hoặc "PUBLISHED" (Đã xuất bản). Mặc định là PUBLISHED để tương thích với dữ liệu cũ.
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     private User author; // Người đăng (Admin)

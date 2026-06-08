@@ -17,8 +17,36 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAll() {
-        // Lấy danh sách bài viết (mới nhất lên đầu)
+        // Cho Admin: Lấy tất cả bài viết (Bao gồm Nháp), mới nhất lên đầu
         return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Post> findAllPublished() {
+        // Cho User: Chỉ lấy bài đã xuất bản
+        return postRepository.findAllByStatusOrderByCreatedAtDesc("PUBLISHED");
+    }
+
+    @Override
+    public List<Post> findPublishedByCategory(String category) {
+        // Cho User: Lọc theo danh mục và chỉ lấy bài đã xuất bản
+        return postRepository.findByCategoryAndStatusOrderByCreatedAtDesc(category, "PUBLISHED");
+    }
+
+    @Override
+    public long countDrafts() {
+        return postRepository.countByStatus("DRAFT");
+    }
+
+    @Override
+    public Optional<Post> findLatestPublishedPost() {
+        return postRepository.findFirstByStatusOrderByCreatedAtDesc("PUBLISHED");
+    }
+
+    @Override
+    public Optional<Post> findLatestEmergencyAlert() {
+        // Tìm bài viết PUBLISHED mới nhất có chứa chữ "[Cảnh báo y tế]" trong tiêu đề
+        return postRepository.findFirstByStatusAndTitleContainingIgnoreCaseOrderByCreatedAtDesc("PUBLISHED", "[Cảnh báo y tế]");
     }
 
     @Override

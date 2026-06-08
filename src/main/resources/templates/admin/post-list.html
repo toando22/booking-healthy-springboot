@@ -44,6 +44,7 @@
                                 <th scope="col">Tiêu đề</th>
                                 <th scope="col">Ngày đăng</th>
                                 <th scope="col">Tác giả</th>
+                                <th scope="col">Trạng thái</th>
                                 <th scope="col">Hành động</th>
                             </tr>
                             </thead>
@@ -57,6 +58,11 @@
                                 <td th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
                                 <td th:text="${post.author != null ? post.author.fullName : 'Unknown'}">Admin</td>
                                 <td>
+                                    <span th:if="${post.status == 'PUBLISHED'}" class="badge bg-success">Đã xuất bản</span>
+                                    <span th:if="${post.status == 'DRAFT'}" class="badge bg-warning text-dark">Bản nháp</span>
+                                </td>
+                                <td>
+                                    <a th:if="${post.status == 'DRAFT'}" th:href="@{/admin/manage-news/publish/{id}(id=${post.id})}" class="btn btn-success btn-sm" title="Xuất bản"><i class="bi bi-check-circle"></i></a>
                                     <a th:href="@{/admin/manage-news/edit/{id}(id=${post.id})}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
                                     <a th:href="@{/admin/manage-news/delete/{id}(id=${post.id})}" class="btn btn-danger btn-sm"
                                        onclick="return confirm('Xóa bài viết này?')"><i class="bi bi-trash"></i></a>

@@ -136,4 +136,19 @@ public class AdminPostController {
         }
         return "redirect:/admin/manage-news";
     }
+
+    // 6. XUẤT BẢN BẢN NHÁP (DUYỆT BÀI)
+    @GetMapping("/publish/{id}")
+    public String publishPost(@PathVariable("id") Long id, RedirectAttributes ra) {
+        Optional<Post> postOpt = postService.findById(id);
+        if (postOpt.isPresent()) {
+            Post post = postOpt.get();
+            post.setStatus("PUBLISHED");
+            postService.save(post);
+            ra.addFlashAttribute("successMessage", "Đã xuất bản bài viết thành công: " + post.getTitle());
+        } else {
+            ra.addFlashAttribute("errorMessage", "Không tìm thấy bài viết để duyệt.");
+        }
+        return "redirect:/admin/manage-news";
+    }
 }

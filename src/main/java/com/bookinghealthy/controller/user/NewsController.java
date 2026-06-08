@@ -22,15 +22,16 @@ public class NewsController {
     // 1. HIỂN THỊ DANH SÁCH TIN TỨC
     @GetMapping("/news")
     public String showNewsList(Model model) {
-        model.addAttribute("posts", postService.findAll());
+        // Chỉ lấy bài viết đã xuất bản
+        model.addAttribute("posts", postService.findAllPublished());
         model.addAttribute("activePage", "news"); // Để highlight menu nếu cần
         return "user/news"; // -> Trỏ tới file templates/user/news.html
     }
     // 2. TRANG Y HỌC THƯỜNG THỨC (Chỉ hiện bài KNOWLEDGE)
     @GetMapping("/knowledge")
     public String showKnowledgeList(Model model) {
-        // Lọc bài viết có category là 'KNOWLEDGE'
-        model.addAttribute("posts", postRepository.findByCategoryOrderByCreatedAtDesc("KNOWLEDGE"));
+        // Lọc bài viết có category là 'KNOWLEDGE' và trạng thái 'PUBLISHED'
+        model.addAttribute("posts", postService.findPublishedByCategory("KNOWLEDGE"));
         model.addAttribute("pageTitle", "Y học thường thức"); // Tiêu đề trang
         model.addAttribute("activePage", "news");
         return "user/news"; // Dùng chung giao diện news.html
@@ -39,7 +40,8 @@ public class NewsController {
     @GetMapping("/news/{id}")
     public String showNewsDetails(@PathVariable("id") Long id, Model model) {
         Optional<Post> post = postService.findById(id);
-        if (post.isPresent()) {
+        // Chỉ cho phép xem nếu bài viết tồn tại và đã xuất bản
+        if (post.isPresent() && "PUBLISHED".equals(post.get().getStatus())) {
             model.addAttribute("post", post.get());
             model.addAttribute("activePage", "news");
             return "user/news-details"; // -> Trỏ tới file templates/user/news-details.html
