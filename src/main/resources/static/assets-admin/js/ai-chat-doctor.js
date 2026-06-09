@@ -1,19 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- 1. KHỞI TẠO BIẾN ---
-    const widget = document.getElementById('ai-chat-widget-doctor');
-    const toggleBtn = document.getElementById('ai-chat-toggle-doctor');
-    const closeBtn = document.getElementById('btn-close-doctor');
-    const maximizeBtn = document.getElementById('btn-maximize-doctor');
     const chatBox = document.getElementById('ai-chat-box-doctor');
-    const header = document.getElementById('ai-chat-header-doctor');
+    const closeBtn = document.getElementById('btn-close-doctor');
     const chatInput = document.getElementById('ai-chat-input-doctor');
     const sendBtn = document.getElementById('ai-chat-send-doctor');
     const messagesContainer = document.getElementById('ai-chat-messages-doctor');
     const btnNewChat = document.getElementById('btn-new-chat-doctor');
 
-    // --- 2. HÀM GLOBAL (Dùng cho nút trên Header & Quick Reply) ---
+    // --- 2. KHÔI PHỤC KÍCH THƯỚC TỪ TRANG TRƯỚC (SỬA LỖI MẤT KÍCH THƯỚC) ---
+    const savedWidth = sessionStorage.getItem('meditrust_chat_width_doctor');
+    if (savedWidth && chatBox) {
+        chatBox.style.width = savedWidth; // Áp dụng lại độ rộng bạn vừa kéo
+    }
+
+    // --- 3. HÀM GLOBAL ---
     window.toggleDoctorAI = function() {
-        if (chatBox.classList.contains('open')) {
+        if (chatBox && chatBox.classList.contains('open')) {
             closeChat();
         } else {
             openChat();
@@ -27,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // --- 3. QUẢN LÝ PHIÊN (Session Storage) ---
+    // --- 4. QUẢN LÝ PHIÊN ---
     let sessionId = sessionStorage.getItem('meditrust_session_id_doctor');
     if (!sessionId) {
         sessionId = 'doc_session_' + Math.random().toString(36).substr(2, 9);
@@ -35,123 +37,93 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const savedChatHtml = sessionStorage.getItem('meditrust_chat_html_doctor');
-    if (savedChatHtml) {
+    if (savedChatHtml && messagesContainer) {
         messagesContainer.innerHTML = savedChatHtml;
-        setTimeout(() => {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
+        setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 100);
     }
 
-    // Kiểm tra trạng thái mở chat từ phiên trước
     const chatState = sessionStorage.getItem('meditrust_chat_state_doctor');
     if (chatState === 'open') {
         openChat();
     }
 
-    // --- 4. HÀM MỞ / ĐÓNG CHAT CHUẨN ---
+    // --- 5. HÀM MỞ / ĐÓNG ---
     function openChat() {
-        chatBox.classList.add('open'); // Đã sửa lỗi: Dùng class 'open' thay vì 'd-none'
-        //toggleBtn.classList.add('d-none');
+        if(!chatBox) return;
+        chatBox.classList.add('open');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'open');
-        chatInput.focus();
+        if(chatInput) chatInput.focus();
         loadWelcomeMessage();
         updateLiveStats();
     }
 
     function closeChat() {
-        chatBox.classList.remove('open'); // Đã sửa lỗi
-        //toggleBtn.classList.remove('d-none');
+        if(!chatBox) return;
+        chatBox.classList.remove('open');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'closed');
-
-        // Reset vị trí icon nếu bị lỗi khi kéo thả
-        //toggleBtn.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 9999 !important; background-color: #198754 !important;";
     }
 
-    // --- 5. LẮNG NGHE SỰ KIỆN CLICK MỞ/ĐÓNG/PHÓNG TO ---
-    toggleBtn.addEventListener('click', function(e) {
-        if (hasDragged) { hasDragged = false; return; } // Bỏ qua nếu đang kéo thả
-        openChat();
-    });
-
-    closeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeChat();
-    });
+    // --- 6. LẮNG NGHE SỰ KIỆN CLICK CƠ BẢN ---
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeChat();
+        });
+    }
 
     if (btnNewChat) {
-        btnNewChat.addEventListener('click', function(e) {
+        btnNewChat.onclick = function(e) {
             e.preventDefault();
-            e.stopPropagation();
             if (confirm('Làm mới phiên chat?')) {
                 sessionStorage.removeItem('meditrust_session_id_doctor');
                 sessionStorage.removeItem('meditrust_chat_html_doctor');
                 sessionStorage.setItem('meditrust_chat_state_doctor', 'open');
                 window.location.reload();
             }
+        };
+    }
+
+    // --- 7. TÍNH NĂNG KÉO VIỀN ĐỂ THAY ĐỔI KÍCH THƯỚC (ĐÃ SỬA LỖI) ---
+    const resizeHandle = document.getElementById('doctor-ai-resize-handle');
+    let isResizing = false;
+
+    if (resizeHandle && chatBox) {
+        // Tăng thêm vùng bắt chuột an toàn bằng JS đề phòng CSS bị trang khác ghi đè
+        resizeHandle.style.width = '12px';
+        resizeHandle.style.left = '-6px';
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            chatBox.style.transition = 'none';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            let newWidth = window.innerWidth - e.clientX;
+
+            // Khống chế kích thước: Tối thiểu 300px, tối đa 900px
+            if (newWidth >= 300 && newWidth <= 900) {
+                chatBox.style.width = newWidth + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.userSelect = 'auto';
+                chatBox.style.transition = 'right 0.4s cubic-bezier(0.05, 0.7, 0.1, 1.0)';
+
+                // GHI NHỚ LẠI KÍCH THƯỚC KHI CHUYỂN TRANG
+                sessionStorage.setItem('meditrust_chat_width_doctor', chatBox.style.width);
+            }
         });
     }
 
-    maximizeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isFullscreen = chatBox.classList.toggle('fullscreen');
-        if (isFullscreen) {
-            maximizeBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i>';
-        } else {
-            maximizeBtn.innerHTML = '<i class="bi bi-arrows-fullscreen"></i>';
-            chatBox.style.width  = '';
-            chatBox.style.height = '';
-        }
-        setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 100);
-    });
-
-    // --- 6. XỬ LÝ KÉO THẢ ICON & HEADER ---
-    let isDraggingIcon = false, hasDragged = false;
-    let iconOffsetX, iconOffsetY, dragStartX = 0, dragStartY = 0;
-
-    toggleBtn.addEventListener('mousedown', function(e) {
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        hasDragged = false;
-        const rect = toggleBtn.getBoundingClientRect();
-        iconOffsetX = e.clientX - rect.left;
-        iconOffsetY = e.clientY - rect.top;
-        isDraggingIcon = true;
-    });
-
-    document.addEventListener('mousemove', function(e) {
-        if (!isDraggingIcon) return;
-        let moveX = Math.abs(e.clientX - dragStartX);
-        let moveY = Math.abs(e.clientY - dragStartY);
-
-        if (moveX > 5 || moveY > 5) {
-            hasDragged = true;
-            toggleBtn.style.transition = 'none';
-            toggleBtn.style.bottom = 'auto';
-            toggleBtn.style.right = 'auto';
-
-            let newX = e.clientX - iconOffsetX;
-            let newY = e.clientY - iconOffsetY;
-
-            if (newX < 0) newX = 0;
-            if (newY < 0) newY = 0;
-            if (newX + toggleBtn.offsetWidth > window.innerWidth) newX = window.innerWidth - toggleBtn.offsetWidth;
-            if (newY + toggleBtn.offsetHeight > window.innerHeight) newY = window.innerHeight - toggleBtn.offsetHeight;
-
-            toggleBtn.style.left = newX + 'px';
-            toggleBtn.style.top = newY + 'px';
-        }
-    });
-
-    document.addEventListener('mouseup', function() {
-        if (isDraggingIcon) {
-            isDraggingIcon = false;
-            toggleBtn.style.transition = 'transform 0.2s ease';
-        }
-    });
-
-    // --- 7. LOAD MESSAGE & CALL API ---
+    // --- 8. LOGIC CALL API VÀ HIỂN THỊ TIN NHẮN ---
     function updateLiveStats() {
+        if(!messagesContainer) return;
         fetch('/api/doctor/chat/welcome')
             .then(res => res.text())
             .then(newWelcomeHtml => {
@@ -170,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadWelcomeMessage() {
-        if (messagesContainer.innerHTML.trim() === '') {
+        if (messagesContainer && messagesContainer.innerHTML.trim() === '') {
             const typingMsg = appendMessage('bot', '<div class="typing-dots"><span></span><span></span><span></span></div>');
             fetch('/api/doctor/chat/welcome')
                 .then(res => res.text())
@@ -199,10 +171,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function appendMessage(sender, textOrHtml) {
+        if(!messagesContainer) return;
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('chat-msg', sender === 'assistant' || sender === 'bot' ? 'bot' : 'user');
 
-        // Tích hợp marked.js để parse markdown từ file số 2
         if((sender === 'bot' || sender === 'assistant') && textOrHtml.indexOf('<div') === -1 && typeof marked !== 'undefined') {
             msgDiv.innerHTML = marked.parse(textOrHtml);
         } else {
@@ -216,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function sendMessage() {
+        if(!chatInput || !messagesContainer) return;
         const text = chatInput.value.trim();
         if (!text) return;
 
@@ -225,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const typingMsg = appendMessage('bot', '<div class="typing-dots"><span></span><span></span><span></span></div>');
 
         try {
-            // Sử dụng API endpoint duy nhất (bạn có thể đổi thành /api/doctor/assistant/chat nếu backend yêu cầu)
             const response = await fetch('/api/doctor/chat/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -236,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 let cleanStr = data.answer || data.ai_reply || "";
 
-                // Cố gắng parse JSON nếu backend trả về string JSON bọc trong markdown
                 cleanStr = cleanStr.replace(/```json/gi, '').replace(/```/g, '').trim();
                 let formattedText = cleanStr;
 
@@ -245,9 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (aiData.ai_reply) {
                         formattedText = aiData.ai_reply;
                     }
-                } catch(e) {
-                    // Fallback to raw string
-                }
+                } catch(e) {}
 
                 if(typeof marked !== 'undefined') {
                     typingMsg.innerHTML = marked.parse(formattedText);
@@ -266,10 +235,10 @@ document.addEventListener('DOMContentLoaded', function() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    if(sendBtn) sendBtn.addEventListener('click', sendMessage);
+    if(chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-    // --- 8. TOUR GUIDE CẢNH BÁO Y TẾ CHO BÁC SĨ ---
+    // --- 9. TOUR GUIDE CẢNH BÁO Y TẾ CHO BÁC SĨ ---
     function checkDoctorEmergencyAlert() {
         if (sessionStorage.getItem('meditrust_chat_state_doctor') === 'open') return;
 
@@ -324,10 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('btn-skip-alert-doc').addEventListener('click', function() {
                         localStorage.setItem('meditrust_doctor_last_alert_id', data.id.toString());
                         tourGuideBox.classList.remove('show');
-                    });
-
-                    toggleBtn.addEventListener('click', function() {
-                        if (tourGuideBox) tourGuideBox.classList.remove('show');
                     });
                 }
             })
