@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 4. HÀM MỞ / ĐÓNG CHAT CHUẨN ---
     function openChat() {
         chatBox.classList.add('open'); // Đã sửa lỗi: Dùng class 'open' thay vì 'd-none'
-        toggleBtn.classList.add('d-none');
+        //toggleBtn.classList.add('d-none');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'open');
         chatInput.focus();
         loadWelcomeMessage();
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function closeChat() {
         chatBox.classList.remove('open'); // Đã sửa lỗi
-        toggleBtn.classList.remove('d-none');
+        //toggleBtn.classList.remove('d-none');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'closed');
 
         // Reset vị trí icon nếu bị lỗi khi kéo thả
-        toggleBtn.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 9999 !important; background-color: #198754 !important;";
+        //toggleBtn.style.cssText = "display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 9999 !important; background-color: #198754 !important;";
     }
 
     // --- 5. LẮNG NGHE SỰ KIỆN CLICK MỞ/ĐÓNG/PHÓNG TO ---
