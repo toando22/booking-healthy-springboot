@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const messagesContainer = document.getElementById('ai-chat-messages-doctor');
     const btnNewChat = document.getElementById('btn-new-chat-doctor');
 
-    // --- 2. KHÔI PHỤC KÍCH THƯỚC TỪ TRANG TRƯỚC (SỬA LỖI MẤT KÍCH THƯỚC) ---
+    // --- 2. KHÔI PHỤC KÍCH THƯỚC TỪ TRANG TRƯỚC ---
     const savedWidth = sessionStorage.getItem('meditrust_chat_width_doctor');
     if (savedWidth && chatBox) {
-        chatBox.style.width = savedWidth; // Áp dụng lại độ rộng bạn vừa kéo
+        chatBox.style.width = savedWidth;
     }
 
     // --- 3. HÀM GLOBAL ---
@@ -29,13 +29,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // --- 4. QUẢN LÝ PHIÊN ---
+    // --- 4. QUẢN LÝ PHIÊN & NGỮ CẢNH
+    const currentPath = window.location.pathname;
+    const savedPath = sessionStorage.getItem('meditrust_chat_last_path_doctor');
     let sessionId = sessionStorage.getItem('meditrust_session_id_doctor');
+
+    // Nếu bác sĩ chuyển URL (từ danh sách sang chi tiết, hoặc từ bệnh nhân A sang bệnh nhân B)
+    if (savedPath && savedPath !== currentPath) {
+        // Xóa trí nhớ giao diện cũ
+        sessionStorage.removeItem('meditrust_chat_html_doctor');
+        if (messagesContainer) messagesContainer.innerHTML = '';
+
+        // Cấp phát một ID phiên chat mới tinh để Backend xóa trí nhớ ngầm
+        sessionId = 'doc_session_' + Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem('meditrust_session_id_doctor', sessionId);
+    }
+    // Cập nhật lại đường dẫn hiện tại để lần sau so sánh
+    sessionStorage.setItem('meditrust_chat_last_path_doctor', currentPath);
+
     if (!sessionId) {
         sessionId = 'doc_session_' + Math.random().toString(36).substr(2, 9);
         sessionStorage.setItem('meditrust_session_id_doctor', sessionId);
     }
 
+    // Phục hồi HTML (chỉ khi chưa bị xóa do chuyển trang)
     const savedChatHtml = sessionStorage.getItem('meditrust_chat_html_doctor');
     if (savedChatHtml && messagesContainer) {
         messagesContainer.innerHTML = savedChatHtml;
@@ -83,12 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // --- 7. TÍNH NĂNG KÉO VIỀN ĐỂ THAY ĐỔI KÍCH THƯỚC (ĐÃ SỬA LỖI) ---
+    // --- 7. TÍNH NĂNG KÉO VIỀN ĐỂ THAY ĐỔI KÍCH THƯỚC ---
     const resizeHandle = document.getElementById('doctor-ai-resize-handle');
     let isResizing = false;
 
     if (resizeHandle && chatBox) {
-        // Tăng thêm vùng bắt chuột an toàn bằng JS đề phòng CSS bị trang khác ghi đè
         resizeHandle.style.width = '12px';
         resizeHandle.style.left = '-6px';
 
@@ -100,10 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.addEventListener('mousemove', (e) => {
             if (!isResizing) return;
-
             let newWidth = window.innerWidth - e.clientX;
-
-            // Khống chế kích thước: Tối thiểu 300px, tối đa 900px
             if (newWidth >= 300 && newWidth <= 900) {
                 chatBox.style.width = newWidth + 'px';
             }
@@ -114,8 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 isResizing = false;
                 document.body.style.userSelect = 'auto';
                 chatBox.style.transition = 'right 0.4s cubic-bezier(0.05, 0.7, 0.1, 1.0)';
-
-                // GHI NHỚ LẠI KÍCH THƯỚC KHI CHUYỂN TRANG
                 sessionStorage.setItem('meditrust_chat_width_doctor', chatBox.style.width);
             }
         });
@@ -150,18 +161,38 @@ document.addEventListener('DOMContentLoaded', function() {
                     const formattedText = greetingText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                     typingMsg.innerHTML = formattedText;
 
-                    let quickActionsHtml = `
-                        <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #198754;">
-                            <div style="font-weight: bold; font-size: 13px; color: #333; margin-bottom: 8px;">
-                                <i class="bi bi-lightning-charge-fill text-warning"></i> Thao tác nhanh:
+                    // --- LOGIC HIỂN THỊ NÚT THÔNG MINH ---
+                    const isViewingRecord = document.getElementById("pdf-content") !== null;
+                    let quickActionsHtml = '';
+
+                    if (isViewingRecord) {
+                        quickActionsHtml = `
+                            <div style="margin-top: 15px; padding: 12px; background: #f0f7ff; border-radius: 8px; border-left: 4px solid #0d6efd;">
+                                <div style="font-weight: bold; font-size: 13px; color: #0d6efd; margin-bottom: 8px;">
+                                    <i class="bi bi-file-medical-fill"></i> Trợ lý Lâm sàng:
+                                </div>
+                                <div class="quick-replies-container" style="margin-top: 0; padding-top: 0; border: none;">
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Tóm tắt nhanh bệnh án này cho tôi', this)">📝 Tóm tắt nhanh</button>
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Phân tích đơn thuốc này, có cảnh báo tác dụng phụ hay tương tác thuốc nào không?', this)">💊 Phân tích Đơn thuốc</button>
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Gợi ý chế độ ăn uống và sinh hoạt cho bệnh nhân này', this)">🥗 Gợi ý lời dặn dò</button>
+                                </div>
                             </div>
-                            <div class="quick-replies-container" style="margin-top: 0; padding-top: 0; border: none;">
-                                <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Thống kê lịch hôm nay', this)">📊 Thống kê lịch hôm nay</button>
-                                <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Kiểm tra bệnh án nợ', this)">📝 Kiểm tra bệnh án nợ</button>
-                                <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Lịch tuần này thế nào?', this)">📅 Lịch tuần này</button>
+                        `;
+                    } else {
+                        quickActionsHtml = `
+                            <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #198754;">
+                                <div style="font-weight: bold; font-size: 13px; color: #333; margin-bottom: 8px;">
+                                    <i class="bi bi-lightning-charge-fill text-warning"></i> Thao tác nhanh:
+                                </div>
+                                <div class="quick-replies-container" style="margin-top: 0; padding-top: 0; border: none;">
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Thống kê lịch hôm nay', this)">📊 Thống kê lịch hôm nay</button>
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Kiểm tra bệnh án nợ', this)">📝 Kiểm tra bệnh án nợ</button>
+                                    <button class="quick-reply-btn" onclick="window.sendQuickReplyDoctor('Lịch tuần này thế nào?', this)">📅 Lịch tuần này</button>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
+
                     appendMessage('bot', quickActionsHtml);
                 })
                 .catch(() => {
@@ -197,11 +228,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const typingMsg = appendMessage('bot', '<div class="typing-dots"><span></span><span></span><span></span></div>');
 
+        // Lấy nội dung trang màn hình (nếu đang ở trang bệnh án)
+        let contextText = "";
+        const pdfContent = document.getElementById("pdf-content");
+        if (pdfContent) {
+            contextText = pdfContent.innerText;
+        }
+
         try {
             const response = await fetch('/api/doctor/chat/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sessionId: sessionId, prompt: text })
+                body: JSON.stringify({
+                    sessionId: sessionId,
+                    prompt: text,
+                    pageContent: contextText
+                })
             });
 
             if (response.ok) {
