@@ -165,7 +165,7 @@ public class DoctorAiController {
         Set<String> bookedTomorrow = new HashSet<>();
 
         if (upcomingBookings.isEmpty()) {
-            scheduleDetails.append("Không có lịch khám nào.\n");
+            scheduleDetails.append("Hiện tại không có ca khám nào trong hôm nay và ngày mai.\n");
         } else {
             for (Booking b : upcomingBookings) {
                 String patientName = b.getUser() != null ? b.getUser().getFullName() : "Khách vãng lai";
@@ -229,8 +229,24 @@ public class DoctorAiController {
         }
         if (reviewCount == 0) reviewTexts.append("Chưa có đánh giá chữ.\n");
 
-        // 4. Nhồi biến vào Prompt (Đã bổ sung Tuần/Tháng và Lệnh Định Dạng)
-        String contextMsg = String.format("Bạn là AI Trợ lý Bác sĩ hệ thống MediTrust. Phải trả lời bằng VĂN BẢN THƯỜNG, tự nhiên, xưng hô 'Em' với 'Bác sĩ'.\n\n"
+        // 4. Đọc dữ liệu văn bản từ màn hình và ÉP KIỂU NGỮ CẢNH CHO AI
+        String pageContextInfo = "";
+        if (request.getPageContent() != null && !request.getPageContent().trim().isEmpty()) {
+            pageContextInfo = "\n\n======================================================\n"
+                    + "📋 THÔNG TIN BỆNH ÁN BÁC SĨ ĐANG MỞ TRÊN MÀN HÌNH:\n"
+                    + request.getPageContent() + "\n"
+                    + "======================================================\n"
+                    + "🚨 CHỈ THỊ ÉP BUỘC ĐỐI VỚI BỆNH ÁN NÀY (HÃY ĐỌC KỸ):\n"
+                    + "Nếu Bác sĩ yêu cầu 'tóm tắt', 'đánh giá', 'phân tích', hoặc hỏi bất cứ điều gì về 'bệnh nhân', 'bệnh án', 'toa thuốc', 'đơn thuốc'... BẠN PHẢI MẶC ĐỊNH lấy thông tin từ Bệnh án đang mở ở trên để trả lời mà KHÔNG CẦN Bác sĩ phải nói rõ là 'trên màn hình'.\n\n"
+                    + "💡 KỊCH BẢN HỖ TRỢ BÁC SĨ (Hãy linh hoạt áp dụng tùy câu hỏi):\n"
+                    + "- KHI ĐƯỢC YÊU CẦU TÓM TẮT: Trình bày cực kỳ súc tích: (1) Tên & Tuổi bệnh nhân, (2) Chẩn đoán chính, (3) Các chỉ số sinh tồn bất thường (nếu có), (4) Tổng quan thuốc đã kê.\n"
+                    + "- KHI ĐƯỢC YÊU CẦU ĐÁNH GIÁ/PHÂN TÍCH: Hãy đóng vai trò hội chẩn. Kiểm tra xem các thuốc đã kê có tương tác xấu với nhau không? Có phù hợp với chẩn đoán (Mã ICD) không? Có cần cảnh báo tác dụng phụ gì cho bệnh nhân này không?\n"
+                    + "- KHI ĐƯỢC YÊU CẦU LỜI DẶN: Dựa vào chẩn đoán, hãy đưa ra 3-5 gạch đầu dòng về chế độ dinh dưỡng, sinh hoạt, tập luyện để Bác sĩ copy và dặn dò bệnh nhân.\n";
+        }
+
+        // 5. NHỒI BIẾN VÀO PROMPT
+        String contextMsg = String.format("Bạn là AI Trợ lý của hệ thống MediTrust. ĐỐI TƯỢNG BẠN ĐANG GIAO TIẾP LÀ BÁC SĨ.\n"
+                        + "YÊU CẦU XƯNG HÔ TUYỆT ĐỐI NGHIÊM NGẶT: Bạn PHẢI tự xưng bản thân mình là 'em' (hoặc 'trợ lý') và luôn gọi người dùng là 'Bác sĩ'. TUYỆT ĐỐI CẤM tự nhận mình là bác sĩ và cấm gọi người dùng là em.\n\n"
                         + "--- THỐNG KÊ LỊCH KHÁM ---\n"
                         + "- HÔM NAY (%s): Tổng %d ca, đã khám %d ca, còn %d ca chưa khám (Tổng tất cả bao gồm hủy: %d ca)\n"
                         + "- TUẦN NÀY (%s đến %s): Tổng %d ca, đã khám %d ca, còn %d ca\n"
@@ -238,19 +254,27 @@ public class DoctorAiController {
                         + "- HỒ SƠ BỆNH ÁN CÒN NỢ: %d hồ sơ.\n"
                         + "👉 CA KHÁM GẦN NHẤT TIẾP THEO: %s\n"
                         + "👉 LỊCH TRỐNG GẦN NHẤT TIẾP THEO: %s\n\n"
-                        + "--- QUY TẮC ---\n"
-                        + "1. CA KHÁM VÀ LỊCH TRỐNG: Hãy lấy thông tin ở mục '👉 CA KHÁM/ LỊCH TRỐNG GẦN NHẤT TIẾP THEO' để trả lời ngay lập tức.\n"
-                        + "2. HỎI VỀ THỐNG KÊ: Lấy dữ liệu ở mục 'THỐNG KÊ LỊCH KHÁM' để báo cáo chính xác cho bác sĩ (Ví dụ: Tuần này, tháng này).\n"
-                        + "3. LỆNH ĐỊNH DẠNG TỐI THƯỢNG: TUYỆT ĐỐI CẤM tự chế ra các key JSON như 'total_cases'. NẾU hệ thống ngầm bắt buộc bạn phải trả về JSON (có mảng suggested_prompts), thì bạn BẮT BUỘC phải đặt TOÀN BỘ câu trả lời giao tiếp của bạn vào trong key \"ai_reply\". (Ví dụ: {\"ai_reply\": \"Dạ thưa Bác sĩ, lịch tuần này...\", \"suggested_prompts\": [...]}).\n\n"
-                        + "--- REVIEW ---\n%s\n\n"
-                        + "Thời gian hiện tại: %s. Người dùng hỏi: %s",
+                        + "--- CHI TIẾT LỊCH KHÁM (HÔM NAY & NGÀY MAI) ---\n"
+                        + "%s\n\n"
+                        + "--- QUY TẮC CHÍNH (TUYỆT ĐỐI TUÂN THỦ) ---\n"
+                        + "1. PHÂN BIỆT RẠCH RÒI 'CA KHÁM' VÀ 'LỊCH TRỐNG':\n"
+                        + "   - KHI BÁC SĨ HỎI 'LỊCH TIẾP THEO', 'CA TIẾP THEO', 'BỆNH NHÂN TIẾP THEO': Bạn CHỈ ĐƯỢC PHÉP dùng mục '👉 CA KHÁM GẦN NHẤT TIẾP THEO' để trả lời. TUYỆT ĐỐI KHÔNG được lôi lịch trống ra nói.\n"
+                        + "   - KHI BÁC SĨ HỎI 'CÒN TRỐNG KHÔNG', 'LỊCH TRỐNG', 'KHI NÀO RẢNH': Bạn MỚI ĐƯỢC PHÉP dùng mục '👉 LỊCH TRỐNG GẦN NHẤT TIẾP THEO'.\n"
+                        + "   - KHI BÁC SĨ HỎI 'HÔM NAY CÓ LỊCH GÌ KHÔNG', 'DANH SÁCH BỆNH NHÂN': Bạn PHẢI đọc phần 'CHI TIẾT LỊCH KHÁM' ra để báo cáo.\n"
+                        + "2. HỎI VỀ THỐNG KÊ: Lấy dữ liệu ở mục 'THỐNG KÊ LỊCH KHÁM' để báo cáo.\n"
+                        + "3. LỆNH ĐỊNH DẠNG TỐI THƯỢNG: TUYỆT ĐỐI CẤM tự chế ra các key JSON như 'total_cases'. NẾU hệ thống bắt buộc trả về JSON, BẮT BUỘC đặt TOÀN BỘ câu trả lời vào key \"ai_reply\".\n\n"
+                        + "--- REVIEW ---\n%s\n"
+                        + "%s\n"
+                        + "Thời gian hiện tại: %s. Câu hỏi của Bác sĩ: %s",
                 today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), todayActiveTotal, todayCompleted, todayRemaining, todayTotal,
                 startOfWeek.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), endOfWeek.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), weekTotal, weekCompleted, weekRemaining,
                 startOfMonth.format(DateTimeFormatter.ofPattern("MM/yyyy")), monthTotal, monthCompleted,
                 incompleteRecords,
                 nextAppointmentStr,
                 nextEmptySlotStr,
+                scheduleDetails.toString(),
                 reviewTexts.toString(),
+                pageContextInfo,
                 java.time.LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")),
                 request.getPrompt()
         );

@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<th:block th:replace="~{admin/include/header :: header-nav}"></th:block>
+<th:block th:replace="~{doctor/include/header :: header-nav}"></th:block>
 <th:block th:replace="~{doctor/include/sidebar :: sidebar}"></th:block>
 
 <main id="main" class="main">
@@ -305,37 +305,42 @@
 
     // 2. Hàm xử lý sự kiện click vào ô Đánh giá để kích hoạt Trợ lý ảo phân tích sâu
     function triggerAiReviewAnalysis() {
-        // Ánh xạ chính xác 100% theo các ID thực tế trong widget chat của hệ thống
-        const toggleBtn = document.getElementById('ai-chat-toggle-doctor');
         const chatBox = document.getElementById('ai-chat-box-doctor');
         const chatInput = document.getElementById('ai-chat-input-doctor');
         const sendBtn = document.getElementById('ai-chat-send-doctor');
 
         // Kiểm tra an toàn xem các thành phần chatbot đã được load lên DOM chưa
-        if (!toggleBtn || !chatBox || !chatInput || !sendBtn) {
+        if (!chatBox || !chatInput || !sendBtn) {
             console.error("Lỗi UX: Hệ thống chưa tìm thấy các ID thành phần của Trợ lý Bác sĩ.");
             return;
         }
 
-        // Nếu khung chat đang đóng (đang chứa class ẩn 'd-none')
-        if (chatBox.classList.contains('d-none')) {
-            // Giả lập hành vi click vào nút tròn để kích hoạt chuỗi hàm loadWelcomeMessage() và mở khung của file gốc
-            toggleBtn.click();
+        // Nếu khung chat chưa mở (không có class 'open' theo logic JS mới)
+        if (!chatBox.classList.contains('open')) {
+            // Sử dụng hàm global đã định nghĩa ở file ai-chat-doctor.js
+            if (typeof window.toggleDoctorAI === 'function') {
+                window.toggleDoctorAI();
+            } else {
+                // Fallback đề phòng
+                const toggleBtn = document.getElementById('ai-chat-toggle-doctor');
+                if (toggleBtn) toggleBtn.click();
+            }
         }
 
-        // Trễ 350ms đợi khung chat thực hiện xong hiệu ứng mở và lưu trạng thái vào sessionStorage
+        // Trễ 350ms đợi khung chat thực hiện xong hiệu ứng mở
         setTimeout(() => {
-            // Tự động điền câu hỏi phân tích đánh giá y khoa vào ô nhập liệu
-            chatInput.value = "Hãy phân tích các đánh giá bằng chữ gần đây của bệnh nhân và chỉ ra điểm tôi làm tốt, điểm cần cải thiện.";
+            const promptText = "Hãy phân tích các đánh giá bằng chữ gần đây của bệnh nhân và chỉ ra điểm tôi làm tốt, điểm cần cải thiện.";
 
-            // Kích hoạt sự kiện 'input' để đồng bộ hóa nếu hệ thống có kiểm soát chuỗi nhập liệu
-            chatInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-            // Đưa con trỏ chuột tập trung vào ô nhập liệu
-            chatInput.focus();
-
-            // Giả lập click nút gửi tin nhắn đi
-            sendBtn.click();
+            // Tận dụng luôn hàm sendQuickReplyDoctor đã viết sẵn ở file tổng hợp
+            if (typeof window.sendQuickReplyDoctor === 'function') {
+                window.sendQuickReplyDoctor(promptText, null);
+            } else {
+                // Logic cũ nếu hàm trên chưa kịp load
+                chatInput.value = promptText;
+                chatInput.dispatchEvent(new Event('input', { bubbles: true }));
+                chatInput.focus();
+                sendBtn.click();
+            }
         }, 350);
     }
 </script>
