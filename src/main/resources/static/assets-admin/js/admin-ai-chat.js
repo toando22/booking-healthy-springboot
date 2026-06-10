@@ -1,3 +1,8 @@
+if (window.adminAiChatLoaded) {
+    console.warn("Admin AI Chat script loaded multiple times. Skipping initialization.");
+} else {
+    window.adminAiChatLoaded = true;
+
 // HÀM MỞ/ĐÓNG SIÊU ĐƠN GIẢN - TOÀN CỤC
 window.toggleMediTrustAI = function() {
     const panel = document.getElementById('admin-ai-sidepanel');
@@ -171,3 +176,4 @@ document.addEventListener('DOMContentLoaded', function() {
         document.onmouseup = () => { isResizing = false; document.body.style.userSelect = 'auto'; };
     }
 });
+}

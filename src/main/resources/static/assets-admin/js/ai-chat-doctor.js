@@ -1,4 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
+if (window.aiChatDoctorLoaded) {
+    console.warn("AI Chat Doctor script loaded multiple times. Skipping initialization.");
+} else {
+    window.aiChatDoctorLoaded = true;
+    document.addEventListener('DOMContentLoaded', function() {
     // --- 1. KHỞI TẠO BIẾN ---
     const chatBox = document.getElementById('ai-chat-box-doctor');
     const closeBtn = document.getElementById('btn-close-doctor');
@@ -283,6 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- 9. TOUR GUIDE CẢNH BÁO Y TẾ CHO BÁC SĨ ---
     function checkDoctorEmergencyAlert() {
         if (sessionStorage.getItem('meditrust_chat_state_doctor') === 'open') return;
+        if (document.getElementById('chat-tour-guide-doctor')) return;
 
         fetch('/api/public/news/latest-alert')
             .then(response => {
@@ -296,9 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const style = document.createElement('style');
                     style.innerHTML = `
-                        .tour-guide-box-doctor { position: fixed; bottom: 110px; right: 25px; width: 320px; background: #fff; border: 2px solid #198754; border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(25, 135, 84, 0.25); z-index: 10000; opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.9); transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+                        .tour-guide-box-doctor { position: fixed; top: 80px; right: 20px; width: 320px; background: #fff; border: 2px solid #198754; border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(25, 135, 84, 0.25); z-index: 10000; opacity: 0; visibility: hidden; transform: translateY(-20px) scale(0.9); transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
                         .tour-guide-box-doctor.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-                        .tour-guide-box-doctor::after { content: ''; position: absolute; bottom: -12px; right: 22px; border-width: 12px 12px 0; border-style: solid; border-color: #198754 transparent transparent transparent; }
+                        .tour-guide-box-doctor::after { content: ''; position: absolute; top: -12px; right: 150px; border-width: 0 12px 12px; border-style: solid; border-color: transparent transparent #198754 transparent; }
                         .tour-guide-title-doc { font-weight: 800; color: #dc3545; margin-bottom: 8px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
                         .tour-guide-desc-doc { font-size: 13px; color: #444; margin-bottom: 12px; line-height: 1.5; }
                         .tour-guide-btn-doc { background: #198754; color: white; border: none; padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; }
@@ -343,3 +348,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setTimeout(checkDoctorEmergencyAlert, 2000);
 });
+}
