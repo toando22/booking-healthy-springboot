@@ -36,7 +36,7 @@
         <ul class="d-flex align-items-center">
 
             <!-- NÚT MỞ AI SIDEBAR (Lệnh cực mạnh) -->
-            <li class="nav-item pe-3">
+            <li class="nav-item pe-3" sec:authorize="hasRole('ADMIN')">
                 <button type="button" class="nav-link nav-icon" onclick="window.toggleMediTrustAI();" style="border:none; background:none; cursor:pointer;">
                     <i class="bi bi-stars" style="color: #198754; font-size: 1.4rem;"></i>
                 </button>
@@ -66,8 +66,10 @@
         </ul>
     </nav>
 
-    <!-- NHÚNG SIDEBAR TRỰC TIẾP VÀO HEADER ĐỂ CHẮC CHẮN NÓ LUÔN TỒN TẠI -->
-    <div th:replace="~{admin/include/ai-chat :: chat-widget}"></div>
+    <!-- NHÚNG SIDEBAR TRỰC TIẾP VÀO HEADER ĐỂ CHẮC CHẮN NÓ LUÔN TỒN TẠI (Chỉ Admin mới thấy) -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <div th:replace="~{admin/include/ai-chat :: chat-widget}"></div>
+    </div>
 </header>
 
 </body>
