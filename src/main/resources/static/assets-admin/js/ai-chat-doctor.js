@@ -69,6 +69,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!chatBox) return;
         chatBox.classList.add('open');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'open');
+        const toggleBtn = document.getElementById('ai-chat-toggle-doctor');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('style', 'display: none !important;');
+        }
+        const tourGuideBox = document.getElementById('chat-tour-guide-doctor');
+        if (tourGuideBox) {
+            tourGuideBox.classList.remove('show');
+        }
+
         if(chatInput) chatInput.focus();
         loadWelcomeMessage();
         updateLiveStats();
@@ -78,6 +87,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!chatBox) return;
         chatBox.classList.remove('open');
         sessionStorage.setItem('meditrust_chat_state_doctor', 'closed');
+        const tourGuideBox = document.getElementById('chat-tour-guide-doctor');
+        if (tourGuideBox) {
+            tourGuideBox.classList.add('show');
+        }
     }
 
     // --- 6. LẮNG NGHE SỰ KIỆN CLICK CƠ BẢN ---
@@ -290,12 +303,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                if (data) {
+                // Fix 3: Bổ sung kiểm tra data.id an toàn trước khi xử lý
+                if (data && data.id) {
                     const lastAlertId = localStorage.getItem('meditrust_doctor_last_alert_id');
                     if (lastAlertId === data.id.toString()) return;
 
-                    const style = document.createElement('style');
-                    style.innerHTML = `
+                    // Fix 1: DỌN DẸP DOM CŨ. Nếu đã có popup lơ lửng, xóa nó đi trước khi chèn cái mới.
+                    const existingBox = document.getElementById('chat-tour-guide-doctor');
+                    if (existingBox) existingBox.remove();
+
+                    // (Tùy chọn) Tránh việc nhồi thêm <style> nhiều lần vào <head>
+                    if (!document.getElementById('doc-tour-guide-style')) {
+                        const style = document.createElement('style');
+                        style.id = 'doc-tour-guide-style';
+                        style.innerHTML = `
                         .tour-guide-box-doctor { position: fixed; bottom: 110px; right: 25px; width: 320px; background: #fff; border: 2px solid #198754; border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(25, 135, 84, 0.25); z-index: 10000; opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.9); transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
                         .tour-guide-box-doctor.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
                         .tour-guide-box-doctor::after { content: ''; position: absolute; bottom: -12px; right: 22px; border-width: 12px 12px 0; border-style: solid; border-color: #198754 transparent transparent transparent; }
@@ -304,37 +325,40 @@ document.addEventListener('DOMContentLoaded', function() {
                         .tour-guide-btn-doc { background: #198754; color: white; border: none; padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; }
                         .tour-guide-btn-doc:hover { transform: scale(1.05); }
                     `;
-                    document.head.appendChild(style);
+                        document.head.appendChild(style);
+                    }
 
                     const tourGuideHtml = `
-                        <div id="chat-tour-guide-doctor" class="tour-guide-box-doctor show">
-                            <div class="tour-guide-title-doc"><i class="bi bi-exclamation-triangle-fill fs-4"></i> Cập nhật Dịch tễ Khẩn cấp</div>
-                            <div class="tour-guide-desc-doc">
-                                <strong>${data.title}</strong><br/>
-                                <span style="font-size: 0.9em;">${data.summary}</span>
-                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; font-style: italic; color: #198754;">
-                                    Bác sĩ vui lòng lưu ý các triệu chứng lâm sàng liên quan trong quá trình khám bệnh.
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end;">
-                                <button id="btn-skip-alert-doc" class="tour-guide-btn-doc" style="background-color: #6c757d;">Đã nắm rõ</button>
-                                <button id="btn-read-alert-doc" class="tour-guide-btn-doc">Xem chi tiết</button>
+                    <div id="chat-tour-guide-doctor" class="tour-guide-box-doctor show">
+                        <div class="tour-guide-title-doc"><i class="bi bi-exclamation-triangle-fill fs-4"></i> Cập nhật Dịch tễ Khẩn cấp</div>
+                        <div class="tour-guide-desc-doc">
+                            <strong>${data.title}</strong><br/>
+                            <span style="font-size: 0.9em;">${data.summary}</span>
+                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ccc; font-style: italic; color: #198754;">
+                                Bác sĩ vui lòng lưu ý các triệu chứng lâm sàng liên quan trong quá trình khám bệnh.
                             </div>
                         </div>
-                    `;
+                        <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end;">
+                            <button id="btn-skip-alert-doc" class="tour-guide-btn-doc" style="background-color: #6c757d;">Đã nắm rõ</button>
+                            <button id="btn-read-alert-doc" class="tour-guide-btn-doc">Xem chi tiết</button>
+                        </div>
+                    </div>
+                `;
                     document.body.insertAdjacentHTML('beforeend', tourGuideHtml);
 
                     const tourGuideBox = document.getElementById('chat-tour-guide-doctor');
 
                     document.getElementById('btn-read-alert-doc').addEventListener('click', function() {
                         localStorage.setItem('meditrust_doctor_last_alert_id', data.id.toString());
-                        window.open('/news/' + data.id, '_blank');
+                        window.location.href = '/news/' + data.id;
                         tourGuideBox.classList.remove('show');
+                        setTimeout(() => tourGuideBox.remove(), 500);
                     });
 
                     document.getElementById('btn-skip-alert-doc').addEventListener('click', function() {
                         localStorage.setItem('meditrust_doctor_last_alert_id', data.id.toString());
                         tourGuideBox.classList.remove('show');
+                        setTimeout(() => tourGuideBox.remove(), 500);
                     });
                 }
             })
